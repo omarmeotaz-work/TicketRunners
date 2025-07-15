@@ -87,29 +87,22 @@ export function Header() {
   };
 
   return (
-    <header
-      className="
-    sticky top-0 z-50 w-full
-    border-b border-slate-800
-    bg-slate-900/95 text-slate-100
-    backdrop-blur-lg
-  "
-    >
+    <header className="sticky top-0 z-50 w-full bg-transparent backdrop-blur-lg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-8">
-            <a href="/" className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 sm:space-x-8 flex-shrink-0">
+            <a href="/" className="block">
               <img
                 src="/lovable-uploads/3a125e95-6619-4a87-943a-17a2b9109d94.png"
                 alt="Ticket Runners Logo"
-                className="w-48 h-48"
+                className="h-32 w-auto sm:h-32 md:h-40"
               />
             </a>
           </div>
 
-          {/* Search Bar - Hidden on mobile */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8">
+          {/* Search (hidden on mobile) */}
+          <div className="hidden md:flex flex-1 min-w-0 max-w-lg mx-4">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
               <input
@@ -120,9 +113,8 @@ export function Header() {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-2 ">
-            {/* Theme Toggle */}
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center space-x-2">
             <Button variant="header" size="icon" onClick={toggleTheme}>
               {isDarkMode ? (
                 <Sun className="h-4 w-4" />
@@ -130,13 +122,9 @@ export function Header() {
                 <Moon className="h-4 w-4" />
               )}
             </Button>
-
-            {/* Language Toggle */}
             <Button variant="header" size="icon" onClick={toggleLanguage}>
               <span className="text-xs ml-1">{language}</span>
             </Button>
-
-            {/* Auth Buttons */}
             {!isLoggedIn ? (
               <>
                 <Button variant="header" size="icon" onClick={handleRegister}>
@@ -188,7 +176,7 @@ export function Header() {
               </div>
 
               {/* Mobile Actions */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col space-y-2">
                 <div className="flex items-center space-x-2">
                   <Button variant="outline" size="sm" onClick={toggleTheme}>
                     {isDarkMode ? (
@@ -203,8 +191,7 @@ export function Header() {
                     {language}
                   </Button>
                 </div>
-
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col space-y-2">
                   {!isLoggedIn ? (
                     <>
                       <Button

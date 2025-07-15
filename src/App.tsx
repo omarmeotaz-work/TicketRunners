@@ -25,7 +25,10 @@ import TicketDetails from "./pages/TicketDetail";
 import TransferTicketPage from "./pages/TransferTicketPage";
 import TransferTicketsPage from "./pages/TransferTicketsPage";
 import OrganizersPage from "./pages/OrganizersPage";
-
+import GiftTicketPage from "./pages/GiftTicketPage";
+import ViewOrganizersPage from "./pages/ViewOrganizersPage";
+import { ScrollToTop } from "./components/ScrollToTop";
+import PaymentConfirmation from "./pages/PaymentConfirmation";
 /* -------------------------------------------------------------------------- */
 /*                              Theme Context                                 */
 /* -------------------------------------------------------------------------- */
@@ -139,6 +142,7 @@ export default function App() {
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <ScrollToTop />
               <Routes>
                 <Route element={<MainLayout />}>
                   <Route index element={<Index />} />
@@ -157,7 +161,18 @@ export default function App() {
                   <Route path="events" element={<AllEvents />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="organizers" element={<OrganizersPage />} />
-
+                  <Route
+                    path="/ViewOrganizers/:id"
+                    element={<ViewOrganizersPage />}
+                  />
+                  <Route
+                    path="gift/:eventId/:giftId"
+                    element={<GiftTicketPage />}
+                  />
+                  <Route
+                    path="payment-confirmation"
+                    element={<PaymentConfirmation />}
+                  />
                   <Route path="contact" element={<ContactUs />} />
                   <Route path="about" element={<AboutUs />} />
                 </Route>

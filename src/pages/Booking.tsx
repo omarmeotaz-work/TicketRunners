@@ -28,6 +28,7 @@ import {
   CreditCard,
   Store,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Booking = () => {
   const ticketTiers = [
@@ -43,6 +44,7 @@ const Booking = () => {
   type TierKey = (typeof ticketTiers)[number]["key"];
   const { id } = useParams();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [dependents, setDependents] = useState([
     { name: "", mobile: "", socialMedia: "" },
@@ -105,13 +107,14 @@ const Booking = () => {
         "Please head to the nearest outlet to collect your NFC card.",
     });
 
-    // Show confirmation message
-    setTimeout(() => {
-      toast({
-        title: "Confirmation Email Sent",
-        description: "Check your email for payment and ticket details.",
-      });
-    }, 2000);
+    // navigate with state (or URL params)
+    navigate("/payment-confirmation", {
+      state: {
+        eventTitle: eventData.title,
+        totalAmount,
+        transactionId: crypto.randomUUID(), // replace with real reference from backend
+      },
+    });
   };
 
   return (

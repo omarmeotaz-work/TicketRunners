@@ -139,8 +139,18 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-dark">
       <main>
         {/* Hero Section */}
-        <HeroSection onShowTrending={handleShowTrending} />
-
+        <HeroSection
+          featuredEvent={{
+            id: "123",
+            title: "Cairo Jazz Festival 2025",
+            date: "15 July 2025",
+            venue: "El Sawy Culturewheel",
+            image: "/public/event1.jpg",
+          }}
+          onShowTrending={() => {
+            /* … */
+          }}
+        />
         {/* Trending Events Section */}
         <div id="trending-section">
           <EventSection
@@ -222,6 +232,8 @@ export interface EventMetrics {
   date: string;
   venue: string;
   location: string;
+  imageUrl: string;
+  giftTicketIds: string[];
   ticketsSold: number;
   ticketsLeft: number;
   freeTickets: number;
