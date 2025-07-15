@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
 import {
   User,
   Ticket,
@@ -29,11 +28,20 @@ import {
   Eye,
   EyeOff,
   Users,
+  CalendarPlus,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
 const Profile = () => {
   const [showCardDetails, setShowCardDetails] = useState(false);
+  // ① read the URL hash (#nfc, #bookings …)
+  const { hash } = useLocation();
+  const initialTab = (() => {
+    const h = hash.replace("#", "");
+    const valid = ["bookings", "visits", "billing", "nfc", "settings"];
+    return valid.includes(h) ? h : "bookings";
+  })();
+  // ② keep Tabs state in React so the URL can update as the user clicks tabs
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
 
   // Mock data
   const userInfo = {
@@ -113,10 +121,47 @@ const Profile = () => {
     issueDate: "2023-06-15",
     expiryDate: "2025-06-15",
   };
+  // ③ whenever the tab changes, push the new hash to the URL (nice for reload / share)
   const navigate = useNavigate();
+  useEffect(() => {
+    navigate(`#${activeTab}`, { replace: true });
+  }, [activeTab, navigate]);
 
   const handleViewDetails = (ticketID: number) => {
     navigate(`/ticket/${ticketID}`);
+  };
+  const handleAddCalendar = (b: (typeof bookings)[number]) => {
+    const start = new Date(`${b.date} ${b.time}`);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+    const fmt = (d: Date) =>
+      d
+        .toISOString()
+        .replace(/[-:]|\.\d{3}/g, "")
+        .slice(0, 15);
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Ticket Runners//EN",
+      "BEGIN:VEVENT",
+      `UID:${b.id}@ticketrunners.com`,
+      `DTSTAMP:${fmt(new Date())}`,
+      `DTSTART:${fmt(start)}`,
+      `DTEND:${fmt(end)}`,
+      `SUMMARY:${b.eventTitle}`,
+      `LOCATION:${b.location}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+    const blob = new Blob([ics], { type: "text/calendar" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${b.eventTitle.replace(/\s+/g, "_")}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: "Calendar file downloaded" });
   };
 
   return (
@@ -132,30 +177,38 @@ const Profile = () => {
             </p>
           </div>
 
-          <Tabs defaultValue="bookings" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="bookings" className="flex items-center gap-2">
-                <Ticket className="h-4 w-4" />
-                My Bookings
-              </TabsTrigger>
-              <TabsTrigger value="visits" className="flex items-center gap-2">
-                <History className="h-4 w-4" />
-                My Visits
-              </TabsTrigger>
-              <TabsTrigger value="billing" className="flex items-center gap-2">
-                <CreditCard className="h-4 w-4" />
-                Billing History
-              </TabsTrigger>
-              <TabsTrigger value="nfc" className="flex items-center gap-2">
-                <Smartphone className="h-4 w-4" />
-                NFC Card
-              </TabsTrigger>
-              <TabsTrigger value="settings" className="flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                Account Settings
-              </TabsTrigger>
-            </TabsList>
-
+          <Tabs
+            // defaultValue becomes controlled value
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="space-y-6"
+          >
+            {" "}
+            <div className="overflow-x-auto scrollbar-hide">
+              <TabsList className="flex flex-nowrap gap-2 px-2 py-1 min-w-max">
+                {[
+                  { value: "bookings", label: "My Bookings", icon: Ticket },
+                  { value: "visits", label: "My Visits", icon: History },
+                  { value: "billing", label: "Billing", icon: CreditCard },
+                  { value: "nfc", label: "NFC Card", icon: Smartphone },
+                  { value: "settings", label: "Settings", icon: Settings },
+                ].map(({ value, label, icon: Icon }) => (
+                  <TabsTrigger
+                    key={value}
+                    value={value}
+                    /* 🟢 2)  no shrinking, enough width for text, but still compact */
+                    className="
+        flex items-center gap-1 whitespace-nowrap
+        shrink-0 px-3 py-2 text-sm
+        md:justify-center
+      "
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
             {/* My Bookings */}
             <TabsContent value="bookings" className="space-y-6">
               <Card>
@@ -174,12 +227,12 @@ const Profile = () => {
                       key={booking.id}
                       className="border border-border rounded-lg p-4 space-y-3"
                     >
-                      <div className="flex justify-between items-start">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                         <div>
                           <h3 className="font-semibold text-foreground">
                             {booking.eventTitle}
                           </h3>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
                               {booking.date}
@@ -194,18 +247,22 @@ const Profile = () => {
                             </div>
                           </div>
                         </div>
-                        <Badge
-                          variant={
-                            booking.status === "confirmed"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {booking.status}
-                        </Badge>
+
+                        <div className="self-start sm:self-auto">
+                          <Badge
+                            variant={
+                              booking.status === "confirmed"
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="text-xs"
+                          >
+                            {booking.status}
+                          </Badge>
+                        </div>
                       </div>
 
-                      <div className="flex justify-between items-center">
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0 items-start sm:items-center">
                         <div className="text-sm">
                           <span className="text-muted-foreground">
                             Quantity:{" "}
@@ -221,13 +278,22 @@ const Profile = () => {
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           {booking.qrEnabled && (
                             <Button variant="outline" size="sm">
                               <QrCode className="h-4 w-4 mr-2" />
                               QR Code
                             </Button>
                           )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleAddCalendar(booking)}
+                          >
+                            <CalendarPlus className="h-4 w-4 mr-2" />
+                            Add to Calendar
+                          </Button>
+
                           <Button
                             variant="outline"
                             size="sm"
@@ -242,7 +308,6 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </TabsContent>
-
             {/* My Visits */}
             <TabsContent value="visits" className="space-y-6">
               <Card>
@@ -296,7 +361,6 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </TabsContent>
-
             {/* Billing History */}
             <TabsContent value="billing" className="space-y-6">
               <Card>
@@ -315,18 +379,17 @@ const Profile = () => {
                       key={payment.id}
                       className="border border-border rounded-lg p-4"
                     >
-                      <div className="flex justify-between items-center">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div>
                           <h3 className="font-semibold text-foreground">
                             {payment.eventTitle}
                           </h3>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
                             <span>{payment.date}</span>
                             <span>Invoice: {payment.invoiceId}</span>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-right sm:text-left">
                           <div className="text-right">
                             <div className="font-semibold text-foreground">
                               {payment.amount} {payment.currency}
@@ -335,7 +398,11 @@ const Profile = () => {
                               {payment.status}
                             </Badge>
                           </div>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full sm:w-auto"
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
@@ -346,7 +413,6 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </TabsContent>
-
             {/* NFC Card */}
             <TabsContent value="nfc" className="space-y-6">
               <Card>
@@ -407,10 +473,16 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-4">
-                    <Button variant="outline">Replace Card</Button>
-                    <Button variant="outline">Deactivate Card</Button>
-                    <Button variant="gradient">Buy New Card</Button>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                    <Button
+                      variant="outline"
+                      disabled={nfcCard.status !== "Active"}
+                    >
+                      Deactivate Card
+                    </Button>
+                    <Button variant="gradient" className="w-full sm:w-auto">
+                      Buy New Card
+                    </Button>
                   </div>
 
                   <div className="bg-muted/20 rounded-lg p-4">
@@ -425,7 +497,6 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </TabsContent>
-
             {/* Account Settings */}
             <TabsContent value="settings" className="space-y-6">
               <Card>
@@ -456,15 +527,36 @@ const Profile = () => {
                         defaultValue={userInfo.email}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password">New Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Enter new password"
-                      />
+                  </div>
+
+                  <Separator />
+
+                  {/* Change Password Section */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Change Password</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Old Password */}
+                      <div className="space-y-2">
+                        <Label htmlFor="oldPassword">Old Password</Label>
+                        <Input
+                          id="oldPassword"
+                          type="password"
+                          placeholder="Enter current password"
+                        />
+                      </div>
+                      {/* New Password */}
+                      <div className="space-y-2">
+                        <Label htmlFor="newPassword">New Password</Label>
+                        <Input
+                          id="newPassword"
+                          type="password"
+                          placeholder="Enter new password"
+                        />
+                      </div>
                     </div>
                   </div>
+
+                  <Separator />
 
                   <Separator />
 

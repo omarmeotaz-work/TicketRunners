@@ -11,6 +11,7 @@ import {
   Ticket,
   Share2,
   Heart,
+  CalendarPlus,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -104,6 +105,47 @@ const EventDetail: React.FC = () => {
       description: "Event link copied to clipboard",
     });
   };
+
+  const handleAddToCalendar = () => {
+    // 1. Build ICS content
+    const startDate = new Date(`${event.date} ${event.time}`);
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); // assume 2‑hour event
+    const format = (d: Date) =>
+      d
+        .toISOString()
+        .replace(/[-:]|\.\d{3}/g, "")
+        .slice(0, 15);
+
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Ticket Runners//EN",
+      "BEGIN:VEVENT",
+      `UID:${event.id}@ticketrunners.com`,
+      `DTSTAMP:${format(new Date())}`,
+      `DTSTART:${format(startDate)}`,
+      `DTEND:${format(endDate)}`,
+      `SUMMARY:${event.title}`,
+      `LOCATION:${event.location}`,
+      `DESCRIPTION:${event.description}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+
+    // 2. Trigger download
+    const blob = new Blob([ics], { type: "text/calendar" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${event.title.replace(/\s+/g, "_")}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({ title: "Calendar file downloaded" });
+  };
+
   const goToOrganizer = () => navigate(`/ViewOrganizers/${event.organizer.id}`);
   return (
     <div className="min-h-screen bg-gradient-dark">
@@ -159,6 +201,15 @@ const EventDetail: React.FC = () => {
                 aria-label="Share event"
               >
                 <Share2 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="icon"
+                size="icon"
+                className="bg-background/80 backdrop-blur-sm"
+                onClick={handleAddToCalendar}
+                aria-label="Add to calendar"
+              >
+                <CalendarPlus className="h-4 w-4" />
               </Button>
               <Button
                 variant="icon"

@@ -25,7 +25,7 @@ All colors MUST be HSL.
     --secondary-foreground: 0 0% 98%;
 
     --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
+    --muted-foreground: 0 0% 85%;
 
     --accent: 82 39% 35%;
     --accent-foreground: 0 0% 98%;
@@ -208,4 +208,17 @@ All colors MUST be HSL.
   100% {
     box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
   }
+}
+
+/* Tailwind utility */
+.scrollbar-hide {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
 }

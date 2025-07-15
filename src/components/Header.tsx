@@ -11,9 +11,13 @@ import {
   Globe,
   Menu,
   X,
+  Calendar,
+  Smartphone,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AuthModals } from "./AuthModals";
+import { Home, Ticket } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const getInitialTheme = (): boolean => {
   if (typeof window === "undefined") return true;
@@ -174,6 +178,37 @@ export function Header() {
                   className="w-full h-10 pl-10 pr-4 rounded-xl border border-border bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-300"
                 />
               </div>
+              {/* Mobile Navigation Bar */}
+              <nav className="flex justify-between items-center gap-2 pt-2 border-t border-border">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground hover:text-primary"
+                  onClick={() => (window.location.href = "/")}
+                >
+                  <Home className="h-5 w-5" />
+                  Home
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground hover:text-primary"
+                  onClick={() => (window.location.href = "/profile")}
+                >
+                  <Ticket className="h-5 w-5" />
+                  Bookings
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground hover:text-primary"
+                  onClick={() => (window.location.href = "/events")}
+                >
+                  <Calendar className="h-5 w-5" />
+                  Events
+                </Button>
+              </nav>
 
               {/* Mobile Actions */}
               <div className="flex flex-col space-y-2">

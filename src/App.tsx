@@ -29,6 +29,8 @@ import GiftTicketPage from "./pages/GiftTicketPage";
 import ViewOrganizersPage from "./pages/ViewOrganizersPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 import PaymentConfirmation from "./pages/PaymentConfirmation";
+import ForgetPassword from "./pages/ForgetPassword";
+import MerchantPage from "./pages/MerchantPage";
 /* -------------------------------------------------------------------------- */
 /*                              Theme Context                                 */
 /* -------------------------------------------------------------------------- */
@@ -148,6 +150,7 @@ export default function App() {
                   <Route index element={<Index />} />
                   <Route path="event/:id" element={<EventDetail />} />
                   <Route path="booking/:id" element={<Booking />} />
+                  <Route path="/forgot-password" element={<ForgetPassword />} />
                   <Route path="ticket/:id" element={<TicketDetails />} />
                   <Route
                     path="/transfer/:bookingId/:ticketIndex"
@@ -175,6 +178,7 @@ export default function App() {
                   />
                   <Route path="contact" element={<ContactUs />} />
                   <Route path="about" element={<AboutUs />} />
+                  <Route path="merchant" element={<MerchantPage />} />
                 </Route>
                 {/* Catch-all */}
                 <Route path="*" element={<NotFound />} />
