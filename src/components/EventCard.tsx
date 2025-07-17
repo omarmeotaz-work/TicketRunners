@@ -1,17 +1,18 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Calendar, 
-  MapPin, 
-  Clock, 
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Calendar,
+  MapPin,
+  Clock,
   Star,
   Heart,
   Share2,
   Users,
-  Ticket
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+  Ticket,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface EventCardProps {
   id: string;
@@ -42,26 +43,42 @@ export function EventCard({
   rating,
   attendees,
   isFeatured = false,
-  isLiked = false
+  isLiked = false,
 }: EventCardProps) {
   const [liked, setLiked] = useState(isLiked);
   const { toast } = useToast();
+  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+
+  const formattedDate = new Intl.DateTimeFormat(i18n.language, {
+    dateStyle: "long",
+  }).format(new Date(date));
+
+  const formattedTime = new Intl.DateTimeFormat(i18n.language, {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(date));
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     setLiked(!liked);
     toast({
-      title: liked ? 'Removed from favorites' : 'Added to favorites',
-      description: `${title} ${liked ? 'removed from' : 'added to'} your favorites!`,
+      title: liked
+        ? t("eventCard.removedFromFavorites")
+        : t("eventCard.addedToFavorites"),
+      description: t("eventCard.favoriteDescription", {
+        title,
+        action: liked ? t("eventCard.removed") : t("eventCard.added"),
+      }),
     });
   };
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(`Check out this event: ${title}`);
+    navigator.clipboard.writeText(`${t("eventCard.sharePrefix")}: ${title}`);
     toast({
-      title: 'Link copied!',
-      description: 'Event link copied to clipboard',
+      title: t("eventCard.linkCopied"),
+      description: t("eventCard.linkCopiedDescription"),
     });
   };
 
@@ -75,16 +92,19 @@ export function EventCard({
   };
 
   return (
-    <div className="group card-elevated overflow-hidden hover-scale cursor-pointer h-full flex flex-col" onClick={handleCardClick}>
-      {/* Image Container */}
+    <div
+      className="group card-elevated overflow-hidden hover-scale cursor-pointer h-full flex flex-col"
+      onClick={handleCardClick}
+    >
+      {/* Image */}
       <div className="relative overflow-hidden">
         <img
           src={image}
           alt={title}
           className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        
-        {/* Overlay Actions */}
+
+        {/* Actions */}
         <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
           <Button
             variant="icon"
@@ -92,7 +112,9 @@ export function EventCard({
             className="bg-background/80 backdrop-blur-sm hover:bg-background"
             onClick={handleLike}
           >
-            <Heart className={`h-4 w-4 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
+            <Heart
+              className={`h-4 w-4 ${liked ? "fill-red-500 text-red-500" : ""}`}
+            />
           </Button>
           <Button
             variant="icon"
@@ -108,15 +130,18 @@ export function EventCard({
         <div className="absolute top-4 left-4 flex flex-col space-y-2">
           {isFeatured && (
             <Badge className="bg-gradient-primary text-primary-foreground border-0">
-              Featured
+              {t("eventCard.featured")}
             </Badge>
           )}
-          <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
-            {category}
+          <Badge
+            variant="secondary"
+            className="bg-background/80 backdrop-blur-sm"
+          >
+            {t(`categories.${category}`, category)}
           </Badge>
         </div>
 
-        {/* Price Badge */}
+        {/* Price */}
         <div className="absolute bottom-4 right-4">
           <div className="bg-background/90 backdrop-blur-sm rounded-lg px-3 py-2">
             <div className="flex items-center space-x-2">
@@ -139,23 +164,30 @@ export function EventCard({
           {title}
         </h3>
 
-        {/* Event Details */}
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-muted-foreground">
             <Calendar className="h-4 w-4 mr-2" />
-            <span className="text-sm">{date}</span>
+            <span className="text-sm">
+              <strong className="mr-1">{t("eventCard.date")}:</strong>
+              {formattedDate}
+            </span>
           </div>
           <div className="flex items-center text-muted-foreground">
             <Clock className="h-4 w-4 mr-2" />
-            <span className="text-sm">{time}</span>
+            <span className="text-sm">
+              <strong className="mr-1">{t("eventCard.time")}:</strong>
+              {formattedTime}
+            </span>
           </div>
           <div className="flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-2" />
-            <span className="text-sm">{location}</span>
+            <span className="text-sm">
+              <strong className="mr-1">{t("eventCard.location")}:</strong>
+              {location}
+            </span>
           </div>
         </div>
 
-        {/* Stats */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
@@ -169,15 +201,14 @@ export function EventCard({
           </div>
         </div>
 
-        {/* Action Button */}
         <div className="mt-auto">
-          <Button 
-            variant="gradient" 
+          <Button
+            variant="gradient"
             className="w-full group/btn"
             onClick={handleBooking}
           >
             <Ticket className="h-4 w-4 mr-2 transition-transform group-hover/btn:scale-110" />
-            Book Now
+            {t("eventCard.bookNow")}
           </Button>
         </div>
       </div>

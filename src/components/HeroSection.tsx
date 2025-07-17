@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sparkles, TrendingUp, ArrowRight } from "lucide-react";
@@ -20,6 +21,8 @@ export function HeroSection({
   onShowTrending,
   featuredEvent,
 }: HeroSectionProps) {
+  const { t } = useTranslation();
+
   const handleTrendingClick = () => {
     if (onShowTrending) {
       onShowTrending();
@@ -57,23 +60,21 @@ export function HeroSection({
             {/* Welcome Badge */}
             <div className="inline-flex items-center space-x-2 bg-card/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 mb-2 animate-fade-in">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">
-                Welcome to Ticket Runners
-              </span>
+              <span className="text-sm font-medium">{t("hero.badge")}</span>
               <span className="text-primary text-sm font-semibold">
-                Coming soon to Egypt
+                {t("hero.badge_sub")}
               </span>
             </div>
 
             {/* Title */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-foreground mb-4 animate-slide-up">
-              <div>Discover</div>
+              <div>{t("hero.headline_discover")}</div>
               <div className="mt-4">
                 <span className="bg-primary px-2 py-1 rounded text-primary-foreground">
-                  Amazing
+                  {t("hero.headline_amazing")}
                 </span>
               </div>
-              <div className="mt-4">Events</div>
+              <div className="mt-4">{t("hero.headline_events")}</div>
             </h1>
 
             {/* Subtitle */}
@@ -81,8 +82,7 @@ export function HeroSection({
               className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed animate-fade-in"
               style={{ animationDelay: "0.2s" }}
             >
-              Book tickets for the hottest concerts, festivals, and events in
-              Egypt. Secure, fast, and reliable ticket booking experience.
+              {t("hero.subtitle")}
             </p>
 
             {/* CTA Buttons */}
@@ -97,7 +97,7 @@ export function HeroSection({
                 onClick={() => (window.location.href = "/events")}
               >
                 <Sparkles className="h-5 w-5 mr-2 transition-transform group-hover:rotate-12" />
-                Explore Events
+                {t("hero.cta_explore")}
               </Button>
               <Button
                 variant="outline"
@@ -106,7 +106,7 @@ export function HeroSection({
                 onClick={handleTrendingClick}
               >
                 <TrendingUp className="h-5 w-5 mr-2 transition-transform group-hover:scale-110" />
-                Trending Now
+                {t("hero.cta_trending")}
               </Button>
             </div>
           </div>
@@ -115,10 +115,9 @@ export function HeroSection({
           {featuredEvent && (
             <div className="w-full max-w-md mx-auto md:mx-0 animate-fade-in">
               <h2 className="text-xl font-semibold text-foreground mb-2 text-center md:text-left">
-                Today's Featured Event
+                {t("hero.featured_title")}
               </h2>
 
-              {/* Entire card is now clickable */}
               <Link
                 to={`/event/${featuredEvent.id}`}
                 className="block group rounded-xl overflow-hidden border border-border bg-card/80 backdrop-blur-sm shadow-xl transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl"
@@ -140,7 +139,7 @@ export function HeroSection({
                     size="lg"
                     className="w-full pointer-events-none p-2"
                   >
-                    View Event
+                    {t("hero.featured_button")}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>

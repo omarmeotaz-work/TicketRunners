@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -28,20 +29,20 @@ import {
   CreditCard,
   Store,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const Booking = () => {
+  const { t } = useTranslation();
   const ticketTiers = [
-    { key: "regular", label: "Regular", price: 250 },
-    { key: "gold", label: "Gold", price: 400 },
-    { key: "platinum", label: "Platinum", price: 600 },
+    { key: "regular", label: t("booking.regular"), price: 250 },
+    { key: "gold", label: t("booking.gold"), price: 400 },
+    { key: "platinum", label: t("booking.platinum"), price: 600 },
   ] as const;
+  type TierKey = (typeof ticketTiers)[number]["key"];
   const [quantities, setQuantities] = useState<Record<TierKey, number>>({
     regular: 0,
     gold: 0,
     platinum: 0,
   });
-  type TierKey = (typeof ticketTiers)[number]["key"];
   const { id } = useParams();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -59,7 +60,6 @@ const Booking = () => {
   const cardCost = 50;
   const totalAmount = totalTicketPrice + vatAmount + cardCost;
 
-  // Mock event data
   const eventData = {
     title: "Cairo Jazz Festival 2024",
     date: "2024-02-15",
@@ -67,7 +67,6 @@ const Booking = () => {
     location: "Cairo Opera House",
     price: 250,
   };
-  /* Ticket tiers and prices */
 
   const changeQty = (tier: TierKey, delta: number) =>
     setQuantities((prev) => ({
@@ -80,6 +79,7 @@ const Booking = () => {
     updated[index] = { ...updated[index], [field]: value };
     setDependents(updated);
   };
+
   useEffect(() => {
     const need = Math.max(0, totalTickets - 1);
     setDependents((d) =>
@@ -98,21 +98,17 @@ const Booking = () => {
     );
   }, [totalTickets]);
 
-  const ticketPrice = eventData.price;
-
   const handlePayment = () => {
     toast({
-      title: "Payment Successful!",
-      description:
-        "Please head to the nearest outlet to collect your NFC card.",
+      title: t("booking.paymentSuccessTitle"),
+      description: t("booking.paymentSuccessDescription"),
     });
 
-    // navigate with state (or URL params)
     navigate("/payment-confirmation", {
       state: {
         eventTitle: eventData.title,
         totalAmount,
-        transactionId: crypto.randomUUID(), // replace with real reference from backend
+        transactionId: crypto.randomUUID(),
       },
     });
   };
@@ -123,10 +119,10 @@ const Booking = () => {
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-              Book Your Tickets
+              {t("booking.title")}
             </h1>
             <p className="text-muted-foreground">
-              Complete your booking for {eventData.title}
+              {t("booking.subtitle", { event: eventData.title })}
             </p>
           </div>
 
@@ -138,7 +134,7 @@ const Booking = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Ticket className="h-5 w-5 text-primary" />
-                    Event Details
+                    {t("booking.eventDetails")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -163,7 +159,7 @@ const Booking = () => {
               {/* Ticket Quantity */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Ticket Quantities</CardTitle>
+                  <CardTitle>{t("booking.ticketQuantities")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {ticketTiers.map((tier) => (
@@ -172,9 +168,11 @@ const Booking = () => {
                       className="flex items-center justify-between"
                     >
                       <div>
-                        <p className="font-medium">{tier.label}</p>
+                        <p className="font-medium">
+                          {t(`booking.tiers.${tier.key}`)}
+                        </p>
                         <p className="text-sm text-muted-foreground">
-                          {tier.price} EGP per ticket
+                          {tier.price} EGP {t("booking.perTicket")}
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
@@ -201,7 +199,7 @@ const Booking = () => {
                   ))}
 
                   <div className="flex justify-between pt-2">
-                    <span className="font-medium">Subtotal</span>
+                    <span className="font-medium">{t("booking.subtotal")}</span>
                     <span>{totalTicketPrice} EGP</span>
                   </div>
                 </CardContent>
@@ -212,13 +210,15 @@ const Booking = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5 text-primary" />
-                    Customer Information
+                    {t("booking.customerInformation")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="customerName">Full Name</Label>
+                      <Label htmlFor="customerName">
+                        {t("booking.fullName")}
+                      </Label>
                       <Input
                         id="customerName"
                         value={customerInfo.name}
@@ -228,21 +228,7 @@ const Booking = () => {
                             name: e.target.value,
                           })
                         }
-                        placeholder="Enter your full name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="customerMobile">Mobile Number</Label>
-                      <Input
-                        id="customerMobile"
-                        value={customerInfo.mobile}
-                        onChange={(e) =>
-                          setCustomerInfo({
-                            ...customerInfo,
-                            mobile: e.target.value,
-                          })
-                        }
-                        placeholder="+20 123 456 7890"
+                        placeholder={t("booking.fullNamePlaceholder")}
                       />
                     </div>
                   </div>
@@ -255,10 +241,10 @@ const Booking = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-primary" />
-                      Dependents Information
+                      {t("booking.dependentsInfo")}
                     </CardTitle>
                     <CardDescription>
-                      Enter details for additional ticket holders (optional)
+                      {t("booking.dependentsOptional")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -267,30 +253,32 @@ const Booking = () => {
                         key={index}
                         className="border border-border rounded-lg p-4 space-y-3"
                       >
-                        <h4 className="font-medium">Dependent {index + 1}</h4>
+                        <h4 className="font-medium">
+                          {t("booking.dependent") + ` ${index + 1}`}
+                        </h4>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           <div className="space-y-2">
-                            <Label>Name</Label>
+                            <Label>{t("booking.name")}</Label>
                             <Input
                               value={dependent.name}
                               onChange={(e) =>
                                 updateDependent(index, "name", e.target.value)
                               }
-                              placeholder="Full name"
+                              placeholder={t("booking.namePlaceholder")}
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label>Mobile</Label>
+                            <Label>{t("booking.mobile")}</Label>
                             <Input
                               value={dependent.mobile}
                               onChange={(e) =>
                                 updateDependent(index, "mobile", e.target.value)
                               }
-                              placeholder="Mobile number"
+                              placeholder={t("booking.mobilePlaceholder")}
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label>Social Media</Label>
+                            <Label>{t("booking.socialMedia")}</Label>
                             <Input
                               value={dependent.socialMedia}
                               onChange={(e) =>
@@ -300,7 +288,7 @@ const Booking = () => {
                                   e.target.value
                                 )
                               }
-                              placeholder="@username (optional)"
+                              placeholder={t("booking.socialPlaceholder")}
                             />
                           </div>
                         </div>
@@ -317,26 +305,28 @@ const Booking = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CreditCard className="h-5 w-5 text-primary" />
-                    Price Breakdown
+                    {t("booking.priceBreakdown")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span>Ticket Price (x{totalTickets})</span>
+                      <span>
+                        {t("booking.ticketPrice", { count: totalTickets })}
+                      </span>
                       <span>{totalTicketPrice} EGP</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
-                      <span>VAT (14%)</span>
+                      <span>{t("booking.vat")}</span>
                       <span>{vatAmount.toFixed(2)} EGP</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
-                      <span>NFC Card Cost (First Purchase)</span>
+                      <span>{t("booking.cardCost")}</span>
                       <span>{cardCost} EGP</span>
                     </div>
                     <Separator />
                     <div className="flex justify-between font-semibold text-lg">
-                      <span>Total Amount</span>
+                      <span>{t("booking.totalAmount")}</span>
                       <span>{totalAmount.toFixed(2)} EGP</span>
                     </div>
                   </div>
@@ -349,17 +339,18 @@ const Booking = () => {
                       onClick={handlePayment}
                     >
                       <CreditCard className="h-5 w-5 mr-2" />
-                      Complete Payment
+                      {t("booking.completePayment")}
                     </Button>
 
                     <div className="bg-primary/10 rounded-lg p-3">
                       <div className="flex items-start gap-2">
                         <Store className="h-4 w-4 text-primary mt-1" />
                         <div className="text-sm">
-                          <p className="font-medium">First Purchase Notice</p>
+                          <p className="font-medium">
+                            {t("booking.firstPurchaseNotice")}
+                          </p>
                           <p className="text-muted-foreground">
-                            After payment, please visit our nearest outlet to
-                            collect your NFC card for seamless event entry.
+                            {t("booking.nfcInstruction")}
                           </p>
                         </div>
                       </div>
@@ -371,7 +362,7 @@ const Booking = () => {
               {/* Payment Methods */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Payment Methods</CardTitle>
+                  <CardTitle>{t("booking.paymentMethods")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -384,7 +375,7 @@ const Booking = () => {
                       />
                       <label htmlFor="card" className="flex items-center gap-2">
                         <CreditCard className="h-4 w-4" />
-                        Credit/Debit Card
+                        {t("booking.creditDebit")}
                       </label>
                     </div>
                   </div>

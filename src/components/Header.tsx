@@ -15,9 +15,11 @@ import {
   Smartphone,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { AuthModals } from "./AuthModals";
 import { Home, Ticket } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AuthModals } from "./AuthModals";
+import i18n from "@/lib/i18n";
+import { useTranslation } from "react-i18next";
 
 const getInitialTheme = (): boolean => {
   if (typeof window === "undefined") return true;
@@ -36,29 +38,49 @@ export function Header() {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isTagSelectionOpen, setIsTagSelectionOpen] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
+    const html = document.documentElement;
+
     if (isDarkMode) {
-      document.documentElement.classList.remove("light");
+      html.classList.add("dark");
+      html.classList.remove("light");
     } else {
-      document.documentElement.classList.add("light");
+      html.classList.add("light");
+      html.classList.remove("dark");
     }
+
     localStorage.setItem("theme", isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
+
+  useEffect(() => {
+    const storedLang = localStorage.getItem("appLanguage");
+    if (storedLang) {
+      setLanguage(storedLang);
+      i18n.changeLanguage(storedLang === "EN" ? "en" : "ar");
+    }
+  }, []);
 
   const toggleTheme = () => {
     setIsDarkMode((prev) => !prev);
     toast({
-      title: `Switched to ${isDarkMode ? "Light" : "Dark"} Mode`,
-      description: "Theme changed successfully!",
+      title: t("themeSwitched", { theme: isDarkMode ? t("light") : t("dark") }),
+      description: t("themeChangedSuccess"),
     });
   };
 
   const toggleLanguage = () => {
-    setLanguage(language === "EN" ? "AR" : "EN");
+    const newLang = language === "EN" ? "ar" : "EN";
+    setLanguage(newLang);
+    i18n.changeLanguage(newLang === "EN" ? "en" : "ar");
+    localStorage.setItem("appLanguage", newLang); // persist choice
+
     toast({
-      title: `Language changed to ${language === "EN" ? "Arabic" : "English"}`,
-      description: `Interface language updated!`,
+      title: t("languageChanged", {
+        lang: newLang === "ar" ? t("arabic") : t("english"),
+      }),
+      description: t("interfaceLanguageUpdated"),
     });
   };
 
@@ -111,7 +133,7 @@ export function Header() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
               <input
                 type="text"
-                placeholder="Search events..."
+                placeholder={t("searchEvents")}
                 className="w-full h-10 pl-10 pr-4 rounded-xl border border-border bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-300"
               />
             </div>
@@ -187,7 +209,7 @@ export function Header() {
                   onClick={() => (window.location.href = "/")}
                 >
                   <Home className="h-5 w-5" />
-                  Home
+                  {t("home")}{" "}
                 </Button>
                 <Button
                   variant="ghost"
@@ -196,7 +218,7 @@ export function Header() {
                   onClick={() => (window.location.href = "/profile")}
                 >
                   <Ticket className="h-5 w-5" />
-                  Bookings
+                  {t("bookings")}
                 </Button>
 
                 <Button
@@ -206,7 +228,7 @@ export function Header() {
                   onClick={() => (window.location.href = "/events")}
                 >
                   <Calendar className="h-5 w-5" />
-                  Events
+                  {t("events")}
                 </Button>
               </nav>
 
@@ -235,7 +257,7 @@ export function Header() {
                         onClick={handleRegister}
                       >
                         <UserPlus className="h-4 w-4 mr-2" />
-                        Register
+                        {t("register")}
                       </Button>
                       <Button
                         variant="gradient"
@@ -243,7 +265,7 @@ export function Header() {
                         onClick={handleLogin}
                       >
                         <LogIn className="h-4 w-4 mr-2" />
-                        Login
+                        {t("login")}
                       </Button>
                     </>
                   ) : (
@@ -254,7 +276,7 @@ export function Header() {
                         onClick={handleProfile}
                       >
                         <User className="h-4 w-4 mr-2" />
-                        Profile
+                        {t("profile")}
                       </Button>
                       <Button
                         variant="outline"
@@ -262,7 +284,7 @@ export function Header() {
                         onClick={handleLogout}
                       >
                         <LogOut className="h-4 w-4 mr-2" />
-                        Logout
+                        {t("logout")}
                       </Button>
                     </>
                   )}

@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 // Aggregate once to avoid recreating the array on every render
 const allEvents = [...trendingEvents, ...upcomingEvents, ...recommendedEvents];
@@ -71,6 +72,7 @@ function reducer(state: State, action: Action): State {
 const Index = () => {
   const { toast } = useToast();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { t } = useTranslation();
 
   /* --------------------------- Memoized Selectors -------------------------- */
 
@@ -154,8 +156,8 @@ const Index = () => {
         {/* Trending Events Section */}
         <div id="trending-section">
           <EventSection
-            title="Trending Events"
-            subtitle="Most popular events this week"
+            title="trendingEvents"
+            subtitle="checkOutMostPopular"
             icon={TrendingUp}
             events={currentDisplayedEvents.trending}
           />
@@ -166,8 +168,8 @@ const Index = () => {
           currentDisplayedEvents.upcoming.length > 0 && (
             <div className="bg-card/20">
               <EventSection
-                title="Upcoming Events"
-                subtitle="Don't miss these amazing upcoming events"
+                title="upcomingEvents"
+                subtitle="dontMissUpcoming"
                 icon={Calendar}
                 events={currentDisplayedEvents.upcoming}
               />
@@ -178,8 +180,8 @@ const Index = () => {
         {currentDisplayedEvents.filtered.length > 0 && (
           <div className="bg-card/20">
             <EventSection
-              title="Events That May Interest You"
-              subtitle="Personalized recommendations just for you"
+              title="recommendedEvents"
+              subtitle="personalizedRecommendations"
               icon={Sparkles}
               events={currentDisplayedEvents.filtered.slice(0, 6)}
             />
@@ -191,32 +193,29 @@ const Index = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-                Ready to Discover Amazing Events?
+                {t("ctaTitle")}
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Join thousands of event‑goers and never miss out on the best
-                experiences in Egypt.
+                {t("ctaDescription")}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  variant="gradient"
-                  size="hero"
-                  onClick={() => handleNavigation("contact")}
-                  className="group"
-                >
-                  <Mail className="h-5 w-5 mr-2 transition-transform group-hover:scale-110" />
-                  Contact Us
-                </Button>
-                <Button
-                  variant="outline"
-                  size="hero"
-                  onClick={() => handleNavigation("about")}
-                  className="group"
-                >
-                  <Info className="h-5 w-5 mr-2 transition-transform group-hover:scale-110" />
-                  About Us
-                </Button>
-              </div>
+              <Button
+                variant="gradient"
+                size="hero"
+                onClick={() => handleNavigation("contact")}
+                className="group"
+              >
+                <Mail className="h-5 w-5 mr-2 transition-transform group-hover:scale-110" />
+                {t("contactUs")}
+              </Button>
+              <Button
+                variant="outline"
+                size="hero"
+                onClick={() => handleNavigation("about")}
+                className="group"
+              >
+                <Info className="h-5 w-5 mr-2 transition-transform group-hover:scale-110" />
+                {t("aboutUs")}
+              </Button>
             </div>
           </div>
         </section>

@@ -1,6 +1,7 @@
 import { EventCard } from "./EventCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Calendar, Heart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 // Import event images
 import event1 from "@/assets/event1.jpg";
@@ -25,10 +26,23 @@ export function EventSection({
   events,
   showViewAll = true,
 }: EventSectionProps) {
+  const { t } = useTranslation();
+
+  const handleViewAll = () => {
+    const sectionMap: { [key: string]: string } = {
+      trending: "trending",
+      upcoming: "upcoming",
+      recommended: "recommended",
+    };
+
+    const normalizedTitle = title.toLowerCase().replace(/\s+/g, "_");
+    const section = sectionMap[normalizedTitle] || "all";
+    window.location.href = `/events?section=${section}`;
+  };
+
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -36,9 +50,9 @@ export function EventSection({
             </div>
             <div>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                {title}
+                {t(title)}
               </h2>
-              <p className="text-muted-foreground mt-1">{subtitle}</p>
+              <p className="text-muted-foreground mt-1">{t(subtitle)}</p>
             </div>
           </div>
 
@@ -46,24 +60,14 @@ export function EventSection({
             <Button
               variant="outline"
               className="group hidden md:flex"
-              onClick={() => {
-                const sectionMap: { [key: string]: string } = {
-                  "Trending Events": "trending",
-                  "Upcoming Events": "upcoming",
-                  "Events You May Like": "recommended",
-                  "Events That May Interest You": "recommended",
-                };
-                const section = sectionMap[title] || "all";
-                window.location.href = `/events?section=${section}`;
-              }}
+              onClick={handleViewAll}
             >
-              View All
+              {t("viewAll")}
               <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
           )}
         </div>
 
-        {/* Events Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {events.map((event, index) => (
             <div
@@ -76,24 +80,10 @@ export function EventSection({
           ))}
         </div>
 
-        {/* Mobile View All Button */}
         {showViewAll && (
           <div className="flex justify-center mt-8 md:hidden">
-            <Button
-              variant="outline"
-              className="group"
-              onClick={() => {
-                const sectionMap: { [key: string]: string } = {
-                  "Trending Events": "trending",
-                  "Upcoming Events": "upcoming",
-                  "Events You May Like": "recommended",
-                  "Events That May Interest You": "recommended",
-                };
-                const section = sectionMap[title] || "all";
-                window.location.href = `/events?section=${section}`;
-              }}
-            >
-              View All {title}
+            <Button variant="outline" className="group" onClick={handleViewAll}>
+              {t("viewAll")} {t(title)}
               <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
@@ -114,7 +104,7 @@ export const trendingEvents = [
     location: "Cairo Opera House",
     price: 150,
     originalPrice: 200,
-    category: "Music",
+    category: "music",
     rating: 4.8,
     attendees: 1250,
     isFeatured: true,
@@ -127,7 +117,7 @@ export const trendingEvents = [
     time: "6:00 PM",
     location: "Al-Azhar Park",
     price: 75,
-    category: "Cultural",
+    category: "cultural",
     rating: 4.9,
     attendees: 850,
   },
@@ -139,7 +129,7 @@ export const trendingEvents = [
     time: "10:00 AM",
     location: "Museum of Modern Art",
     price: 50,
-    category: "Art",
+    category: "art",
     rating: 4.7,
     attendees: 420,
   },
@@ -154,7 +144,7 @@ export const upcomingEvents = [
     time: "9:00 PM",
     location: "Sayed Darwish Theatre",
     price: 100,
-    category: "Comedy",
+    category: "comedy",
     rating: 4.6,
     attendees: 650,
   },
@@ -167,7 +157,7 @@ export const upcomingEvents = [
     location: "New Capital",
     price: 250,
     originalPrice: 300,
-    category: "EDM",
+    category: "edm",
     rating: 4.9,
     attendees: 2000,
     isFeatured: true,
@@ -180,7 +170,7 @@ export const upcomingEvents = [
     time: "4:00 PM",
     location: "Zamalek District",
     price: 30,
-    category: "Food",
+    category: "food",
     rating: 4.5,
     attendees: 1100,
   },
@@ -195,7 +185,7 @@ export const recommendedEvents = [
     time: "7:30 PM",
     location: "Cairo Opera House",
     price: 120,
-    category: "Classical",
+    category: "classical",
     rating: 4.8,
     attendees: 400,
   },
@@ -207,7 +197,7 @@ export const recommendedEvents = [
     time: "10:00 AM",
     location: "Downtown Cairo",
     price: 80,
-    category: "Workshop",
+    category: "workshop",
     rating: 4.7,
     attendees: 150,
   },
@@ -219,7 +209,7 @@ export const recommendedEvents = [
     time: "8:00 PM",
     location: "Nile Corniche",
     price: 180,
-    category: "Jazz",
+    category: "jazz",
     rating: 4.9,
     attendees: 300,
   },

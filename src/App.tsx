@@ -12,7 +12,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { Footer } from "./components/Footer";
 import Index from "@/pages/Index";
 import EventDetail from "@/pages/EventDetail";
 import Booking from "@/pages/Booking";
@@ -31,6 +31,8 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import PaymentConfirmation from "./pages/PaymentConfirmation";
 import ForgetPassword from "./pages/ForgetPassword";
 import MerchantPage from "./pages/MerchantPage";
+import { AuthModals } from "./components/AuthModals";
+import { useTranslation } from "react-i18next";
 /* -------------------------------------------------------------------------- */
 /*                              Theme Context                                 */
 /* -------------------------------------------------------------------------- */
@@ -136,15 +138,23 @@ const MainLayout = () => (
 const queryClient = new QueryClient();
 
 export default function App() {
+  const { i18n } = useTranslation();
+
+  //direction switch for arabic
+  // useEffect(() => {
+  //   document.documentElement.dir = i18n.language === "ar" ? "rtl" : "ltr";
+  // }, [i18n.language]);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
+          <ThemeProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
               <ScrollToTop />
+
               <Routes>
                 <Route element={<MainLayout />}>
                   <Route index element={<Index />} />
@@ -160,7 +170,6 @@ export default function App() {
                     path="/transfer-tickets"
                     element={<TransferTicketsPage />}
                   />
-
                   <Route path="events" element={<AllEvents />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="organizers" element={<OrganizersPage />} />
@@ -180,13 +189,12 @@ export default function App() {
                   <Route path="about" element={<AboutUs />} />
                   <Route path="merchant" element={<MerchantPage />} />
                 </Route>
-                {/* Catch-all */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </BrowserRouter>
-          </AuthProvider>
-        </ThemeProvider>
-      </TooltipProvider>
+            </TooltipProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }

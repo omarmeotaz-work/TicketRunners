@@ -8,7 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import clsx from "clsx";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface EventFiltersProps {
   onFilterChange: (filters: FilterOptions) => void;
@@ -19,6 +23,8 @@ interface FilterOptions {
   date: string;
   location: string;
   tags: string[];
+  startDate?: Date | null;
+  endDate?: Date | null;
 }
 
 const categories = [
@@ -35,6 +41,7 @@ const categories = [
   "Jazz",
   "Workshop",
 ];
+
 const locations = [
   "All",
   "Cairo Opera House",
@@ -46,6 +53,7 @@ const locations = [
   "Downtown Cairo",
   "Nile Corniche",
 ];
+
 const availableTags = [
   "Music",
   "Comedy",
@@ -63,6 +71,11 @@ const availableTags = [
 ];
 
 export function EventFilters({ onFilterChange }: EventFiltersProps) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.dir() === "rtl";
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
   const [filters, setFilters] = useState<FilterOptions>({
     category: "All",
     date: "All",
@@ -89,7 +102,11 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
       date: "All",
       location: "All",
       tags: [],
+      startDate: null,
+      endDate: null,
     };
+    setStartDate(null);
+    setEndDate(null);
     setFilters(cleared);
     onFilterChange(cleared);
   };
@@ -98,20 +115,32 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
     filters.category !== "All" ||
     filters.date !== "All" ||
     filters.location !== "All" ||
-    filters.tags.length > 0;
+    filters.tags.length > 0 ||
+    !!filters.startDate ||
+    !!filters.endDate;
 
   return (
-    <div className="bg-card backdrop-blur-sm border border-border rounded-xl p-6 mb-8">
+    <div
+      className={clsx(
+        "bg-card border border-border rounded-xl p-6 mb-8",
+        isRTL && "text-right"
+      )}
+    >
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
+        <div
+          className={clsx(
+            "flex items-center",
+            isRTL ? "space-x-reverse space-x-2" : "space-x-2"
+          )}
+        >
           <Filter className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold text-foreground">
-            Filter Events
+            {t("filters.title")}
           </h3>
         </div>
         {hasActiveFilters && (
           <Button variant="outline" size="sm" onClick={clearFilters}>
-            Clear All
+            {t("filters.clearAll")}
           </Button>
         )}
       </div>
@@ -119,19 +148,19 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
           <label className="text-sm font-medium text-foreground mb-2 block">
-            Category
+            {t("filters.category")}
           </label>
           <Select
             value={filters.category}
             onValueChange={(value) => updateFilters({ category: value })}
           >
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue placeholder={t("filters.category")} />
             </SelectTrigger>
             <SelectContent>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
-                  {category}
+                  {t(`categories.${category}`, category)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -140,40 +169,42 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
 
         <div>
           <label className="text-sm font-medium text-foreground mb-2 block">
-            Date
+            {t("filters.date")}
           </label>
           <Select
             value={filters.date}
             onValueChange={(value) => updateFilters({ date: value })}
           >
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue placeholder={t("filters.date")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="All">All Dates</SelectItem>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="tomorrow">Tomorrow</SelectItem>
-              <SelectItem value="this-week">This Week</SelectItem>
-              <SelectItem value="this-month">This Month</SelectItem>
+              <SelectItem value="All">{t("filters.allDates")}</SelectItem>
+              <SelectItem value="today">{t("filters.today")}</SelectItem>
+              <SelectItem value="tomorrow">{t("filters.tomorrow")}</SelectItem>
+              <SelectItem value="this-week">{t("filters.thisWeek")}</SelectItem>
+              <SelectItem value="this-month">
+                {t("filters.thisMonth")}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div>
           <label className="text-sm font-medium text-foreground mb-2 block">
-            Location
+            {t("filters.location")}
           </label>
           <Select
             value={filters.location}
             onValueChange={(value) => updateFilters({ location: value })}
           >
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue placeholder={t("filters.location")} />
             </SelectTrigger>
             <SelectContent>
               {locations.map((location) => (
                 <SelectItem key={location} value={location}>
-                  {location}
+                  {t(`locations.${location}`, location)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -181,23 +212,117 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        {isRTL ? (
+          <>
+            <div>
+              <label className="text-sm font-medium text-foreground mb-2 block">
+                {t("filters.endDate")}
+              </label>
+              <DatePicker
+                selected={endDate}
+                onChange={(date: Date | null) => {
+                  setEndDate(date);
+                  updateFilters({ endDate: date });
+                }}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                maxDate={new Date(new Date().getFullYear(), 11, 31)}
+                className="w-full px-3 py-2 border rounded-md bg-background text-foreground"
+                placeholderText={t("filters.endDate")}
+                calendarStartDay={1}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground mb-2 block">
+                {t("filters.startDate")}
+              </label>
+              <DatePicker
+                selected={startDate}
+                onChange={(date: Date | null) => {
+                  setStartDate(date);
+                  updateFilters({ startDate: date });
+                }}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                maxDate={new Date(new Date().getFullYear(), 11, 31)}
+                className="w-full px-3 py-2 border rounded-md bg-background text-foreground"
+                placeholderText={t("filters.startDate")}
+                calendarStartDay={1}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <label className="text-sm font-medium text-foreground mb-2 block">
+                {t("filters.startDate")}
+              </label>
+              <DatePicker
+                selected={startDate}
+                onChange={(date: Date | null) => {
+                  setStartDate(date);
+                  updateFilters({ startDate: date });
+                }}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                maxDate={new Date(new Date().getFullYear(), 11, 31)}
+                className="w-full px-3 py-2 border rounded-md bg-background text-foreground"
+                placeholderText={t("filters.startDate")}
+                calendarStartDay={1}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground mb-2 block">
+                {t("filters.endDate")}
+              </label>
+              <DatePicker
+                selected={endDate}
+                onChange={(date: Date | null) => {
+                  setEndDate(date);
+                  updateFilters({ endDate: date });
+                }}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                maxDate={new Date(new Date().getFullYear(), 11, 31)}
+                className="w-full px-3 py-2 border rounded-md bg-background text-foreground"
+                placeholderText={t("filters.endDate")}
+                calendarStartDay={1}
+              />
+            </div>
+          </>
+        )}
+      </div>
+
       <div>
         <label className="text-sm font-medium text-foreground mb-2 block">
-          Interest Tags
+          {t("filters.tags")}
         </label>
-        <div className="flex flex-wrap gap-2">
+        <div
+          className={clsx(
+            "flex flex-wrap gap-2",
+            isRTL ? "justify-end" : "justify-start"
+          )}
+        >
           {availableTags.map((tag) => (
             <Badge
               key={tag}
               variant={filters.tags.includes(tag) ? "default" : "secondary"}
-              className={`cursor-pointer transition-all duration-200 ${
+              className={clsx(
+                "cursor-pointer transition-all duration-200",
                 filters.tags.includes(tag)
                   ? "bg-primary text-primary-foreground"
                   : "hover:bg-primary/20"
-              }`}
+              )}
               onClick={() => handleTagToggle(tag)}
             >
-              {tag}
+              {t(`tags.${tag}`, tag)}
             </Badge>
           ))}
         </div>
