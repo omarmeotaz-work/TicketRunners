@@ -121,9 +121,6 @@ const Booking = () => {
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
               {t("booking.title")}
             </h1>
-            <p className="text-muted-foreground">
-              {t("booking.subtitle", { event: eventData.title })}
-            </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -206,34 +203,6 @@ const Booking = () => {
               </Card>
 
               {/* Customer Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-primary" />
-                    {t("booking.customerInformation")}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="customerName">
-                        {t("booking.fullName")}
-                      </Label>
-                      <Input
-                        id="customerName"
-                        value={customerInfo.name}
-                        onChange={(e) =>
-                          setCustomerInfo({
-                            ...customerInfo,
-                            name: e.target.value,
-                          })
-                        }
-                        placeholder={t("booking.fullNamePlaceholder")}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
 
               {/* Dependents Information */}
               {dependents.length > 0 && (
@@ -265,30 +234,6 @@ const Booking = () => {
                                 updateDependent(index, "name", e.target.value)
                               }
                               placeholder={t("booking.namePlaceholder")}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>{t("booking.mobile")}</Label>
-                            <Input
-                              value={dependent.mobile}
-                              onChange={(e) =>
-                                updateDependent(index, "mobile", e.target.value)
-                              }
-                              placeholder={t("booking.mobilePlaceholder")}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>{t("booking.socialMedia")}</Label>
-                            <Input
-                              value={dependent.socialMedia}
-                              onChange={(e) =>
-                                updateDependent(
-                                  index,
-                                  "socialMedia",
-                                  e.target.value
-                                )
-                              }
-                              placeholder={t("booking.socialPlaceholder")}
                             />
                           </div>
                         </div>

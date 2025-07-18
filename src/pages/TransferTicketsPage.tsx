@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,7 @@ interface TransferState {
 }
 
 export default function TransferTicketsPage() {
+  const { t } = useTranslation();
   const { state } = useLocation();
   const { ticketIndexes = [], bookingId = "" } = (state as TransferState) || {};
   const [email, setEmail] = useState("");
@@ -22,7 +24,7 @@ export default function TransferTicketsPage() {
   if (!ticketIndexes.length || !bookingId) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-dark text-foreground">
-        Missing transfer data.
+        {t("transferTickets.missingData")}
       </div>
     );
   }
@@ -30,8 +32,8 @@ export default function TransferTicketsPage() {
   const handleConfirm = () => {
     if (!email || !agree) {
       toast({
-        title: "Incomplete",
-        description: "Enter an email and accept the policy.",
+        title: t("transferTickets.toast.incompleteTitle"),
+        description: t("transferTickets.toast.incompleteDescription"),
         variant: "destructive",
       });
       return;
@@ -40,12 +42,14 @@ export default function TransferTicketsPage() {
     // TODO: call backend API here
 
     toast({
-      title: "Transfer Initiated",
-      description: `Tickets ${ticketIndexes.join(
-        ", "
-      )} for booking ${bookingId} will be sent to ${email}.`,
+      title: t("transferTickets.toast.successTitle"),
+      description: t("transferTickets.toast.successDescription", {
+        tickets: ticketIndexes.join(", "),
+        bookingId,
+        email,
+      }),
     });
-    navigate(`/booking/${bookingId}`); // back to booking
+    navigate(`/booking/${bookingId}`);
   };
 
   return (
@@ -54,18 +58,20 @@ export default function TransferTicketsPage() {
         <Card>
           <CardHeader>
             <CardTitle>
-              Transfer {ticketIndexes.length} Ticket
-              {ticketIndexes.length > 1 && "s"}
+              {t("transferTickets.title", {
+                count: ticketIndexes.length,
+                plural: ticketIndexes.length > 1 ? "s" : "",
+              })}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1 text-foreground">
-                Recipient Email
+                {t("transferTickets.recipientEmail")}
               </label>
               <Input
                 type="email"
-                placeholder="friend@example.com"
+                placeholder={t("transferTickets.emailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -77,7 +83,7 @@ export default function TransferTicketsPage() {
                 onCheckedChange={(v) => setAgree(!!v)}
               />
               <span className="text-sm text-muted-foreground">
-                I agree to the transfer policy and 50EGP fee.
+                {t("transferTickets.checkboxLabel")}
               </span>
             </div>
 
@@ -86,7 +92,7 @@ export default function TransferTicketsPage() {
               disabled={!email || !agree}
               onClick={handleConfirm}
             >
-              Confirm & Pay
+              {t("transferTickets.confirmButton")}
             </Button>
           </CardContent>
         </Card>

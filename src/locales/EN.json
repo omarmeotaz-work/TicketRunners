@@ -161,10 +161,236 @@
     "paymentSuccessTitle": "Payment Successful",
     "paymentSuccessDescription": "Thank you! Your booking has been completed.",
     "fullNamePlaceholder": "Enter your full name",
+    "perTicket": "per Ticket",
+    "firstPurchaseNotice": "First Purchase Notice",
+    "nfcInstruction": "you will need to get your NFC card from one of our merchants",
+    "dependentsOptional": "Plus one Info",
+    "namePlaceholder": "Enter a name",
+
     "tiers": {
       "gold": "gold",
       "regular": "Regular",
       "platinum": "platinum"
     }
+  },
+  "paymentConfirmation": {
+    "title": "Payment Successful",
+    "thankYou": "Thank you for booking with Ticket Runners!",
+    "detailsTitle": "Payment Details",
+    "event": "Event",
+    "transactionId": "Transaction ID",
+    "totalPaid": "Total Paid",
+    "browseEvents": "Browse More Events"
+  },
+  "profilepage": {
+    "profileTabs": {
+      "bookings": "My Bookings",
+      "visits": "My Visits",
+      "billing": "Billing",
+      "nfc": "NFC Card",
+      "settings": "Settings",
+      "title": "My Profile",
+      "description": "Manage your account, bookings, and preferences"
+    },
+    "myBookings": {
+      "title": "My Bookings",
+      "description": "View and manage your ticket bookings",
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "cancelled": "Cancelled"
+      },
+
+      "quantity": "Quantity:",
+      "total": "Total:",
+      "qr": "QR Code",
+      "addToCalendar": "Add to Calendar",
+      "viewDetails": "View Details",
+      "date": "Date",
+      "time": "Time",
+      "location": "Location"
+    },
+    "visits": {
+      "title": "My Visits",
+      "description": "History of events you have attended",
+      "date": "Date",
+      "enteredAt": "Entered at",
+      "location": "Location",
+      "dependents": "Dependents"
+    },
+    "billing": {
+      "title": "Billing History",
+      "description": "View your payment history and download invoices",
+      "invoice": "Invoice",
+      "download": "Download",
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending",
+        "failed": "Failed"
+      }
+    },
+    "nfc": {
+      "title": "My NFC Card",
+      "description": "Manage your NFC card for seamless event entry",
+      "cardStatus": "Card Status",
+      "status": {
+        "Active": "Active",
+        "Inactive": "Inactive",
+        "Blocked": "Blocked"
+      },
+      "cardNumber": "Card Number:",
+      "issueDate": "Issue Date:",
+      "expiryDate": "Expiry Date:",
+      "deactivateCard": "Deactivate Card",
+      "buyNewCard": "Buy New Card",
+      "cardFeaturesTitle": "Card Features",
+      "feature1": "Contactless entry to events",
+      "feature2": "Faster check-in process",
+      "feature3": "Works with all supported venues",
+      "feature4": "Backup QR code always available"
+    },
+    "settingsTab": {
+      "tab": "Settings",
+      "description": "Update your account information and preferences.",
+      "fullName": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email Address",
+      "changePassword": "Change Password",
+      "oldPassword": "Current Password",
+      "oldPasswordPlaceholder": "Enter current password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter a new password",
+      "notificationPreferences": "Notification Preferences",
+      "notifyEmail": "Receive email notifications",
+      "notifySMS": "Receive SMS notifications",
+      "notifyMarketing": "Receive marketing offers",
+      "saveChanges": "Save Changes"
+    },
+    "subscriptions": {
+      "title": "My Subscriptions",
+      "description": "Manage your active and past subscriptions",
+      "plan": "Plan",
+      "price": "Price",
+      "duration": "Duration",
+      "status": {
+        "active": "Active",
+        "expired": "Expired",
+        "cancelled": "Cancelled"
+      },
+      "renew": "Renew",
+      "cancel": "Cancel",
+      "viewDetails": "View Details"
+    },
+    "wishlist": {
+      "title": "Wishlist",
+      "description": "Events you’ve saved for later",
+      "empty": "Your wishlist is empty.",
+      "remove": "Remove",
+      "viewEvent": "View Event"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Update your personal information",
+      "name": "Name",
+      "email": "Email",
+      "language": "Preferred Language",
+      "update": "Update",
+      "success": "Settings updated successfully"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Manage how you receive notifications",
+      "email": "Email Notifications",
+      "sms": "SMS Notifications",
+      "push": "Push Notifications",
+      "on": "On",
+      "off": "Off",
+      "save": "Save Preferences"
+    }
+  },
+  "ticketDetails": {
+    "title": "Ticket Details",
+    "reference": "Booking Reference #{{id}}",
+    "notFound": "Booking not found.",
+    "eventInfo": {
+      "title": "Event Information"
+    },
+    "tickets": {
+      "title": "Your Tickets",
+      "description": "Transfer tickets individually or select multiple to transfer together",
+      "ticketNumber": "Ticket #{{index}}",
+      "transferred": "Transferred (Code: {{code}})",
+      "transfer": "Transfer",
+      "transferSelected": "Transfer Selected Tickets"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "subtotal": "Subtotal",
+      "vat": "VAT (14%)",
+      "total": "Total"
+    }
+  },
+  "transferTicket": {
+    "title": "Transfer Ticket #{{ticketIndex}}",
+    "emailLabel": "Recipient's Email",
+    "emailPlaceholder": "example@email.com",
+    "policyLabel": "I agree to the ticket transfer policy and service fee.",
+    "feeNotice": "A service fee of {{amount}} will apply to this transfer.",
+    "confirmButton": "Confirm & Pay",
+    "toast": {
+      "errorTitle": "Error",
+      "errorDescription": "Please enter the email and accept the transfer policy.",
+      "successTitle": "Transfer Complete",
+      "successDescription": "Ticket #{{ticketIndex}} for booking {{bookingId}} transferred to {{email}}."
+    }
+  },
+  "transferTickets": {
+    "missingData": "Missing transfer data.",
+    "title": "Transfer {{count}} Ticket{{plural}}",
+    "recipientEmail": "Recipient Email",
+    "emailPlaceholder": "friend@example.com",
+    "checkboxLabel": "I agree to the transfer policy and 50EGP fee.",
+    "confirmButton": "Confirm & Pay",
+    "toast": {
+      "incompleteTitle": "Incomplete",
+      "incompleteDescription": "Enter an email and accept the policy.",
+      "successTitle": "Transfer Initiated",
+      "successDescription": "Tickets {{tickets}} for booking {{bookingId}} will be sent to {{email}}."
+    }
+  },
+
+  "eventDetail": {
+    "title": "Ahmed Sheba Live Concert",
+    "date": "March 15, 2025",
+    "time": "8:00 PM",
+    "location": "Cairo Opera House",
+    "category": "Music",
+    "description": "Join us for an unforgettable evening with Ahmed Sheba, one of Egypt's most beloved musicians. Experience his greatest hits in an intimate setting at the prestigious Cairo Opera House.",
+    "organizer": {
+      "name": "Sheba Events LLC"
+    },
+    "attendees": "{{count}} attending",
+    "aboutEvent": "About this event",
+    "perTicket": "per ticket",
+    "organizers": "Organizers",
+    "shareToast": {
+      "title": "Link copied!",
+      "description": "Event link copied to clipboard"
+    },
+    "calendarToast": "Calendar file downloaded"
+  },
+  "badges": {
+    "featured": "Featured"
+  },
+  "buttons": {
+    "bookNow": "Book Now"
+  },
+  "ariaLabels": {
+    "share": "Share",
+    "addToCalendar": "Add to calendar",
+    "addToFavorites": "Add to favorites"
+  },
+  "currency": {
+    "egp": "EGP"
   }
 }
