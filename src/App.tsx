@@ -141,9 +141,9 @@ export default function App() {
   const { i18n } = useTranslation();
 
   //direction switch for arabic
-  // useEffect(() => {
-  //   document.documentElement.dir = i18n.language === "ar" ? "rtl" : "ltr";
-  // }, [i18n.language]);
+  useEffect(() => {
+    document.documentElement.dir = i18n.language === "ar" ? "rtl" : "ltr";
+  }, [i18n.language]);
 
   return (
     <QueryClientProvider client={queryClient}>

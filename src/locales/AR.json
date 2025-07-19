@@ -142,30 +142,259 @@
     "subtotal": "الإجمالي الفرعي",
     "customerInfo": "معلومات العميل",
     "fullName": "الاسم الكامل",
-    "mobile": "رقم الهاتف",
+    "mobile": "رقم الجوال",
     "dependentsInfo": "معلومات المرافقين",
     "dependent": "المرافق {{index}}",
     "name": "الاسم",
-    "mobilePlaceholder": "رقم الهاتف",
-    "socialMedia": "وسائل التواصل",
+    "mobilePlaceholder": "رقم الجوال",
+    "socialMedia": "وسائل التواصل الاجتماعي",
     "optionalUsername": "@اسم_المستخدم (اختياري)",
-    "priceBreakdown": "تفاصيل السعر",
-    "ticketPrice": "سعر التذكرة (×{{count}})",
+    "priceBreakdown": "تفصيل السعر",
+    "ticketPrice": "سعر التذكرة (x{{count}})",
     "vat": "ضريبة القيمة المضافة (14٪)",
-    "cardCost": "تكلفة بطاقة NFC (لأول عملية شراء)",
+    "cardCost": "تكلفة بطاقة NFC (أول عملية شراء)",
     "totalAmount": "المبلغ الإجمالي",
     "completePayment": "إتمام الدفع",
     "paymentNoticeTitle": "تنويه بخصوص أول عملية شراء",
-    "paymentNoticeBody": "بعد الدفع، يرجى زيارة أقرب فرع لاستلام بطاقة NFC الخاصة بك لدخول سهل إلى الحدث.",
+    "paymentNoticeBody": "بعد الدفع، يرجى زيارة أقرب فرع لنا لاستلام بطاقة NFC الخاصة بك لتسهيل دخول الفعالية.",
     "paymentMethods": "طرق الدفع",
-    "creditDebit": "بطاقة ائتمان/خصم مباشر",
+    "creditDebit": "بطاقة ائتمان/خصم",
     "paymentSuccessTitle": "تم الدفع بنجاح",
     "paymentSuccessDescription": "شكرًا لك! تم إكمال الحجز بنجاح.",
-    "fullNamePlaceholder": "ادخل اسمك الكامل",
+    "fullNamePlaceholder": "أدخل اسمك الكامل",
+    "perTicket": "لكل تذكرة",
+    "firstPurchaseNotice": "تنويه بخصوص أول عملية شراء",
+    "nfcInstruction": "ستحتاج إلى الحصول على بطاقة NFC من أحد وكلائنا",
+    "dependentsOptional": "معلومات الشخص المرافق",
+    "namePlaceholder": "أدخل الاسم",
+
     "tiers": {
-      "gold": "ذهب",
+      "gold": "ذهبي",
       "regular": "عادي",
-      "platinum": "البلاتين"
+      "platinum": "بلاتيني"
     }
+  },
+  "paymentConfirmation": {
+    "title": "تم الدفع بنجاح",
+    "thankYou": "شكرًا لحجزك مع Ticket Runners!",
+    "detailsTitle": "تفاصيل الدفع",
+    "event": "الفعالية",
+    "transactionId": "رقم العملية",
+    "totalPaid": "إجمالي المبلغ المدفوع",
+    "browseEvents": "تصفح المزيد من الفعاليات"
+  },
+  "profilepage": {
+    "profileTabs": {
+      "bookings": "حجوزاتي",
+      "visits": "زياراتي",
+      "billing": "الفواتير",
+      "nfc": "بطاقة NFC",
+      "settings": "الإعدادات",
+      "title": "ملفي الشخصي",
+      "description": "إدارة الحساب، الحجوزات، والتفضيلات"
+    },
+    "myBookings": {
+      "title": "حجوزاتي",
+      "description": "عرض وإدارة حجوزات التذاكر الخاصة بك",
+      "status": {
+        "confirmed": "مؤكد",
+        "pending": "قيد الانتظار",
+        "cancelled": "ملغي"
+      },
+      "quantity": "الكمية:",
+      "total": "الإجمالي:",
+      "qr": "رمز QR",
+      "addToCalendar": "أضف إلى التقويم",
+      "viewDetails": "عرض التفاصيل",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "location": "الموقع"
+    },
+    "visits": {
+      "title": "زياراتي",
+      "description": "تاريخ الأحداث التي حضرتها",
+      "date": "التاريخ",
+      "enteredAt": "وقت الدخول",
+      "location": "الموقع",
+      "dependents": "المرافقون"
+    },
+    "billing": {
+      "title": "سجل الفواتير",
+      "description": "عرض سجل الدفع وتنزيل الفواتير",
+      "invoice": "رقم الفاتورة",
+      "download": "تنزيل",
+      "status": {
+        "paid": "مدفوع",
+        "pending": "قيد الانتظار",
+        "failed": "فشل"
+      }
+    },
+
+    "nfc": {
+      "title": "بطاقتي الذكية",
+      "description": "إدارة بطاقتك الذكية للدخول السلس إلى الفعاليات",
+      "cardStatus": "حالة البطاقة",
+      "status": {
+        "Active": "نشطة",
+        "Inactive": "غير نشطة",
+        "Blocked": "محظورة"
+      },
+      "cardNumber": "رقم البطاقة:",
+      "issueDate": "تاريخ الإصدار:",
+      "expiryDate": "تاريخ الانتهاء:",
+      "deactivateCard": "تعطيل البطاقة",
+      "buyNewCard": "شراء بطاقة جديدة",
+      "cardFeaturesTitle": "مميزات البطاقة",
+      "feature1": "دخول بدون تلامس للفعاليات",
+      "feature2": "تسريع عملية تسجيل الدخول",
+      "feature3": "تعمل مع جميع الأماكن المدعومة",
+      "feature4": "رمز QR احتياطي متوفر دائمًا"
+    },
+    "settingsTab": {
+      "tab": "الإعدادات",
+      "description": "قم بتحديث معلومات حسابك وتفضيلاتك.",
+      "fullName": "الاسم الكامل",
+      "phone": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "changePassword": "تغيير كلمة المرور",
+      "oldPassword": "كلمة المرور الحالية",
+      "oldPasswordPlaceholder": "أدخل كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "newPasswordPlaceholder": "أدخل كلمة مرور جديدة",
+      "notificationPreferences": "تفضيلات الإشعارات",
+      "notifyEmail": "استلام الإشعارات عبر البريد الإلكتروني",
+      "notifySMS": "استلام الإشعارات عبر الرسائل النصية",
+      "notifyMarketing": "استلام العروض التسويقية",
+      "saveChanges": "حفظ التغييرات"
+    }
+  },
+
+  "ticketDetails": {
+    "title": "تفاصيل التذكرة",
+    "reference": "رقم الحجز #{{id}}",
+    "notFound": "لم يتم العثور على الحجز.",
+    "eventInfo": {
+      "title": "معلومات الفعالية"
+    },
+    "tickets": {
+      "title": "تذاكرك",
+      "description": "انقل التذاكر بشكل فردي أو اختر عدة تذاكر لنقلها معًا",
+      "ticketNumber": "تذكرة #{{index}}",
+      "transferred": "تم النقل (الرمز: {{code}})",
+      "transfer": "نقل",
+      "transferSelected": "نقل التذاكر المحددة"
+    },
+    "summary": {
+      "title": "ملخص الطلب",
+      "subtotal": "الإجمالي",
+      "vat": "ضريبة القيمة المضافة (14%)",
+      "total": "الإجمالي الكلي"
+    }
+  },
+  "subscriptions": {
+    "title": "اشتراكاتي",
+    "description": "إدارة الاشتراكات الحالية والسابقة",
+    "plan": "الخطة",
+    "price": "السعر",
+    "duration": "المدة",
+    "status": {
+      "active": "نشط",
+      "expired": "منتهي",
+      "cancelled": "ملغي"
+    },
+    "renew": "تجديد",
+    "cancel": "إلغاء",
+    "viewDetails": "عرض التفاصيل"
+  },
+  "wishlist": {
+    "title": "المفضلة",
+    "description": "الفعاليات التي قمت بحفظها لاحقًا",
+    "empty": "قائمة المفضلة فارغة.",
+    "remove": "إزالة",
+    "viewEvent": "عرض الفعالية"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "description": "تحديث معلوماتك الشخصية",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "language": "اللغة المفضلة",
+    "update": "تحديث",
+    "success": "تم تحديث الإعدادات بنجاح"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "description": "إدارة طرق تلقي الإشعارات",
+    "email": "إشعارات البريد الإلكتروني",
+    "sms": "إشعارات الرسائل النصية",
+    "push": "إشعارات التطبيق",
+    "on": "تشغيل",
+    "off": "إيقاف",
+    "save": "حفظ التفضيلات"
+  },
+  "transferTicket": {
+    "title": "نقل التذكرة رقم #{{ticketIndex}}",
+    "emailLabel": "البريد الإلكتروني للمستلم",
+    "emailPlaceholder": "example@email.com",
+    "policyLabel": "أوافق على سياسة نقل التذاكر ورسوم الخدمة.",
+    "feeNotice": "سيتم تطبيق رسوم خدمة قدرها {{amount}} على هذه العملية.",
+    "confirmButton": "تأكيد والدفع",
+    "toast": {
+      "errorTitle": "خطأ",
+      "errorDescription": "يرجى إدخال البريد الإلكتروني والموافقة على سياسة النقل.",
+      "successTitle": "تم النقل",
+      "successDescription": "تم نقل التذكرة رقم #{{ticketIndex}} للحجز رقم {{bookingId}} إلى {{email}}."
+    }
+  },
+  "transferTickets": {
+    "title": "نقل {{count}} تذكرة",
+    "title_plural": "نقل {{count}} تذاكر",
+    "emailLabel": "البريد الإلكتروني للمستلم",
+    "emailPlaceholder": "friend@example.com",
+    "recipientEmail": "البريد الإلكتروني للمستلم",
+    "agreeText": "أوافق على سياسة النقل ورسوم ٥٠ جنيهًا.",
+    "confirmButton": "تأكيد والدفع",
+    "toast": {
+      "incompleteTitle": "بيانات غير مكتملة",
+      "incompleteDescription": "يرجى إدخال البريد الإلكتروني والموافقة على السياسة.",
+      "successTitle": "تم بدء النقل",
+      "successDescription": "سيتم إرسال التذاكر {{tickets}} للحجز رقم {{bookingId}} إلى {{email}}."
+    },
+    "missingData": "بيانات النقل غير متوفرة."
+  },
+
+  "eventDetail": {
+    "title": "حفل أحمد شيبة مباشر",
+    "date": "15 مارس 2025",
+    "time": "8:00 مساءً",
+    "location": "دار الأوبرا المصرية",
+    "category": "موسيقى",
+    "description": "انضم إلينا في أمسية لا تُنسى مع أحمد شيبة، أحد أشهر الموسيقيين المحبوبين في مصر. استمتع بأعظم أغانيه في جو حميمي في دار الأوبرا المصرية المرموقة.",
+    "organizer": {
+      "name": "شركة شيبة للفعاليات"
+    },
+    "attendees": "{{count}} يحضرون",
+    "aboutEvent": "حول هذا الحدث",
+    "perTicket": "لكل تذكرة",
+    "organizers": "المنظمون",
+    "shareToast": {
+      "title": "تم نسخ الرابط!",
+      "description": "تم نسخ رابط الحدث إلى الحافظة"
+    },
+    "calendarToast": "تم تنزيل ملف التقويم"
+  },
+  "badges": {
+    "featured": "مميز"
+  },
+  "buttons": {
+    "bookNow": "احجز الآن"
+  },
+  "ariaLabels": {
+    "share": "مشاركة",
+    "addToCalendar": "إضافة إلى التقويم",
+    "addToFavorites": "إضافة إلى المفضلة"
+  },
+  "currency": {
+    "egp": "ج.م"
   }
 }

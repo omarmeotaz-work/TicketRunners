@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TransferTicketPage() {
+  const { t } = useTranslation();
   const { bookingId, ticketIndex } = useParams();
   const { toast } = useToast();
 
@@ -18,18 +18,20 @@ export default function TransferTicketPage() {
   const handleConfirm = () => {
     if (!email || !agreed) {
       toast({
-        title: "Error",
-        description: "Please enter the email and accept the transfer policy.",
+        title: t("transferTicket.toast.errorTitle"),
+        description: t("transferTicket.toast.errorDescription"),
         variant: "destructive",
       });
       return;
     }
 
-    // Payment and transfer logic here
-
     toast({
-      title: "Transfer Complete",
-      description: `Ticket #${ticketIndex} for booking ${bookingId} transferred to ${email}.`,
+      title: t("transferTicket.toast.successTitle"),
+      description: t("transferTicket.toast.successDescription", {
+        ticketIndex,
+        bookingId,
+        email,
+      }),
     });
   };
 
@@ -38,15 +40,15 @@ export default function TransferTicketPage() {
       <main className="container mx-auto py-12 px-4 max-w-xl space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Transfer Ticket #{ticketIndex}</CardTitle>
+            <CardTitle>{t("transferTicket.title", { ticketIndex })}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1 text-foreground">
-                Recipient's Email
+                {t("transferTicket.emailLabel")}
               </label>
               <Input
-                placeholder="example@email.com"
+                placeholder={t("transferTicket.emailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -59,17 +61,16 @@ export default function TransferTicketPage() {
                 onCheckedChange={(val) => setAgreed(!!val)}
               />
               <label htmlFor="policy" className="text-sm text-muted-foreground">
-                I agree to the ticket transfer policy and service fee.
+                {t("transferTicket.policyLabel")}
               </label>
             </div>
 
             <div className="text-sm text-muted-foreground">
-              A service fee of <strong>25 EGP</strong> will apply to this
-              transfer.
+              {t("transferTicket.feeNotice", { amount: "25 EGP" })}
             </div>
 
             <Button className="w-full" onClick={handleConfirm}>
-              Confirm & Pay
+              {t("transferTicket.confirmButton")}
             </Button>
           </CardContent>
         </Card>

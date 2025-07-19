@@ -31,10 +31,12 @@ import {
   CalendarPlus,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 const Profile = () => {
   const [showCardDetails, setShowCardDetails] = useState(false);
   // ① read the URL hash (#nfc, #bookings …)
   const { hash } = useLocation();
+  const { t } = useTranslation();
   const initialTab = (() => {
     const h = hash.replace("#", "");
     const valid = ["bookings", "visits", "billing", "nfc", "settings"];
@@ -170,10 +172,10 @@ const Profile = () => {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-              My Profile
+              {t("profilepage.profileTabs.title")}
             </h1>
             <p className="text-muted-foreground">
-              Manage your account, bookings, and preferences
+              {t("profilepage.profileTabs.description")}
             </p>
           </div>
 
@@ -187,24 +189,43 @@ const Profile = () => {
             <div className="overflow-x-auto scrollbar-hide">
               <TabsList className="flex flex-nowrap gap-2 px-2 py-1 min-w-max">
                 {[
-                  { value: "bookings", label: "My Bookings", icon: Ticket },
-                  { value: "visits", label: "My Visits", icon: History },
-                  { value: "billing", label: "Billing", icon: CreditCard },
-                  { value: "nfc", label: "NFC Card", icon: Smartphone },
-                  { value: "settings", label: "Settings", icon: Settings },
-                ].map(({ value, label, icon: Icon }) => (
+                  {
+                    value: "bookings",
+                    labelKey: "profilepage.profileTabs.bookings",
+                    icon: Ticket,
+                  },
+                  {
+                    value: "visits",
+                    labelKey: "profilepage.profileTabs.visits",
+                    icon: History,
+                  },
+                  {
+                    value: "billing",
+                    labelKey: "profilepage.profileTabs.billing",
+                    icon: CreditCard,
+                  },
+                  {
+                    value: "nfc",
+                    labelKey: "profilepage.profileTabs.nfc",
+                    icon: Smartphone,
+                  },
+                  {
+                    value: "settings",
+                    labelKey: "profilepage.profileTabs.settings",
+                    icon: Settings,
+                  },
+                ].map(({ value, labelKey, icon: Icon }) => (
                   <TabsTrigger
                     key={value}
                     value={value}
-                    /* 🟢 2)  no shrinking, enough width for text, but still compact */
                     className="
-        flex items-center gap-1 whitespace-nowrap
-        shrink-0 px-3 py-2 text-sm
-        md:justify-center
-      "
+      flex items-center gap-1 whitespace-nowrap
+      shrink-0 px-3 py-2 text-sm
+      md:justify-center
+    "
                   >
                     <Icon className="h-4 w-4" />
-                    {label}
+                    {t(labelKey)}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -215,10 +236,10 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Ticket className="h-5 w-5 text-primary" />
-                    My Bookings
+                    {t("profilepage.myBookings.title")}
                   </CardTitle>
                   <CardDescription>
-                    View and manage your ticket bookings
+                    {t("profilepage.myBookings.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -235,14 +256,23 @@ const Profile = () => {
                           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
+                              <span className="font-medium">
+                                {t("profilepage.myBookings.date")}:{" "}
+                              </span>
                               {booking.date}
                             </div>
                             <div className="flex items-center gap-1">
                               <Clock className="h-4 w-4" />
+                              <span className="font-medium">
+                                {t("profilepage.myBookings.time")}:{" "}
+                              </span>
                               {booking.time}
                             </div>
                             <div className="flex items-center gap-1">
                               <MapPin className="h-4 w-4" />
+                              <span className="font-medium">
+                                {t("profilepage.myBookings.location")}:{" "}
+                              </span>
                               {booking.location}
                             </div>
                           </div>
@@ -257,7 +287,9 @@ const Profile = () => {
                             }
                             className="text-xs"
                           >
-                            {booking.status}
+                            {t(
+                              `profilepage.myBookings.status.${booking.status}`
+                            )}
                           </Badge>
                         </div>
                       </div>
@@ -265,13 +297,13 @@ const Profile = () => {
                       <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0 items-start sm:items-center">
                         <div className="text-sm">
                           <span className="text-muted-foreground">
-                            Quantity:{" "}
+                            {t("profilepage.myBookings.quantity")}{" "}
                           </span>
                           <span className="font-medium">
                             {booking.quantity}
                           </span>
                           <span className="text-muted-foreground ml-4">
-                            Total:{" "}
+                            {t("profilepage.myBookings.total")}{" "}
                           </span>
                           <span className="font-medium">
                             {booking.ticketPrice * booking.quantity} EGP
@@ -282,7 +314,7 @@ const Profile = () => {
                           {booking.qrEnabled && (
                             <Button variant="outline" size="sm">
                               <QrCode className="h-4 w-4 mr-2" />
-                              QR Code
+                              {t("profilepage.myBookings.qr")}
                             </Button>
                           )}
                           <Button
@@ -291,7 +323,7 @@ const Profile = () => {
                             onClick={() => handleAddCalendar(booking)}
                           >
                             <CalendarPlus className="h-4 w-4 mr-2" />
-                            Add to Calendar
+                            {t("profilepage.myBookings.addToCalendar")}
                           </Button>
 
                           <Button
@@ -299,7 +331,7 @@ const Profile = () => {
                             size="sm"
                             onClick={() => handleViewDetails(booking.id)}
                           >
-                            View Details
+                            {t("profilepage.myBookings.viewDetails")}
                           </Button>
                         </div>
                       </div>
@@ -314,10 +346,10 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <History className="h-5 w-5 text-primary" />
-                    My Visits
+                    {t("profilepage.visits.title")}
                   </CardTitle>
                   <CardDescription>
-                    History of events you have attended
+                    {t("profilepage.visits.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -334,14 +366,23 @@ const Profile = () => {
                           <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
+                              <span className="font-medium">
+                                {t("profilepage.visits.date")}:
+                              </span>
                               {visit.date}
                             </div>
                             <div className="flex items-center gap-1">
                               <Clock className="h-4 w-4" />
-                              Entered at {visit.entranceTime}
+                              <span className="font-medium">
+                                {t("profilepage.visits.enteredAt")}:
+                              </span>
+                              {visit.entranceTime}
                             </div>
                             <div className="flex items-center gap-1">
                               <MapPin className="h-4 w-4" />
+                              <span className="font-medium">
+                                {t("profilepage.visits.location")}:
+                              </span>
                               {visit.location}
                             </div>
                           </div>
@@ -352,7 +393,8 @@ const Profile = () => {
                         <div className="flex items-center gap-2">
                           <Users className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm text-muted-foreground">
-                            Dependents: {visit.dependents.join(", ")}
+                            {t("profilepage.visits.dependents")}:{" "}
+                            {visit.dependents.join(", ")}
                           </span>
                         </div>
                       )}
@@ -367,10 +409,10 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CreditCard className="h-5 w-5 text-primary" />
-                    Billing History
+                    {t("profilepage.billing.title")}
                   </CardTitle>
                   <CardDescription>
-                    View your payment history and download invoices
+                    {t("profilepage.billing.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -386,7 +428,10 @@ const Profile = () => {
                           </h3>
                           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
                             <span>{payment.date}</span>
-                            <span>Invoice: {payment.invoiceId}</span>
+                            <span>
+                              {t("profilepage.billing.invoice")}:{" "}
+                              {payment.invoiceId}
+                            </span>
                           </div>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-right sm:text-left">
@@ -395,7 +440,9 @@ const Profile = () => {
                               {payment.amount} {payment.currency}
                             </div>
                             <Badge variant="default" className="text-xs">
-                              {payment.status}
+                              {t(
+                                `profilepage.billing.status.${payment.status.toLowerCase()}`
+                              )}
                             </Badge>
                           </div>
                           <Button
@@ -404,7 +451,7 @@ const Profile = () => {
                             className="w-full sm:w-auto"
                           >
                             <Download className="h-4 w-4 mr-2" />
-                            Download
+                            {t("profilepage.billing.download")}
                           </Button>
                         </div>
                       </div>
@@ -419,25 +466,27 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Smartphone className="h-5 w-5 text-primary" />
-                    My NFC Card
+                    {t("profilepage.nfc.title")}
                   </CardTitle>
                   <CardDescription>
-                    Manage your NFC card for seamless event entry
+                    {t("profilepage.nfc.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="border border-border rounded-lg p-4">
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="font-semibold text-foreground">
-                        Card Status
+                        {t("profilepage.nfc.cardStatus")}
                       </h3>
-                      <Badge variant="default">{nfcCard.status}</Badge>
+                      <Badge variant="default">
+                        {t(`profilepage.nfc.status.${nfcCard.status}`)}
+                      </Badge>
                     </div>
 
                     <div className="space-y-3">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          Card Number:
+                          {t("profilepage.nfc.cardNumber")}
                         </span>
                         <div className="flex items-center gap-2">
                           <span className="font-mono">
@@ -460,13 +509,13 @@ const Profile = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          Issue Date:
+                          {t("profilepage.nfc.issueDate")}
                         </span>
                         <span>{nfcCard.issueDate}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
-                          Expiry Date:
+                          {t("profilepage.nfc.expiryDate")}
                         </span>
                         <span>{nfcCard.expiryDate}</span>
                       </div>
@@ -478,20 +527,22 @@ const Profile = () => {
                       variant="outline"
                       disabled={nfcCard.status !== "Active"}
                     >
-                      Deactivate Card
+                      {t("profilepage.nfc.deactivateCard")}
                     </Button>
                     <Button variant="gradient" className="w-full sm:w-auto">
-                      Buy New Card
+                      {t("profilepage.nfc.buyNewCard")}
                     </Button>
                   </div>
 
                   <div className="bg-muted/20 rounded-lg p-4">
-                    <h4 className="font-semibold mb-2">Card Features</h4>
+                    <h4 className="font-semibold mb-2">
+                      {t("profilepage.nfc.cardFeaturesTitle")}
+                    </h4>
                     <ul className="text-sm space-y-1 text-muted-foreground">
-                      <li>• Contactless entry to events</li>
-                      <li>• Faster check-in process</li>
-                      <li>• Works with all supported venues</li>
-                      <li>• Backup QR code always available</li>
+                      <li>• {t("profilepage.nfc.feature1")}</li>
+                      <li>• {t("profilepage.nfc.feature2")}</li>
+                      <li>• {t("profilepage.nfc.feature3")}</li>
+                      <li>• {t("profilepage.nfc.feature4")}</li>
                     </ul>
                   </div>
                 </CardContent>
@@ -503,24 +554,30 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Settings className="h-5 w-5 text-primary" />
-                    Account Settings
+                    {t("profilepage.settingsTab.tab")}
                   </CardTitle>
                   <CardDescription>
-                    Update your contact information and preferences
+                    {t("profilepage.settingsTab.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="fullName">Full Name</Label>
+                      <Label htmlFor="fullName">
+                        {t("profilepage.settingsTab.fullName")}
+                      </Label>
                       <Input id="fullName" defaultValue={userInfo.name} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
+                      <Label htmlFor="phone">
+                        {t("profilepage.settingsTab.phone")}
+                      </Label>
                       <Input id="phone" defaultValue={userInfo.phone} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
+                      <Label htmlFor="email">
+                        {t("profilepage.settingsTab.email")}
+                      </Label>
                       <Input
                         id="email"
                         type="email"
@@ -531,26 +588,33 @@ const Profile = () => {
 
                   <Separator />
 
-                  {/* Change Password Section */}
                   <div className="space-y-4">
-                    <h4 className="font-semibold">Change Password</h4>
+                    <h4 className="font-semibold">
+                      {t("profilepage.settingsTab.changePassword")}
+                    </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Old Password */}
                       <div className="space-y-2">
-                        <Label htmlFor="oldPassword">Old Password</Label>
+                        <Label htmlFor="oldPassword">
+                          {t("profilepage.settingsTab.oldPassword")}
+                        </Label>
                         <Input
                           id="oldPassword"
                           type="password"
-                          placeholder="Enter current password"
+                          placeholder={t(
+                            "profilepage.settingsTab.oldPasswordPlaceholder"
+                          )}
                         />
                       </div>
-                      {/* New Password */}
                       <div className="space-y-2">
-                        <Label htmlFor="newPassword">New Password</Label>
+                        <Label htmlFor="newPassword">
+                          {t("profilepage.settingsTab.newPassword")}
+                        </Label>
                         <Input
                           id="newPassword"
                           type="password"
-                          placeholder="Enter new password"
+                          placeholder={t(
+                            "profilepage.settingsTab.newPasswordPlaceholder"
+                          )}
                         />
                       </div>
                     </div>
@@ -558,10 +622,10 @@ const Profile = () => {
 
                   <Separator />
 
-                  <Separator />
-
                   <div className="space-y-4">
-                    <h4 className="font-semibold">Notification Preferences</h4>
+                    <h4 className="font-semibold">
+                      {t("profilepage.settingsTab.notificationPreferences")}
+                    </h4>
                     <div className="space-y-2">
                       <label className="flex items-center space-x-2">
                         <input
@@ -570,7 +634,7 @@ const Profile = () => {
                           className="rounded border-border"
                         />
                         <span className="text-sm">
-                          Email notifications for new events
+                          {t("profilepage.settingsTab.notifyEmail")}
                         </span>
                       </label>
                       <label className="flex items-center space-x-2">
@@ -580,7 +644,7 @@ const Profile = () => {
                           className="rounded border-border"
                         />
                         <span className="text-sm">
-                          SMS notifications for booking confirmations
+                          {t("profilepage.settingsTab.notifySMS")}
                         </span>
                       </label>
                       <label className="flex items-center space-x-2">
@@ -589,14 +653,16 @@ const Profile = () => {
                           className="rounded border-border"
                         />
                         <span className="text-sm">
-                          Marketing communications
+                          {t("profilepage.settingsTab.notifyMarketing")}
                         </span>
                       </label>
                     </div>
                   </div>
 
                   <div className="flex justify-end">
-                    <Button variant="gradient">Save Changes</Button>
+                    <Button variant="gradient">
+                      {t("profilepage.settingsTab.saveChanges")}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
