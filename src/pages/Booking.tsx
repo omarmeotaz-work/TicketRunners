@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Header } from "@/components/Header";
@@ -47,9 +47,16 @@ const Booking = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const [dependents, setDependents] = useState([
-    { name: "", mobile: "", socialMedia: "" },
-  ]);
+  const [dependents, setDependents] = useState<
+    {
+      name: string;
+      mobile: string;
+      socialMedia: string;
+      assignedTicketNumber: number;
+      ticketType: string;
+    }[]
+  >([]);
+
   const [customerInfo, setCustomerInfo] = useState({ name: "", mobile: "" });
   const totalTickets = Object.values(quantities).reduce((s, n) => s + n, 0);
   const totalTicketPrice = ticketTiers.reduce(
@@ -59,6 +66,14 @@ const Booking = () => {
   const vatAmount = totalTicketPrice * 0.14;
   const cardCost = 50;
   const totalAmount = totalTicketPrice + vatAmount + cardCost;
+  const userTicketTypeRef = useRef<TierKey | "">("");
+  const [userTicketType, setUserTicketType] = useState<TierKey | "">("");
+
+  const ticketTypeColors: Record<TierKey, string> = {
+    platinum: "bg-yellow-200", // or a custom class like "bg-[#e6e6fa]"
+    gold: "bg-amber-200",
+    silver: "bg-gray-200",
+  };
 
   const eventData = {
     title: "Cairo Jazz Festival 2024",
@@ -79,26 +94,93 @@ const Booking = () => {
     updated[index] = { ...updated[index], [field]: value };
     setDependents(updated);
   };
-
   useEffect(() => {
-    const need = Math.max(0, totalTickets - 1);
-    setDependents((d) =>
-      d.length === need
-        ? d
-        : need > d.length
-        ? [
-            ...d,
-            ...Array.from({ length: need - d.length }, () => ({
-              name: "",
-              mobile: "",
-              socialMedia: "",
-            })),
-          ]
-        : d.slice(0, need)
+    const allTickets: { ticketType: TierKey }[] = [];
+
+    ticketTiers.forEach((tier) => {
+      for (let i = 0; i < quantities[tier.key]; i++) {
+        allTickets.push({ ticketType: tier.key });
+      }
+    });
+
+    if (allTickets.length === 0) {
+      userTicketTypeRef.current = "";
+      setUserTicketType("");
+      setDependents([]);
+      return;
+    }
+
+    // Always re-calculate the highest tier selected
+    const tiersOrderedByPrice = [...ticketTiers].sort(
+      (a, b) => b.price - a.price
     );
-  }, [totalTickets]);
+    let newUserTicketType: TierKey | "" = "";
+
+    for (const tier of tiersOrderedByPrice) {
+      if (quantities[tier.key] > 0) {
+        newUserTicketType = tier.key;
+        break;
+      }
+    }
+
+    // Only update ref and state if changed
+    if (newUserTicketType !== userTicketTypeRef.current) {
+      userTicketTypeRef.current = newUserTicketType;
+      setUserTicketType(newUserTicketType);
+    }
+
+    // Assign all other tickets to dependents
+    const dependentTickets: { ticketType: TierKey }[] = [];
+    const ticketsLeft = { ...quantities };
+
+    if (userTicketTypeRef.current) {
+      ticketsLeft[userTicketTypeRef.current] -= 1;
+    }
+
+    ticketTiers.forEach((tier) => {
+      for (let i = 0; i < ticketsLeft[tier.key]; i++) {
+        dependentTickets.push({ ticketType: tier.key });
+      }
+    });
+
+    setDependents((prev) => {
+      const updated = [...prev];
+
+      dependentTickets.forEach((ticket, index) => {
+        if (!updated[index]) {
+          updated[index] = {
+            name: "",
+            mobile: "",
+            socialMedia: "",
+            assignedTicketNumber: index + 2,
+            ticketType: ticket.ticketType,
+          };
+        } else {
+          updated[index].assignedTicketNumber = index + 2;
+          updated[index].ticketType = ticket.ticketType;
+        }
+      });
+
+      return updated.slice(0, dependentTickets.length);
+    });
+  }, [quantities]);
 
   const handlePayment = () => {
+    const newBooking = {
+      id,
+      title: eventData.title,
+      date: eventData.date,
+      time: eventData.time,
+      timestamp: new Date().toISOString(),
+    };
+
+    const stored = localStorage.getItem("bookedEvents");
+    const existing = stored ? JSON.parse(stored) : [];
+    localStorage.setItem(
+      "bookedEvents",
+      JSON.stringify([...existing, newBooking])
+    );
+
     toast({
       title: t("booking.paymentSuccessTitle"),
       description: t("booking.paymentSuccessDescription"),
@@ -112,6 +194,13 @@ const Booking = () => {
       },
     });
   };
+
+  const mainTicketType = (() => {
+    for (const tier of ticketTiers) {
+      if (quantities[tier.key] > 0) return tier.key;
+    }
+    return "";
+  })();
 
   return (
     <div className="min-h-screen bg-gradient-dark">
@@ -169,7 +258,8 @@ const Booking = () => {
                           {t(`booking.tiers.${tier.key}`)}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {tier.price} EGP {t("booking.perTicket")}
+                          {tier.price}
+                          {t("booking.perTicket")}
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
@@ -201,10 +291,40 @@ const Booking = () => {
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Customer Information */}
-
+              <div className={`p-4 rounded-xl`}>
+                {/* Customer Information */}
+                {mainTicketType && (
+                  <Card
+                    className={
+                      mainTicketType === "platinum"
+                        ? "bg-gray-200"
+                        : mainTicketType === "gold"
+                        ? "bg-amber-200"
+                        : "bg-blue-200"
+                    }
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <User className="h-5 w-5 text-primary" />
+                        {t("booking.mainUserInfo")}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>{t("booking.ticketType")}</Label>
+                          <Input
+                            value={t(`booking.tiers.${mainTicketType}`)}
+                            disabled
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
               {/* Dependents Information */}
+
               {dependents.length > 0 && (
                 <Card>
                   <CardHeader>
@@ -217,28 +337,47 @@ const Booking = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {dependents.map((dependent, index) => (
-                      <div
-                        key={index}
-                        className="border border-border rounded-lg p-4 space-y-3"
-                      >
-                        <h4 className="font-medium">
-                          {t("booking.dependent") + ` ${index + 1}`}
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                          <div className="space-y-2">
-                            <Label>{t("booking.name")}</Label>
-                            <Input
-                              value={dependent.name}
-                              onChange={(e) =>
-                                updateDependent(index, "name", e.target.value)
-                              }
-                              placeholder={t("booking.namePlaceholder")}
-                            />
+                    {dependents.map((dependent, index) => {
+                      const bgClass =
+                        dependent.ticketType === "platinum"
+                          ? "bg-gray-200"
+                          : dependent.ticketType === "gold"
+                          ? "bg-amber-200"
+                          : "bg-blue-200";
+
+                      return (
+                        <div
+                          key={index}
+                          className={`border border-border rounded-lg p-4 space-y-3 ${bgClass}`}
+                        >
+                          <h4 className="font-medium">
+                            {t("booking.dependent") + ` ${index + 1}`}
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <Label>{t("booking.name")}</Label>
+                              <Input
+                                value={dependent.name}
+                                onChange={(e) =>
+                                  updateDependent(index, "name", e.target.value)
+                                }
+                                placeholder={t("booking.namePlaceholder")}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>{t("booking.ticketType")}</Label>
+                              <Input
+                                value={
+                                  t(`booking.tiers.${dependent.ticketType}`) ||
+                                  ""
+                                }
+                                disabled
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </CardContent>
                 </Card>
               )}

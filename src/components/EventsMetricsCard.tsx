@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Ticket, Gift } from "lucide-react";
+import { Ticket, Gift, BarChart2 } from "lucide-react";
 import { EventMetrics } from "../pages/Index";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -8,6 +9,7 @@ import { useTranslation } from "react-i18next";
 export default function EventMetricsCard({ e }: { e: EventMetrics }) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const [showMetrics, setShowMetrics] = useState(false);
 
   const handleGift = () => {
     const giftId = e.giftTicketIds?.[0] ?? crypto.randomUUID();
@@ -41,8 +43,7 @@ export default function EventMetricsCard({ e }: { e: EventMetrics }) {
           • {e.location}
         </p>
       </CardHeader>
-
-      <CardContent className="grid grid-cols-3 text-center text-sm gap-y-2">
+      <CardContent className="grid grid-cols-2 md:grid-cols-3 text-center text-sm gap-y-3">
         <div>
           <p className="font-bold text-lg text-primary">{e.ticketsLeft}</p>
           <p className="text-muted-foreground text-xs">
@@ -57,10 +58,62 @@ export default function EventMetricsCard({ e }: { e: EventMetrics }) {
           <p className="font-bold text-lg text-blue-600">{e.freeTickets}</p>
           <p className="text-muted-foreground text-xs">{t("event.giftable")}</p>
         </div>
+
+        {showMetrics && (
+          <div className="mt-4 col-span-full w-full rounded-xl border p-6 shadow-sm bg-muted">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Row 1 */}
+              <div>
+                <p className="font-bold text-yellow-600">
+                  E£ {e.pendingPayouts.toLocaleString()}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {t("event.pendingPayouts")}
+                </p>
+              </div>
+              <div>
+                <p className="font-bold text-emerald-700">
+                  E£ {e.netEarnings.toLocaleString()}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {t("event.netEarnings")}
+                </p>
+              </div>
+              {/* Row 2 */}
+              <div>
+                <p className="font-bold text-lime-600">
+                  E£ {e.receivedPayouts.toLocaleString()}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {t("event.receivedPayouts")}
+                </p>
+              </div>
+
+              <div>
+                <p className="font-bold text-lg">
+                  {e.completionRate.toFixed(1)}%
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {t("event.completionRate")}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </CardContent>
 
-      {e.freeTickets > 0 && (
-        <div className="p-3 border-t border-border flex items-center justify-center">
+      <div className="p-3 border-t border-border flex flex-col gap-2 items-center justify-center">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-sm"
+          onClick={() => setShowMetrics(!showMetrics)}
+        >
+          {showMetrics ? t("event.hideMetrics") : t("event.viewMetrics")}
+          <BarChart2 className="h-4 w-4 ml-2" />
+        </Button>
+
+        {e.freeTickets > 0 && (
           <Button
             variant="outline"
             size="sm"
@@ -70,8 +123,8 @@ export default function EventMetricsCard({ e }: { e: EventMetrics }) {
             {t("event.giftTicket")}
             <Gift className="h-4 w-4 ml-1 transition-transform group-hover:-rotate-12" />
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </Card>
   );
 }

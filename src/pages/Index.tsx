@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import "keen-slider/keen-slider.min.css";
 
 // Aggregate once to avoid recreating the array on every render
 const allEvents = [...trendingEvents, ...upcomingEvents, ...recommendedEvents];
@@ -171,7 +172,7 @@ const Index = () => {
                 title="upcomingEvents"
                 subtitle="dontMissUpcoming"
                 icon={Calendar}
-                events={currentDisplayedEvents.upcoming}
+                events={[...currentDisplayedEvents.upcoming]}
               />
             </div>
           )}
@@ -235,6 +236,10 @@ export interface EventMetrics {
   giftTicketIds: string[];
   ticketsSold: number;
   ticketsLeft: number;
+  completionRate: number;
+  netEarnings: number;
+  receivedPayouts: number;
+  pendingPayouts: number;
   freeTickets: number;
 }
 

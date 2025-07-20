@@ -222,3 +222,18 @@ All colors MUST be HSL.
   display: none;
   /* Safari and Chrome */
 }
+
+/* Tailwind layer, add to global.css or your component’s scoped style block */
+.perspective {
+  perspective: 1000px;
+}
+
+.card-3d {
+  transition: transform 0.4s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.card-3d:hover {
+  transform: rotateY(10deg) rotateX(5deg) skewY(1deg) skewX(1deg);
+}

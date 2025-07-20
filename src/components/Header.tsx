@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { AuthModals } from "./AuthModals";
 import i18n from "@/lib/i18n";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/Contexts/AuthContext";
 
 const getInitialTheme = (): boolean => {
   if (typeof window === "undefined") return true;
@@ -30,15 +31,20 @@ const getInitialTheme = (): boolean => {
 };
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(getInitialTheme);
-  const [language, setLanguage] = useState("EN");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignupOpen, setIsSignupOpen] = useState(false);
-  const [isTagSelectionOpen, setIsTagSelectionOpen] = useState(false);
+  const { user, openLogin, openSignup, logout } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const stored = localStorage.getItem("theme");
+    if (stored === "light") return false;
+    if (stored === "dark") return true;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+  const [language, setLanguage] = useState("EN");
 
   useEffect(() => {
     const html = document.documentElement;
@@ -84,32 +90,44 @@ export function Header() {
     });
   };
 
-  const handleRegister = () => {
-    setIsSignupOpen(true);
-  };
+  useEffect(() => {
+    const html = document.documentElement;
+    if (isDarkMode) {
+      html.classList.add("dark");
+      html.classList.remove("light");
+    } else {
+      html.classList.add("light");
+      html.classList.remove("dark");
+    }
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    const storedLang = localStorage.getItem("appLanguage");
+    if (storedLang) {
+      setLanguage(storedLang);
+      i18n.changeLanguage(storedLang === "EN" ? "en" : "ar");
+    }
+  }, []);
 
   const handleLogin = () => {
-    setIsLoginOpen(true);
+    openLogin();
+  };
+
+  const handleRegister = () => {
+    openSignup();
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    logout();
     toast({
-      title: "Logged out",
-      description: "You have been logged out successfully",
+      title: t("logout"),
+      description: t("logoutSuccess"),
     });
   };
 
   const handleProfile = () => {
     window.location.href = "/profile";
-  };
-
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
-
-  const handleSignupSuccess = () => {
-    setIsTagSelectionOpen(true);
   };
 
   return (
@@ -140,7 +158,7 @@ export function Header() {
           </div>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden md:flex items-center gap-x-2 ltr:flex-row rtl:flex-row-reverse">
             <Button variant="header" size="icon" onClick={toggleTheme}>
               {isDarkMode ? (
                 <Sun className="h-4 w-4" />
@@ -151,7 +169,7 @@ export function Header() {
             <Button variant="header" size="icon" onClick={toggleLanguage}>
               <span className="text-xs ml-1">{language}</span>
             </Button>
-            {!isLoggedIn ? (
+            {!user ? (
               <>
                 <Button variant="header" size="icon" onClick={handleRegister}>
                   <UserPlus className="h-4 w-4" />
@@ -205,7 +223,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground hover:text-primary"
+                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground"
                   onClick={() => (window.location.href = "/")}
                 >
                   <Home className="h-5 w-5" />
@@ -214,7 +232,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground hover:text-primary"
+                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground"
                   onClick={() => (window.location.href = "/profile")}
                 >
                   <Ticket className="h-5 w-5" />
@@ -224,7 +242,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground hover:text-primary"
+                  className="flex-1 flex flex-col items-center text-xs text-muted-foreground"
                   onClick={() => (window.location.href = "/events")}
                 >
                   <Calendar className="h-5 w-5" />
@@ -235,7 +253,7 @@ export function Header() {
               {/* Mobile Actions */}
               <div className="flex flex-col space-y-2">
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" onClick={toggleTheme}>
+                  <Button variant="ghost" size="sm" onClick={toggleTheme}>
                     {isDarkMode ? (
                       <Sun className="h-4 w-4 mr-2" />
                     ) : (
@@ -243,7 +261,7 @@ export function Header() {
                     )}
                     {isDarkMode ? "Light" : "Dark"}
                   </Button>
-                  <Button variant="outline" size="sm" onClick={toggleLanguage}>
+                  <Button variant="ghost" size="sm" onClick={toggleLanguage}>
                     <Globe className="h-4 w-4 mr-2" />
                     {language}
                   </Button>
@@ -296,16 +314,9 @@ export function Header() {
       </div>
 
       <AuthModals
-        isLoginOpen={isLoginOpen}
-        isSignupOpen={isSignupOpen}
-        isTagSelectionOpen={isTagSelectionOpen}
-        onLoginClose={() => setIsLoginOpen(false)}
-        onSignupClose={() => {
-          setIsSignupOpen(false);
-          setIsTagSelectionOpen(true);
+        onLoginSuccess={() => {
+          /* handle success if needed */
         }}
-        onTagSelectionClose={() => setIsTagSelectionOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
       />
     </header>
   );

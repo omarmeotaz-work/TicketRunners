@@ -1,50 +1,62 @@
+import { useTranslation } from "react-i18next";
+
 export default function AboutUs() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-foreground mb-8">About Us</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-8">
+            {t("about.title")}
+          </h1>
 
           <div className="space-y-8">
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                {t("about.mission.title")}
+              </h2>
               <p className="text-muted-foreground leading-relaxed">
-                At Ticket Runners, we're passionate about connecting people with
-                amazing events. Our platform makes it easy to discover, book,
-                and attend the events that matter to you.
+                {t("about.mission.text")}
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">What We Do</h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                {t("about.what_we_do.title")}
+              </h2>
               <p className="text-muted-foreground leading-relaxed">
-                We provide a comprehensive event booking platform that helps
-                event organizers reach their audience and helps attendees find
-                their perfect events. From concerts to conferences, festivals to
-                workshops, we've got it all covered.
+                {t("about.what_we_do.text")}
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Our Values</h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                {t("about.values.title")}
+              </h2>
               <div className="grid md:grid-cols-3 gap-6 mt-6">
                 <div className="text-center">
-                  <h3 className="font-semibold mb-2">Innovation</h3>
+                  <h3 className="font-semibold mb-2">
+                    {t("about.values.innovation.title")}
+                  </h3>
                   <p className="text-sm text-muted-foreground">
-                    Constantly improving our platform with cutting-edge
-                    technology
+                    {t("about.values.innovation.text")}
                   </p>
                 </div>
                 <div className="text-center">
-                  <h3 className="font-semibold mb-2">Community</h3>
+                  <h3 className="font-semibold mb-2">
+                    {t("about.values.community.title")}
+                  </h3>
                   <p className="text-sm text-muted-foreground">
-                    Building connections between event organizers and attendees
+                    {t("about.values.community.text")}
                   </p>
                 </div>
                 <div className="text-center">
-                  <h3 className="font-semibold mb-2">Excellence</h3>
+                  <h3 className="font-semibold mb-2">
+                    {t("about.values.excellence.title")}
+                  </h3>
                   <p className="text-sm text-muted-foreground">
-                    Delivering exceptional experiences for all our users
+                    {t("about.values.excellence.text")}
                   </p>
                 </div>
               </div>

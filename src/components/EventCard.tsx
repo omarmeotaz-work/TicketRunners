@@ -10,6 +10,7 @@ import {
   Share2,
   Users,
   Ticket,
+  Banknote,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
@@ -140,22 +141,6 @@ export function EventCard({
             {t(`categories.${category}`, category)}
           </Badge>
         </div>
-
-        {/* Price */}
-        <div className="absolute bottom-4 right-4">
-          <div className="bg-background/90 backdrop-blur-sm rounded-lg px-3 py-2">
-            <div className="flex items-center space-x-2">
-              {originalPrice && (
-                <span className="text-sm text-muted-foreground line-through">
-                  {originalPrice} EGP
-                </span>
-              )}
-              <span className="text-lg font-bold text-primary">
-                {price} EGP
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Content */}
@@ -166,24 +151,31 @@ export function EventCard({
 
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-muted-foreground">
-            <Calendar className="h-4 w-4 mr-2" />
+            <Calendar className="h-4 w-4 mx-2" />
             <span className="text-sm">
-              <strong className="mr-1">{t("eventCard.date")}:</strong>
+              <strong className="mx-1">{t("eventCard.date")}:</strong>
               {formattedDate}
             </span>
           </div>
           <div className="flex items-center text-muted-foreground">
-            <Clock className="h-4 w-4 mr-2" />
+            <Clock className="h-4 w-4 mx-2" />
             <span className="text-sm">
-              <strong className="mr-1">{t("eventCard.time")}:</strong>
+              <strong className="mx-1">{t("eventCard.time")}:</strong>
               {formattedTime}
             </span>
           </div>
           <div className="flex items-center text-muted-foreground">
-            <MapPin className="h-4 w-4 mr-2" />
+            <MapPin className="h-4 w-4 mx-2" />
             <span className="text-sm">
-              <strong className="mr-1">{t("eventCard.location")}:</strong>
+              <strong className="mx-1">{t("eventCard.location")}:</strong>
               {location}
+            </span>
+          </div>
+          <div className="flex items-center text-muted-foreground">
+            <Banknote className="h-4 w-4 mx-2" />
+            <span className="text-sm">
+              <strong className="mx-1">{t("eventCard.price")}:</strong>
+              {price} {t("eventCard.currency")}
             </span>
           </div>
         </div>
@@ -191,11 +183,11 @@ export function EventCard({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mx-1" />
               <span className="text-sm font-medium">{rating}</span>
             </div>
             <div className="flex items-center text-muted-foreground">
-              <Users className="h-4 w-4 mr-1" />
+              <Users className="h-4 w-4 mx-1" />
               <span className="text-sm">{attendees}</span>
             </div>
           </div>

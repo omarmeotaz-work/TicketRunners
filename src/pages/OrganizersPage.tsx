@@ -3,8 +3,10 @@ import OrganizerBlock from "@/components/OrganizerBlock";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "react-i18next";
 
 export default function OrganizersPage() {
+  const { t } = useTranslation();
   const testOrganizer: Organizer = {
     id: "org-1",
     name: "Cairo Beats",
@@ -22,7 +24,12 @@ export default function OrganizersPage() {
         ticketsSold: 470,
         ticketsLeft: 30,
         freeTickets: 5,
-        giftTicketIds: ["gift-1", "gift-2", "gift-3", "gift-4", "gift-5"], // example
+        giftTicketIds: ["gift-1", "gift-2", "gift-3", "gift-4", "gift-5"],
+
+        completionRate: 94, // e.g., (470 / (470 + 30)) * 100
+        netEarnings: 470 * 250, // example ticket price EGP 250
+        receivedPayouts: 100000,
+        pendingPayouts: 17750,
       },
       {
         id: "evt-102",
@@ -34,7 +41,12 @@ export default function OrganizersPage() {
         ticketsSold: 150,
         ticketsLeft: 50,
         freeTickets: 10,
-        giftTicketIds: ["gift-1", "gift-2", "gift-3", "gift-4", "gift-5"], // example
+        giftTicketIds: ["gift-1", "gift-2", "gift-3", "gift-4", "gift-5"],
+
+        completionRate: 75, // (150 / (150 + 50)) * 100
+        netEarnings: 150 * 200, // example ticket price EGP 200
+        receivedPayouts: 25000,
+        pendingPayouts: 5000,
       },
       {
         id: "evt-103",
@@ -46,7 +58,12 @@ export default function OrganizersPage() {
         ticketsSold: 800,
         ticketsLeft: 200,
         freeTickets: 20,
-        giftTicketIds: ["gift-1", "gift-2", "gift-3", "gift-4", "gift-5"], // example
+        giftTicketIds: ["gift-1", "gift-2", "gift-3", "gift-4", "gift-5"],
+
+        completionRate: 80, // (800 / (800 + 200)) * 100
+        netEarnings: 800 * 300, // example ticket price EGP 300
+        receivedPayouts: 200000,
+        pendingPayouts: 40000,
       },
     ],
   };
@@ -56,10 +73,10 @@ export default function OrganizersPage() {
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-            Organizer Overview
+            {t("organizer.overviewTitle")}
           </h1>
           <p className="text-muted-foreground text-base">
-            View your events, track ticket sales, and manage promotions.
+            {t("organizer.overviewDescription")}
           </p>
         </div>
 

@@ -8,6 +8,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useTranslation } from "react-i18next";
 
 interface EventImage {
   url: string;
@@ -87,6 +88,7 @@ const ViewOrganizersPage: React.FC = () => {
 
   // Navigate handlers
   const goToEvent = (eventId: string) => navigate(`/event/${eventId}`);
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gradient-dark">
@@ -109,7 +111,7 @@ const ViewOrganizersPage: React.FC = () => {
         {/* Events Section */}
         <section>
           <h2 className="text-2xl font-semibold text-foreground mb-6">
-            Upcoming & Recent Events
+            {t("organizers.title")}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -144,17 +146,26 @@ const ViewOrganizersPage: React.FC = () => {
                   <h3 className="font-semibold text-lg text-foreground line-clamp-2 min-h-[48px]">
                     {evt.title}
                   </h3>
+
                   <div className="flex items-center text-sm text-muted-foreground gap-2">
                     <Calendar className="h-4 w-4" />
-                    <span>{evt.date}</span>
+                    <span>
+                      {t("organizers.date")}: {evt.date}
+                    </span>
                   </div>
+
                   <div className="flex items-center text-sm text-muted-foreground gap-2">
                     <Clock className="h-4 w-4" />
-                    <span>{evt.time}</span>
+                    <span>
+                      {t("organizers.time")}: {evt.time}
+                    </span>
                   </div>
+
                   <div className="flex items-center text-sm text-muted-foreground gap-2">
                     <MapPin className="h-4 w-4" />
-                    <span className="line-clamp-1">{evt.location}</span>
+                    <span className="line-clamp-1">
+                      {t("organizers.location")}: {evt.location}
+                    </span>
                   </div>
 
                   {/* Category Badge */}
@@ -162,7 +173,9 @@ const ViewOrganizersPage: React.FC = () => {
                     <Badge variant="secondary">{evt.category}</Badge>
                     <div className="flex items-center gap-1 text-sm">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span>{evt.rating}</span>
+                      <span>
+                        {t("organizers.rating")}: {evt.rating}
+                      </span>
                     </div>
                   </div>
                 </div>

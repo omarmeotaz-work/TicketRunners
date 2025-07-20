@@ -25,8 +25,10 @@
     "subtitle": "Book tickets for the hottest concerts, festivals, and events in Egypt. Secure, fast, and reliable ticket booking experience.",
     "cta_explore": "Explore Events",
     "cta_trending": "Trending Now",
-    "featured_title": "Today's Featured Event",
-    "featured_button": "View Event"
+    "featured_title": "Today's Featured Events",
+    "featured_button": "View Event",
+    "book_now": "Book Now",
+    "organized_by": "Organized by"
   },
   "footer": {
     "tagline": "Your trusted ticket marketplace in Egypt. Discover, book, and enjoy the hottest events with secure and fast booking experience.",
@@ -42,8 +44,8 @@
     "refund": "Refund Policy",
     "contact": "Contact",
     "location": "Cairo, Egypt",
-    "trustTagline": "Your Trusted Ticket Marketplace",
-    "technicalSupport": "Technical Support"
+    "trustSlogan": "Your Trusted Ticket Marketplace",
+    "techSupport": "Technical Support"
   },
   "eventCard": {
     "featured": "Featured",
@@ -58,7 +60,9 @@
     "linkCopiedDescription": "Event link copied to clipboard",
     "location": "Location",
     "date": "Date",
-    "time": "Time"
+    "time": "Time",
+    "price": "Starting from",
+    "currency": "EGP"
   },
 
   "trendingEvents": "Trending Events",
@@ -76,7 +80,13 @@
     "ticketsLeft": "Tickets Left",
     "sold": "Sold",
     "giftable": "Giftable",
-    "giftTicket": "Gift Ticket"
+    "giftTicket": "Gift Ticket",
+    "viewMetrics": "View Event Metrics",
+    "hideMetrics": "Hide Event Metrics",
+    "completionRate": "Completion Rate",
+    "netEarnings": "Net Earnings",
+    "receivedPayouts": "Received Payouts",
+    "pendingPayouts": "Pending Payouts"
   },
   "filters": {
     "title": "Filter Events",
@@ -143,7 +153,7 @@
     "fullName": "Full Name",
     "mobile": "Mobile Number",
     "dependentsInfo": "Dependents Information",
-    "dependent": "Dependent {{index}}",
+    "dependent": "Dependent",
     "name": "Name",
     "mobilePlaceholder": "Mobile number",
     "socialMedia": "Social Media",
@@ -166,6 +176,8 @@
     "nfcInstruction": "you will need to get your NFC card from one of our merchants",
     "dependentsOptional": "Plus one Info",
     "namePlaceholder": "Enter a name",
+    "ticketType": "Ticket Tier",
+    "mainUserInfo": "Your ticket",
 
     "tiers": {
       "gold": "gold",
@@ -247,7 +259,10 @@
       "feature1": "Contactless entry to events",
       "feature2": "Faster check-in process",
       "feature3": "Works with all supported venues",
-      "feature4": "Backup QR code always available"
+      "feature4": "Backup QR code always available",
+      "cardTitle": "NFC Access Card",
+      "issued": "Issued",
+      "expires": "Expires"
     },
     "settingsTab": {
       "tab": "Settings",
@@ -392,5 +407,124 @@
   },
   "currency": {
     "egp": "EGP"
+  },
+  "eventspage": {
+    "all": "All Events",
+    "trending": "Trending Events",
+    "upcoming": "Upcoming Events",
+    "recommended": "Events You May Like",
+    "subtitle": "Discover amazing events happening around you",
+    "no_matches": "No events match your criteria."
+  },
+
+  "contact": {
+    "title": "Contact Us",
+    "get_in_touch": "Get in Touch",
+    "send_message": "Send Message",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "form": {
+      "name": "Your Name",
+      "email": "Your Email",
+      "message": "Your Message",
+      "submit": "Send Message"
+    }
+  },
+
+  "about": {
+    "title": "About Us",
+    "mission": {
+      "title": "Our Mission",
+      "text": "At Ticket Runners, we're passionate about connecting people with amazing events. Our platform makes it easy to discover, book, and attend the events that matter to you."
+    },
+    "what_we_do": {
+      "title": "What We Do",
+      "text": "We provide a comprehensive event booking platform that helps event organizers reach their audience and helps attendees find their perfect events. From concerts to conferences, festivals to workshops, we've got it all covered."
+    },
+    "values": {
+      "title": "Our Values",
+      "innovation": {
+        "title": "Innovation",
+        "text": "Constantly improving our platform with cutting-edge technology"
+      },
+      "community": {
+        "title": "Community",
+        "text": "Building connections between event organizers and attendees"
+      },
+      "excellence": {
+        "title": "Excellence",
+        "text": "Delivering exceptional experiences for all our users"
+      }
+    }
+  },
+
+  "organizers": {
+    "title": "Event Organizers",
+    "description": "Browse all organizers and explore their events.",
+    "attendees": "{{count}} attendees",
+    "rating": "rating",
+    "fetchErrorTitle": "Failed to Load Organizers",
+    "fetchErrorMessage": "There was an error fetching organizers. Please try again later.",
+    "date": "Date",
+    "time": "Time",
+    "location": "Location"
+  },
+
+  "invoice": {
+    "view_template": "View Template",
+    "preview_title": "Invoice Template Preview",
+    "number": "Invoice #",
+    "date": "Date",
+    "customer": "Billed To",
+    "description": "Description",
+    "quantity": "Qty",
+    "price": "Price",
+    "total": "Total",
+    "note": "This is a sample invoice. Actual charges may vary.",
+    "item_1": "Premium Event Access",
+    "item_2": "Service Fee"
+  },
+  "organizer": {
+    "overviewTitle": "Organizer Overview",
+    "overviewDescription": "View your events, track ticket sales, and manage promotions."
+  },
+
+  "auth": {
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "email": "Email",
+    "phone_number": "Phone Number",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "continue": "Continue",
+    "select_interests": "Select Your Interests",
+    "welcome": "Welcome",
+    "all_set": "You're all set!",
+    "errors": {
+      "email_required": "Email is required.",
+      "email_invalid": "Invalid email address.",
+      "password_required": "Password is required.",
+      "password_min": "Password must be at least 6 characters.",
+      "first_name_required": "First name is required.",
+      "first_name_min": "First name must be at least 3 characters.",
+      "last_name_required": "Last name is required.",
+      "last_name_min": "Last name must be at least 3 characters.",
+      "phone_required": "Phone number is required.",
+      "phone_invalid": "Phone number must be valid (10–15 digits).",
+      "confirm_password_required": "Confirm your password.",
+      "confirm_password_mismatch": "Passwords do not match."
+    },
+    "no_account": "Don't have an account?",
+    "already_account": "Already have an account?"
+  },
+
+  "interests": {
+    "music": "Music",
+    "sports": "Sports",
+    "technology": "Technology",
+    "theatre": "Theatre"
   }
 }

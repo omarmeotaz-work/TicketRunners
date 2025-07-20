@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sparkles, TrendingUp, ArrowRight } from "lucide-react";
+import { FeaturedCarousel } from "./FeaturedEventsCarousal";
+import i18n from "@/lib/i18n";
 
 interface FeaturedEvent {
   id: string;
@@ -16,6 +18,44 @@ interface HeroSectionProps {
   onShowTrending?: () => void;
   featuredEvent: FeaturedEvent | null;
 }
+const featuredEvents = [
+  {
+    id: "1",
+    title: "Cairo Jazz Night",
+    date: "July 22, 2026",
+    image: "/event1.jpg", // remove /public prefix
+    venue: "Cairo Opera House",
+    organizer: "Cairo Music Society",
+    bookNowLink: "https://example.com/book/1",
+  },
+  {
+    id: "2",
+    title: "Giza Art Festival",
+    date: "July 25, 2025",
+    image: "/event2.jpg",
+    venue: "Giza Cultural Center",
+    organizer: "Egyptian Art Foundation",
+    bookNowLink: "https://example.com/book/2",
+  },
+  {
+    id: "3",
+    title: "Alexandria Food Carnival",
+    date: "August 5, 2025",
+    image: "/event3.jpg",
+    venue: "Alexandria Corniche",
+    organizer: "Taste Egypt",
+    bookNowLink: "https://example.com/book/3",
+  },
+  {
+    id: "4",
+    title: "Sahara EDM Bash",
+    date: "August 10, 2025",
+    image: "/event4.jpg",
+    venue: "Siwa Oasis",
+    organizer: "Desert Beats",
+    bookNowLink: "https://example.com/book/4",
+  },
+];
 
 export function HeroSection({
   onShowTrending,
@@ -54,9 +94,15 @@ export function HeroSection({
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid md:grid-cols-2 gap-10 items-center gap-y-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center min-h-[500px]">
           {/* Left Column */}
-          <div className="text-center md:text-left max-w-xl mx-auto md:mx-0">
+          <div
+            className={`max-w-xl mx-auto md:mx-0 ${
+              i18n.language === "ar"
+                ? "text-right md:text-right"
+                : "text-center md:text-left"
+            }`}
+          >
             {/* Welcome Badge */}
             <div className="inline-flex items-center space-x-2 bg-card/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 mb-2 animate-fade-in">
               <Sparkles className="h-4 w-4 text-primary" />
@@ -110,42 +156,8 @@ export function HeroSection({
               </Button>
             </div>
           </div>
-
           {/* Right Column: Featured Event */}
-          {featuredEvent && (
-            <div className="w-full max-w-md mx-auto md:mx-0 animate-fade-in">
-              <h2 className="text-xl font-semibold text-foreground mb-2 text-center md:text-left">
-                {t("hero.featured_title")}
-              </h2>
-
-              <Link
-                to={`/event/${featuredEvent.id}`}
-                className="block group rounded-xl overflow-hidden border border-border bg-card/80 backdrop-blur-sm shadow-xl transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl"
-              >
-                <img
-                  src={featuredEvent.image}
-                  alt={featuredEvent.title}
-                  className="w-full h-60 object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="p-4 sm:p-6">
-                  <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-2 group-hover:text-primary">
-                    {featuredEvent.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {featuredEvent.date} – {featuredEvent.venue}
-                  </p>
-                  <Button
-                    variant="gradient"
-                    size="lg"
-                    className="w-full pointer-events-none p-2"
-                  >
-                    {t("hero.featured_button")}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </Link>
-            </div>
-          )}
+          <FeaturedCarousel events={featuredEvents} />
         </div>
       </div>
     </section>

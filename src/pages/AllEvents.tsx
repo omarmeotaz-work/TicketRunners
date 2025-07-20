@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { EventCard } from "@/components/EventCard";
 import { EventFilters } from "@/components/EventFilters";
 import {
@@ -8,19 +9,14 @@ import {
   recommendedEvents,
 } from "@/components/EventSection";
 
-/* -------------------------------------------------------------------------- */
-/*                               Filter Types                                 */
-/* -------------------------------------------------------------------------- */
 type Filters = { category: string; location: string; tags: string[] };
-
 const defaultFilters: Filters = { category: "All", location: "All", tags: [] };
 
 const AllEvents = () => {
-  /* -------------------------------- Routing -------------------------------- */
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const section = searchParams.get("section") ?? "all";
 
-  /* ------------------------------- Base list ------------------------------- */
   const baseEvents = useMemo(() => {
     switch (section) {
       case "trending":
@@ -34,9 +30,7 @@ const AllEvents = () => {
     }
   }, [section]);
 
-  /* --------------------------- Filter state & UI --------------------------- */
   const [filters, setFilters] = useState<Filters>(defaultFilters);
-
   const handleFilterChange = useCallback((f: Filters) => setFilters(f), []);
 
   const filteredEvents = useMemo(() => {
@@ -57,40 +51,35 @@ const AllEvents = () => {
     return list;
   }, [baseEvents, filters]);
 
-  /* ------------------------------ Page title ------------------------------ */
   const title = (() => {
     switch (section) {
       case "trending":
-        return "Trending Events";
+        return t("eventspage.trending");
       case "upcoming":
-        return "Upcoming Events";
+        return t("eventspage.upcoming");
       case "recommended":
-        return "Events You May Like";
+        return t("eventspage.recommended");
       default:
-        return "All Events";
+        return t("eventspage.all");
     }
   })();
 
-  /* -------------------------------- Render -------------------------------- */
   return (
     <div className="min-h-screen bg-gradient-dark">
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Page heading */}
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
             {title}
           </h1>
           <p className="text-lg text-muted-foreground">
-            Discover amazing events happening around you
+            {t("eventspage.subtitle")}
           </p>
         </div>
 
-        {/* Filters */}
         <div className="mb-12">
           <EventFilters onFilterChange={handleFilterChange} />
         </div>
 
-        {/* Grid */}
         {filteredEvents.length ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEvents.map((event, i) => (
@@ -105,7 +94,7 @@ const AllEvents = () => {
           </div>
         ) : (
           <p className="text-muted-foreground text-center">
-            No events match your criteria.
+            {t("eventspage.no_matches")}
           </p>
         )}
       </main>

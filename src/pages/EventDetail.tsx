@@ -81,8 +81,7 @@ const EventDetail: React.FC = () => {
       organizer: {
         id: "org-12",
         name: t("eventDetail.organizer.name"),
-        logoUrl:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAB9VBMVEUQAy8QAy4FsXn////4RhbRWvL6zx4Cp/8QAzEAACgBhWAAACMAACYAAB8AAAAPBC4AAC4AABwAACsAACQAABgAq/8AABQJACyLQdQAAC0Cff8AADEAABMAAA/IMxUAABr7gR739vgOACUAAAsiHyykoq4VR0h7e4ASZZwMACQAgP8NACn+RxQPOkDCwsO5ur8YEyxqaG0TXo0SABsQOVwiACD3TCG0XNK4LhOoKBMAiV//2DEDdVgFsHv8zh8fGjCZmJzS0tTKrDZST1vh4OFQXGqHlKZfaXqVq7w0NUqqw9VMUWoMEDsNLFYdktsbpfITPmwWS3gXg8UTGDoac68OJlONNzEXVYbPSS+lOyvARS5iJSdPIi4TRZISV7APJlsSKUdDGCgtFkV+QJZ1PZATVasVdugJYcsvDyQhDCvbSylDIVvNYusIjO4OK2OOLieUTq2lMyhjMXl1Kyg4GEpaHSUKiewxHEHUafUWTZASO3mKQrt6MbajUr5yMK2NQNluO6moS9RXMYUdAjZkOJg9ImZrQTKgWSu3ZixUMy3qgzGrYzE+JCgQLzoca1zXejkAaUyCTTDZbBStiDnvtSLlmyHWfBhpWzDsyTspHybBp0APVU6OejdTSDBcTC4AIjgbo3yfiko4LSV8ajYgdmfavVJxe45tYoydAAAT/UlEQVR4nO1ci0PU1prPYRBPSDKZJDMT6TBaMq0YAzKKjlagAwLzCBWqtJaHtxXtVSruRaXu9qF92N721lbaXnsXBB9U3fk79/tOMi/Q7naLMtM9v9JxJjlJzu9893vke5xFB4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4PgTQ3UEgcB/+PenBLXffMOm9E/LTyXW8cjYHtuiW12T5wZqj0a2R0aP2/h9qyvzPEC7DwDB7ZGxNxWvM9Y/CAhKpcysoMioNbYdEYm82U3VYgFS19JEhvhBBdtSBetEZLuHseMW2hv4UylRt7qWfwSKImo2AZZvjJ7oFrpPRnyKkVEVlZRQCrKkdSzE8ZOjoycPOJZqvROJnLDssaIMt0fe6mbqawm0rn2jA5QikdG3nVaQ3qh2sEQQjp4BXvbxAzapZxH6ahkZG4+fBE7HT1QyPNlNreNjkYMOU1fBjJn1yNQZZ3oZeSv4Dgjz4IGykoKxcdTwaCSypxuESISYdWqWqnWortbBsQhCBVc/5uwpyxBIvtN9PIL9EY0ptSc6JvU67JCEWnTP6NjY6NugkG+1VjM8GQStjbxjge8n4lRHY8quRzVVBdK9y3KijuBQ1T5QxXA0fDASGXsDi8WmGwGnW7a6ur8XFCMzFT+7PZyoZLh9+3h4LPImCo60gAiBYayutNSUFAlyQaDZbb/9l3ffvfDuX957u4ph5Ix98DjaGSq0TADD1EysntTUPHvu8vtnJajy2389vxfw0t6XLlzYXs3QcRwam/1AEEITjY0dF0W1nhg6cx9t23bpqiJYH+99yceFC/9W1RHPgHcQp6euyFSfBBkuxOrLlmqHtwHmROdvRYZ7z184X6WmENXI8zt37pzXY6dTjZN6KFZPakrMs5eA4eEoUc6/VBbi9iJFzBJFalwBgjuPzMT0+VOyeHphYbZOEmMITqggn7186dJhQe3+KxMifOy9UCnEyEmNSRBwRVT10KGpVGPjfEytdY4syCTUkWVRam21FUelb5SEuLeyJ0b27Jre6WMmRC0wpx1oTkntd0ZV1LSv5q6+f/XqnBCVHGp/XNETL5S19PihI0WG8yF9Hgg2nqqLwM3Q5kA9tzFcOnzubNTpvlBpbEohTWK+SHDnlK1PplIXF8RYrJatDbY+VaNzh7dV4caH0dD5KopMUSMnuqdKDI8cotbsrGTMnr52euYDORSrTVXFSkn0xrb1+OhcVC9T3OspauRk+FqZ4GszMXH21ETKw8XJ6VrNFWl47tIGgugzPjDe3Vty/Ocv/DuI8bg8Xyb42szMVKoDY1OGjlRtBuGESFc/ehpB6I9n45+cL3Hc+9L57e9061fKBF87kirRQ6QO1aYMzf94BkGkqNifXGABKuD8u+8pVDxSIngk1ViFjovyVnN5BsIbO2FJUSXHiZp/++Tjjz/+5D2pGzIq50iR4M7GdeiYrEklFXDq7PAzKZ6TKCWQTFjwv4Bu3WcIBFPrGaauxbaaylNBVKqffSbFT8OYD0O4488dUuOIJ8L1KsqUtCadBebzRKJPp3jp+qdxVogydjiBKE55Iqy2MQwLoa1l8mxQQk3t8lMIfnl9x/V40TwSwmYq9Hkmwg2dsLFjQq5NS+pBVbX1QQ0Q/GzHjk9bq6pNhNA0Y7hRR1OnQ2otj4NTOZyYu1HhNi59+RkQ/PwLpbIUTrcdmgAl3ShC0NGanuYXnauXz80FlblzN74Ecl8Cvc+u7/h8x+c35fXzhC2gphtE2NE4r29Nzf+XEL2w7QY1tNAXnzFc38Ew51QVBLNKZyd2Htmgoj7BmpWhOOfp52XJuHkd6fn8dnwqV09ro5qGFnauU9KOi9MiVWszsShCQjtz6fJX8tyOSoCSbiiqUnk+VS3AyQ9CbPa7hudoCBHDZz8kmil9/XklwU9Nh9L1s9lUsKdSjZjbdwBSqckZXXcsIwY+s3ZtKSH6rmjSoo5RJcIdfxc3lsV5fHFmYXLiImBqcsHSW65NwbdpXaC0ZmUoKB/euHTpsEHPVhH8WmEzGOsLUzMUi4mGKIqyGIsJoQXMETtS06FaNTQQmGpXmQuMyzcrlPTzLwxVYOajOFRI2PKMkDj7zbf/AHz7na3HiBCbR3VtnLJqV4SQAnuWVJO+ZtR8CYqEmEwpBY8ohndCzPjmx1sv+7j1/Q8idfTpKxNTCzUcsxEqsYDtow91rcLQ3JSU24urnTKuSizZSCp+9+PLlbj1vR2iqLI1PNZGVXHOSwU16ptS+Pj6q/Dutb6Gtebe1YcOLS6AUo1vX16PW9/ptaqcPqggvY+d8P0oEaSbzM1/cZPGbzf3NTQ09PU2H21eLVpUKn2/gSBQ/AFNTO06CtS8qzduvH9WATmp5OyHf39DVUR7FfkBjvY2Nzf3PiRsYlh+GsGXf7QJrpBSa3cVGGS1rVHJRIcNPxwwKrT7iU+woe+nZqR4G8/pPz+N4MvfxQilJi4Eo7U5V+pZSfAIzGCy9Vz2E6DmM+xFIR5tfijQ2A+3/llGieDPIRoS7aQUMmt2+okicJxCpdbu3uZOwVlsKKOZCfHoE4fKd375HfHLv/6zguPPMpWXji0vL9+5W7senw01IVMLZNewqt7u28Cw+eiqKq80FfHLv3yKt74RqbTS09T0elPT8lJLrQqxCAcJriWt5gqCDUd/6mUUm5NimSEwQo63/nFXF0qHe36t2ZEoHzSJslu0VvueynDVqGQIcvznt98ZsVhMv9fjEbxj1LTLAJBOMCyLlr3W8FSGvca9KoZNy/FY7P69JVu/vwLdcOWBXPvLhpOru5OEVvVC7Ic+w+aHD3oq1RQodsfu9PQsL+mQZOhyDFxizYbeRRBw+lWGtIrhbnu5SoavNx2TlnqaXu95EKLesmihdnP8CthVdgY8fpHh0VW5uiMCVrRj8HnMqO3uVw3qrDVUqunaTz/5Imxe1Jd6PPUsoefB3eWepp675lZX+/fgYV9DtTssM3SUY5X0gOvry4bxeGXllXqSoXC7iuHaw8XeEkMhBLamimNTz5IeEsV66H1lVJvSRet2kSFENVSs7onAdkUWNgzG1TZohQwhAXao2Vmk2Imzh9XmFDxGWqh5F1ENWu6H8KXTHnfIwyeQWwDGBaq3PFqusjWvNy2F6qoT4ka8oi3t62tY1J6sdVIBM47mo4sOlX59pK+j2HSv1scwNgDj7j5PhE92QSi+iEmj07na26nGHvT0LIXuHqsMbZpWaj3c3gBSjGn6Fu1OoPrEeZh0IIe3BKJDYNrzKGTcWy4ZGnD3oTrrhwJNe0q6tmoJLF20m9cWvT3ALY+B0Z0Wqt+9s1xyG8dqNu99JljY1tebJtTpBaI25lTNuD+WxO72YIgG8aecfLyy3MOwopM6cxeC0Nm39uQ27qeAIHyt0wsBFnGilGAqeEyGAJvSkC7Lj+7fvyuznVlf59wBXzty2HbashD588pBgGNeAjhFPy/d67unAj6i438IMtZjIr95EKHgLZ9geYJSctYYUOwU22KjfTRd30JYypfoS4UYQTBj7Glb9OewaH6f4P4ASLwbYvdUVeW5AkVnNfX3pra7I8wJh84fW7kV7q2vyXEH4/wB9F1q7F+2trslzBf8H4yQp/3+G3Q8AAAAASUVORK5CYII=",
+        logoUrl: "/public/placeholderLogo.png",
       },
     }),
     [id, t]
@@ -249,15 +248,15 @@ const EventDetail: React.FC = () => {
               {/* Meta */}
               <div className="space-y-3 mb-6">
                 <div className="flex items-center text-muted-foreground">
-                  <Calendar className="h-5 w-5 mr-3" />
+                  <Calendar className="h-5 w-5 mx-3" />
                   <span>{event.date}</span>
                 </div>
                 <div className="flex items-center text-muted-foreground">
-                  <Clock className="h-5 w-5 mr-3" />
+                  <Clock className="h-5 w-5 mx-3" />
                   <span>{event.time}</span>
                 </div>
                 <div className="flex items-center text-muted-foreground">
-                  <MapPin className="h-5 w-5 mr-3" />
+                  <MapPin className="h-5 w-5 mx-3" />
                   <span>{event.location}</span>
                 </div>
               </div>
@@ -265,11 +264,11 @@ const EventDetail: React.FC = () => {
               {/* Rating & Attendees */}
               <div className="flex items-center space-x-6 mb-6">
                 <div className="flex items-center">
-                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400 mr-2" />
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400 mx-2" />
                   <span className="font-medium">{event.rating}</span>
                 </div>
                 <div className="flex items-center text-muted-foreground">
-                  <Users className="h-5 w-5 mr-2" />
+                  <Users className="h-5 w-5 mx-2" />
                   <span>
                     {t("eventDetail.attendees", { count: event.attendees })}
                   </span>
@@ -311,7 +310,7 @@ const EventDetail: React.FC = () => {
                   className="w-full group/btn"
                   onClick={handleBooking}
                 >
-                  <Ticket className="h-4 w-4 mr-2 transition-transform group-hover/btn:scale-110" />
+                  <Ticket className="h-4 w-4 mx-2 transition-transform group-hover/btn:scale-110" />
                   {t("buttons.bookNow")}
                 </Button>
 
@@ -321,16 +320,18 @@ const EventDetail: React.FC = () => {
                 </p>
                 <div
                   onClick={goToOrganizer}
-                  className="flex items-center gap-3 cursor-pointer p-3 bg-secondary rounded-lg hover-scale"
+                  className="mx-auto group flex items-center gap-3 cursor-pointer p-3 bg-secondary rounded-lg hover-scale"
                 >
-                  <img
-                    src={event.organizer.logoUrl}
-                    alt={event.organizer.name}
-                    className="w-10 h-10 rounded-md object-cover"
-                  />
-                  <span className="font-medium text-foreground/90 group-hover:text-primary transition-colors">
-                    {event.organizer.name}
-                  </span>
+                  <div className="flex flex-col items-center">
+                    <img
+                      src={event.organizer.logoUrl}
+                      alt={event.organizer.name}
+                      className="w-10 h-10 rounded-md object-cover"
+                    />
+                    <span className="mx-auto text-muted-foreground mt-1">
+                      {event.organizer.name}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

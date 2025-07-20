@@ -8,36 +8,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "@/Contexts/AuthContext";
 
 interface AuthModalsProps {
-  isLoginOpen: boolean;
-  isSignupOpen: boolean;
-  onLoginClose: () => void;
-  onSignupClose: () => void;
   onLoginSuccess?: () => void;
 }
 
-export const AuthModals: React.FC<AuthModalsProps> = ({
-  isLoginOpen,
-  isSignupOpen,
-  onLoginClose,
-  onSignupClose,
-  onLoginSuccess,
-}) => {
+export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
+  const { isLoginOpen, isSignupOpen, closeLogin, closeSignup, login } =
+    useAuth();
+
   const { toast } = useToast();
-  const [showInterestDialog, setShowInterestDialog] = useState(false);
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const interestOptions = [
-    "Music",
-    "Sports",
-    "Tech",
-    "Fashion",
-    "Food",
-    "Travel",
-    "Fitness",
-    "Art",
-    "Gaming",
-  ];
+  const { t } = useTranslation();
+  const [isSignup, setIsSignup] = useState(false);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -51,6 +35,10 @@ export const AuthModals: React.FC<AuthModalsProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    setIsSignup(isSignupOpen);
+  }, [isSignupOpen, isLoginOpen]);
+
+  useEffect(() => {
     setForm({
       firstName: "",
       lastName: "",
@@ -60,36 +48,38 @@ export const AuthModals: React.FC<AuthModalsProps> = ({
       phone: "",
     });
     setErrors({});
-  }, [isLoginOpen, isSignupOpen]);
+  }, [isSignup]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!form.email) newErrors.email = "Email is required.";
+    if (!form.email) newErrors.email = t("auth.errors.email_required");
     else if (!/\S+@\S+\.\S+/.test(form.email))
-      newErrors.email = "Invalid email address.";
+      newErrors.email = t("auth.errors.email_invalid");
 
-    if (!form.password) newErrors.password = "Password is required.";
+    if (!form.password) newErrors.password = t("auth.errors.password_required");
     else if (form.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters.";
+      newErrors.password = t("auth.errors.password_min");
 
-    if (isSignupOpen) {
-      if (!form.firstName) newErrors.firstName = "First name is required.";
+    if (isSignup) {
+      if (!form.firstName)
+        newErrors.firstName = t("auth.errors.first_name_required");
       else if (form.firstName.length < 3)
-        newErrors.firstName = "First name must be at least 3 characters.";
+        newErrors.firstName = t("auth.errors.first_name_min");
 
-      if (!form.lastName) newErrors.lastName = "Last name is required.";
+      if (!form.lastName)
+        newErrors.lastName = t("auth.errors.last_name_required");
       else if (form.lastName.length < 3)
-        newErrors.lastName = "Last name must be at least 3 characters.";
+        newErrors.lastName = t("auth.errors.last_name_min");
 
-      if (!form.phone) newErrors.phone = "Phone number is required.";
+      if (!form.phone) newErrors.phone = t("auth.errors.phone_required");
       else if (!/^\+?\d{10,15}$/.test(form.phone))
-        newErrors.phone = "Phone number must be valid (10–15 digits).";
+        newErrors.phone = t("auth.errors.phone_invalid");
 
       if (!form.confirmPassword)
-        newErrors.confirmPassword = "Confirm your password.";
+        newErrors.confirmPassword = t("auth.errors.confirm_password_required");
       else if (form.password !== form.confirmPassword)
-        newErrors.confirmPassword = "Passwords do not match.";
+        newErrors.confirmPassword = t("auth.errors.confirm_password_mismatch");
     }
 
     setErrors(newErrors);
@@ -99,19 +89,24 @@ export const AuthModals: React.FC<AuthModalsProps> = ({
   const handleSubmit = () => {
     if (!validate()) return;
 
-    // Simulate token storage
+    // Replace with actual backend call
     localStorage.setItem("auth_token", "fake-token-" + Date.now());
     toast({
-      title: isLoginOpen ? "Signed in" : "Signed up",
-      description: `Welcome, ${form.email}`,
+      title: isSignup ? t("auth.sign_up") : t("auth.sign_in"),
+      description: `${t("auth.welcome")}, ${form.email}`,
     });
 
-    if (isLoginOpen) {
-      onLoginSuccess?.();
-      onLoginClose();
+    if (isSignup) {
+      const token = "fake-token-" + Date.now(); // or from API response
+      localStorage.setItem("auth_token", token);
+      login(token);
+      closeSignup();
     } else {
-      onSignupClose();
-      setShowInterestDialog(true); // <-- Open interests dialog after signup
+      const token = "fake-token-" + Date.now();
+      localStorage.setItem("auth_token", token);
+      login(token);
+      onLoginSuccess?.();
+      closeLogin();
     }
   };
 
@@ -131,85 +126,73 @@ export const AuthModals: React.FC<AuthModalsProps> = ({
     </div>
   );
 
-  return (
-    <>
-      {/* Login Dialog */}
-      <Dialog open={isLoginOpen} onOpenChange={onLoginClose}>
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle>Sign In</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            {renderField("email", "Email", "email")}
-            {renderField("password", "Password", "password")}
-            <Button className="w-full" onClick={handleSubmit}>
-              Sign In
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+  const handleClose = () => {
+    setIsSignup(false);
+    closeLogin();
+    closeSignup();
+  };
 
-      {/* Signup Dialog */}
-      <Dialog open={isSignupOpen} onOpenChange={onSignupClose}>
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle>Sign Up</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            {renderField("firstName", "First Name")}
-            {renderField("lastName", "Last Name")}
-            {renderField("email", "Email", "email")}
-            {renderField("phone", "Phone Number")}
-            {renderField("password", "Password", "password")}
-            {renderField("confirmPassword", "Confirm Password", "password")}
-            <Button className="w-full" onClick={handleSubmit}>
-              Sign Up
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-      <Dialog
-        open={showInterestDialog}
-        onOpenChange={() => setShowInterestDialog(false)}
-      >
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Select Your Interests (Optional)</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-wrap gap-2">
-            {interestOptions.map((tag) => (
-              <Button
-                key={tag}
-                variant={
-                  selectedInterests.includes(tag) ? "default" : "outline"
-                }
-                onClick={() =>
-                  setSelectedInterests((prev) =>
-                    prev.includes(tag)
-                      ? prev.filter((t) => t !== tag)
-                      : [...prev, tag]
-                  )
-                }
-              >
-                {tag}
-              </Button>
-            ))}
-          </div>
-          <Button
-            className="w-full mt-4"
-            onClick={() => {
-              // Persist to backend if needed here
-              setShowInterestDialog(false);
-              toast({
-                title: "Welcome!",
-                description: "You're all set.",
-              });
-            }}
-          >
-            Continue
+  return (
+    <Dialog open={isLoginOpen || isSignupOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="text-center">
+            {isSignup ? t("auth.sign_up") : t("auth.sign_in")}
+          </DialogTitle>
+        </DialogHeader>
+
+        <form
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
+          {isSignup && (
+            <>
+              {renderField("firstName", t("auth.first_name"))}
+              {renderField("lastName", t("auth.last_name"))}
+              {renderField("phone", t("auth.phone_number"))}
+            </>
+          )}
+          {renderField("email", t("auth.email"), "email")}
+          {renderField("password", t("auth.password"), "password")}
+          {isSignup &&
+            renderField(
+              "confirmPassword",
+              t("auth.confirm_password"),
+              "password"
+            )}
+
+          <Button className="w-full mt-4" type="submit">
+            {t("auth.continue")}
           </Button>
-        </DialogContent>
-      </Dialog>
-    </>
+        </form>
+
+        <div className="text-sm text-center mt-2">
+          {isSignup ? (
+            <>
+              {t("auth.already_account")}{" "}
+              <button
+                className="underline text-primary"
+                onClick={() => setIsSignup(false)}
+              >
+                {t("auth.sign_in")}
+              </button>
+            </>
+          ) : (
+            <>
+              {t("auth.no_account")}{" "}
+              <button
+                className="underline text-primary"
+                onClick={() => setIsSignup(true)}
+              >
+                {t("auth.sign_up")}
+              </button>
+            </>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

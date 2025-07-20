@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { InvoicePreview } from "@/components/invoicePreview";
 const Profile = () => {
   const [showCardDetails, setShowCardDetails] = useState(false);
   // ① read the URL hash (#nfc, #bookings …)
@@ -445,6 +446,7 @@ const Profile = () => {
                               )}
                             </Badge>
                           </div>
+                          <InvoicePreview />
                           <Button
                             variant="outline"
                             size="sm"
@@ -472,6 +474,29 @@ const Profile = () => {
                     {t("profilepage.nfc.description")}
                   </CardDescription>
                 </CardHeader>
+                <div className="relative mx-auto w-80 h-48 perspective mb-6">
+                  <div className="card-3d hover:skew hover:rotate">
+                    <div className="bg-gradient-to-br from-primary to-blue-600 text-white p-6 rounded-xl shadow-xl w-full h-full flex flex-col justify-between">
+                      <div className="text-sm font-semibold tracking-widest uppercase">
+                        {t("profilepage.nfc.cardTitle")}{" "}
+                      </div>
+                      <div className="text-lg font-mono font-bold">
+                        1234 5678 9012 3456
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <div>
+                          <div>{t("profilepage.nfc.issued")}</div>{" "}
+                          <div className="font-semibold">07/2024</div>
+                        </div>
+                        <div>
+                          <div>{t("profilepage.nfc.expires")}</div>{" "}
+                          <div className="font-semibold">07/2029</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <CardContent className="space-y-6">
                   <div className="border border-border rounded-lg p-4">
                     <div className="flex justify-between items-center mb-4">
