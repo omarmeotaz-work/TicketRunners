@@ -203,18 +203,18 @@ const Index = () => {
                 variant="gradient"
                 size="hero"
                 onClick={() => handleNavigation("contact")}
-                className="group"
+                className="group mx-2"
               >
-                <Mail className="h-5 w-5 mr-2 transition-transform group-hover:scale-110" />
+                <Mail className="h-5 w-5  transition-transform group-hover:scale-110" />
                 {t("contactUs")}
               </Button>
               <Button
                 variant="outline"
                 size="hero"
                 onClick={() => handleNavigation("about")}
-                className="group"
+                className="group mx-2"
               >
-                <Info className="h-5 w-5 mr-2 transition-transform group-hover:scale-110" />
+                <Info className="h-5 w-5 transition-transform group-hover:scale-110" />
                 {t("aboutUs")}
               </Button>
             </div>

@@ -138,7 +138,7 @@ export function Header() {
           <div className="flex items-center space-x-2 sm:space-x-8 flex-shrink-0">
             <a href="/" className="block">
               <img
-                src="/lovable-uploads/3a125e95-6619-4a87-943a-17a2b9109d94.png"
+                src="/uploads/3a125e95-6619-4a87-943a-17a2b9109d94.png"
                 alt="Ticket Runners Logo"
                 className="h-32 w-auto sm:h-32 md:h-40"
               />
