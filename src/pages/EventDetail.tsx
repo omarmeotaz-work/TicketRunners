@@ -61,8 +61,7 @@ const EventDetail: React.FC = () => {
     () => ({
       id,
       title: t("eventDetail.title"),
-      videoUrl:
-        "https://player.vimeo.com/external/567774747.sd.mp4?s=6c1bc8f5e6f485d6d6c2a9f2bbfc408b7222b2fd&profile_id=164&oauth2_token_id=57447761",
+      videoUrl: "/public/SampleVideo.mp4",
       images: [
         { url: "/event1.jpg", isPrimary: true },
         { url: "/event2.jpg" },
@@ -170,7 +169,9 @@ const EventDetail: React.FC = () => {
                   {media.type === "video" ? (
                     <video
                       src={media.url}
-                      controls
+                      autoPlay
+                      muted
+                      loop
                       playsInline
                       preload="none"
                       poster="/video-placeholder.jpg"

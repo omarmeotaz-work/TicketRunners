@@ -118,9 +118,10 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
     <div className="space-y-1">
       <Input
         type={type}
-        placeholder={label}
-        value={form[key]}
+        value={form[key] ?? ""}
+        placeholder={t(`auth.placeholders.${key}`, label)}
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+        autoComplete="off"
       />
       {errors[key] && <p className="text-sm text-red-500">{errors[key]}</p>}
     </div>

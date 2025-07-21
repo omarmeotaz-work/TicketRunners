@@ -121,8 +121,8 @@ const Profile = () => {
   const nfcCard = {
     status: "Active",
     cardNumber: "**** **** **** 1234",
-    issueDate: "2023-06-15",
-    expiryDate: "2025-06-15",
+    issueDate: "2025-07-15",
+    expiryDate: "2026-07-15",
   };
   // ③ whenever the tab changes, push the new hash to the URL (nice for reload / share)
   const navigate = useNavigate();
@@ -476,21 +476,21 @@ const Profile = () => {
                 </CardHeader>
                 <div className="relative mx-auto w-80 h-48 perspective mb-6">
                   <div className="card-3d hover:skew hover:rotate">
-                    <div className="bg-gradient-to-br from-primary to-blue-600 text-white p-6 rounded-xl shadow-xl w-full h-full flex flex-col justify-between">
+                    <div className="bg-gradient-to-br from-primary to-blue-600 text-white p-10 rounded-xl shadow-xl w-full h-full flex flex-col justify-between">
                       <div className="text-sm font-semibold tracking-widest uppercase">
                         {t("profilepage.nfc.cardTitle")}{" "}
                       </div>
                       <div className="text-lg font-mono font-bold">
-                        1234 5678 9012 3456
+                        **** **** **** 1234
                       </div>
                       <div className="flex justify-between text-xs">
                         <div>
                           <div>{t("profilepage.nfc.issued")}</div>{" "}
-                          <div className="font-semibold">07/2024</div>
+                          <div className="font-semibold">07/2025</div>
                         </div>
                         <div>
                           <div>{t("profilepage.nfc.expires")}</div>{" "}
-                          <div className="font-semibold">07/2029</div>
+                          <div className="font-semibold">07/2026</div>
                         </div>
                       </div>
                     </div>
