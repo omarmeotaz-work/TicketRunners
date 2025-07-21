@@ -150,9 +150,7 @@ const Index = () => {
             venue: "El Sawy Culturewheel",
             image: "/public/event1.jpg",
           }}
-          onShowTrending={() => {
-            /* … */
-          }}
+          onShowTrending={() => {}}
         />
         {/* Trending Events Section */}
         <div id="trending-section">
