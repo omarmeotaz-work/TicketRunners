@@ -156,12 +156,15 @@
     "dependent": "Dependent",
     "name": "Name",
     "mobilePlaceholder": "Mobile number",
+    "email": "Dependant's Email",
+    "EmailPlaceholder": "Enter an Email",
     "socialMedia": "Social Media",
     "optionalUsername": "@username (optional)",
     "priceBreakdown": "Price Breakdown",
     "ticketPrice": "Ticket Price (x{{count}})",
     "vat": "VAT (14%)",
     "cardCost": "NFC Card Cost (First Purchase)",
+    "renewalCost": "card renewal cost",
     "totalAmount": "Total Amount",
     "completePayment": "Complete Payment",
     "paymentNoticeTitle": "First Purchase Notice",
@@ -208,9 +211,9 @@
       "title": "My Bookings",
       "description": "View and manage your ticket bookings",
       "status": {
-        "confirmed": "Confirmed",
-        "pending": "Pending",
-        "cancelled": "Cancelled"
+        "Card": "Card",
+        "Wallet": "Wallet",
+        "Both": "Both"
       },
 
       "quantity": "Quantity:",
@@ -224,11 +227,17 @@
     },
     "visits": {
       "title": "My Visits",
-      "description": "History of events you have attended",
+      "description": "Here are your event visit records.",
       "date": "Date",
-      "enteredAt": "Entered at",
+      "enteredAt": "Entrance Time",
       "location": "Location",
-      "dependents": "Dependents"
+      "dependents": "Dependents",
+      "feedback": {
+        "title": "Provide Feedback",
+        "placeholder": "Write your feedback here...",
+        "submit": "Submit Feedback",
+        "button": "Provide Feedback"
+      }
     },
     "billing": {
       "title": "Billing History",
@@ -253,6 +262,7 @@
       "cardNumber": "Card Number:",
       "issueDate": "Issue Date:",
       "expiryDate": "Expiry Date:",
+      "walletexpiryDate": "Wallet expiry date",
       "deactivateCard": "Deactivate Card",
       "buyNewCard": "Buy New Card",
       "cardFeaturesTitle": "Card Features",
@@ -262,10 +272,13 @@
       "feature4": "Backup QR code always available",
       "cardTitle": "NFC Access Card",
       "issued": "Issued",
-      "expires": "Expires"
+      "expires": "Expires",
+      "addToWallet": "Add to Wallet",
+      "notice": "You don't have an active NFC card. Please purchase one from the nearest merchant."
     },
     "settingsTab": {
       "tab": "Settings",
+      "ID": "Your User ID:",
       "description": "Update your account information and preferences.",
       "fullName": "Full Name",
       "phone": "Phone Number",
@@ -279,7 +292,13 @@
       "notifyEmail": "Receive email notifications",
       "notifySMS": "Receive SMS notifications",
       "notifyMarketing": "Receive marketing offers",
-      "saveChanges": "Save Changes"
+      "saveChanges": "Save Changes",
+      "profileImage": "Profile Image",
+      "bloodType": "Blood Type",
+      "emergencyContact": "Emergency Contact",
+      "selectOption": "Select an option",
+      "changesSaved": "Changes saved successfully",
+      "browse": "Upload new image"
     },
     "subscriptions": {
       "title": "My Subscriptions",
@@ -380,6 +399,8 @@
     "time": "8:00 PM",
     "location": "Cairo Opera House",
     "category": "Music",
+    "venueInfoTitle": "About the Venue",
+    "venueInfo": "The Cairo Opera House is a cultural landmark offering world-class acoustics, comfortable seating, and rich history.",
     "description": "Join us for an unforgettable evening with Ahmed Sheba, one of Egypt's most beloved musicians. Experience his greatest hits in an intimate setting at the prestigious Cairo Opera House.",
     "organizer": {
       "name": "Sheba Events LLC"
@@ -460,7 +481,8 @@
   },
 
   "organizers": {
-    "title": "Event Organizers",
+    "Utitle": "Upcoming Events",
+    "Ftitle": "Former Events",
     "description": "Browse all organizers and explore their events.",
     "attendees": "{{count}} attendees",
     "rating": "rating",
@@ -503,6 +525,13 @@
     "select_interests": "Select Your Interests",
     "welcome": "Welcome",
     "all_set": "You're all set!",
+    "verify": "Verify",
+    "otp_sent": "OTP sent",
+    "otp_verified": "Phone number verified",
+    "verify_otp": "Verify OTP",
+    "placeholders": {
+      "otp": "Enter OTP"
+    },
     "errors": {
       "email_required": "Email is required.",
       "email_invalid": "Invalid email address.",
@@ -515,7 +544,9 @@
       "phone_required": "Phone number is required.",
       "phone_invalid": "Phone number must be valid (10–15 digits).",
       "confirm_password_required": "Confirm your password.",
-      "confirm_password_mismatch": "Passwords do not match."
+      "confirm_password_mismatch": "Passwords do not match.",
+      "otp_invalid": "Invalid OTP",
+      "phone_not_verified": "Phone number must be verified before signing up"
     },
     "no_account": "Don't have an account?",
     "already_account": "Already have an account?"
@@ -526,5 +557,26 @@
     "sports": "Sports",
     "technology": "Technology",
     "theatre": "Theatre"
+  },
+
+  "profileSetup": {
+    "complete_profile": "Complete Your Profile",
+    "image_disclaimer": "To ensure security, please upload a clear and recent photo. You may be denied entry to events if your image does not match your appearance.",
+    "select_blood_type": "Select blood type (optional)",
+    "emergency_contact": "Emergency contact (optional)",
+    "submit": "Submit",
+    "errors": {
+      "image_required": "Profile image is required"
+    },
+    "submitted": "Profile completed successfully"
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "message": "Please review and accept the terms and conditions before proceeding."
+  },
+  "common": {
+    "accept": "Accept",
+    "cancel": "Cancel",
+    "invalidDate": "Invalid date"
   }
 }

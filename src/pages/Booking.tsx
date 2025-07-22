@@ -29,6 +29,13 @@ import {
   CreditCard,
   Store,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import i18n from "@/lib/i18n";
 
 const Booking = () => {
   const { t } = useTranslation();
@@ -46,6 +53,45 @@ const Booking = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [showTerms, setShowTerms] = useState(false);
+
+  const onConfirmPayment = () => {
+    setShowTerms(true);
+  };
+
+  const onAcceptTerms = () => {
+    setShowTerms(false);
+    proceedWithPayment();
+  };
+  const proceedWithPayment = () => {
+    const newBooking = {
+      id,
+      title: eventData.title,
+      date: eventData.date,
+      time: eventData.time,
+      timestamp: new Date().toISOString(),
+    };
+
+    const stored = localStorage.getItem("bookedEvents");
+    const existing = stored ? JSON.parse(stored) : [];
+    localStorage.setItem(
+      "bookedEvents",
+      JSON.stringify([...existing, newBooking])
+    );
+
+    toast({
+      title: t("booking.paymentSuccessTitle"),
+      description: t("booking.paymentSuccessDescription"),
+    });
+
+    navigate("/payment-confirmation", {
+      state: {
+        eventTitle: eventData.title,
+        totalAmount,
+        transactionId: crypto.randomUUID(),
+      },
+    });
+  };
 
   const [dependents, setDependents] = useState<
     {
@@ -64,8 +110,9 @@ const Booking = () => {
     0
   );
   const vatAmount = totalTicketPrice * 0.14;
-  const cardCost = 50;
-  const totalAmount = totalTicketPrice + vatAmount + cardCost;
+  const cardCost = 150;
+  const renewalCost = 150;
+  const totalAmount = totalTicketPrice + vatAmount + cardCost + renewalCost;
   const userTicketTypeRef = useRef<TierKey | "">("");
   const [userTicketType, setUserTicketType] = useState<TierKey | "">("");
 
@@ -78,7 +125,7 @@ const Booking = () => {
   const eventData = {
     title: "Cairo Jazz Festival 2024",
     date: "2024-02-15",
-    time: "20:00",
+    time: "10:00",
     location: "Cairo Opera House",
     price: 250,
   };
@@ -165,6 +212,16 @@ const Booking = () => {
     });
   }, [quantities]);
 
+  const [hours, minutes] = eventData.time.split(":").map(Number);
+  const timeDate = new Date();
+  timeDate.setHours(hours, minutes, 0);
+
+  const formattedTime = new Intl.DateTimeFormat(i18n.language, {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  }).format(timeDate);
+
   const handlePayment = () => {
     const newBooking = {
       id,
@@ -204,6 +261,21 @@ const Booking = () => {
 
   return (
     <div className="min-h-screen bg-gradient-dark">
+      <Dialog open={showTerms} onOpenChange={setShowTerms}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("terms.title")}</DialogTitle>
+          </DialogHeader>
+          <p>{t("terms.message")}</p>
+          <div className="flex justify-end gap-4 mt-4">
+            <Button variant="outline" onClick={() => setShowTerms(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button onClick={onAcceptTerms}>{t("common.accept")}</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
@@ -228,11 +300,15 @@ const Booking = () => {
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
-                      {eventData.date}
+                      {new Intl.DateTimeFormat(i18n.language, {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }).format(new Date(eventData.date))}
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
-                      {eventData.time}
+                      {formattedTime}
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
@@ -363,6 +439,19 @@ const Booking = () => {
                                 }
                                 placeholder={t("booking.namePlaceholder")}
                               />
+                              <Label>{t("booking.email")}</Label>
+
+                              <Input
+                                value={dependent.name}
+                                onChange={(e) =>
+                                  updateDependent(
+                                    index,
+                                    "email",
+                                    e.target.value
+                                  )
+                                }
+                                placeholder={t("booking.EmailPlaceholder")}
+                              />
                             </div>
                             <div className="space-y-2">
                               <Label>{t("booking.ticketType")}</Label>
@@ -408,6 +497,10 @@ const Booking = () => {
                       <span>{t("booking.cardCost")}</span>
                       <span>{cardCost} EGP</span>
                     </div>
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>{t("booking.renewalCost")}</span>
+                      <span>{renewalCost} EGP</span>
+                    </div>
                     <Separator />
                     <div className="flex justify-between font-semibold text-lg">
                       <span>{t("booking.totalAmount")}</span>
@@ -420,7 +513,7 @@ const Booking = () => {
                       variant="gradient"
                       size="lg"
                       className="w-full pt-1 pb-1"
-                      onClick={handlePayment}
+                      onClick={onConfirmPayment}
                     >
                       <CreditCard className="h-5 w-5 mr-2" />
                       {t("booking.completePayment")}

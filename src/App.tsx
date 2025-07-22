@@ -34,6 +34,7 @@ import MerchantPage from "./pages/MerchantPage";
 import { AuthModals } from "./components/AuthModals";
 import { useTranslation } from "react-i18next";
 import { AuthProvider } from "./Contexts/AuthContext";
+import ExpiredEventDetail from "./pages/ExpiredEvent";
 /* -------------------------------------------------------------------------- */
 /*                              Theme Context                                 */
 /* -------------------------------------------------------------------------- */
@@ -119,6 +120,10 @@ export default function App() {
                 <Route element={<MainLayout />}>
                   <Route index element={<Index />} />
                   <Route path="event/:id" element={<EventDetail />} />
+                  <Route
+                    path="Expiredevent/:id"
+                    element={<ExpiredEventDetail />}
+                  />
                   <Route path="booking/:id" element={<Booking />} />
                   <Route path="/forgot-password" element={<ForgetPassword />} />
                   <Route path="ticket/:id" element={<TicketDetails />} />

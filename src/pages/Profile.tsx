@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,6 +33,9 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { InvoicePreview } from "@/components/invoicePreview";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Toast } from "@/components/ui/toast";
 const Profile = () => {
   const [showCardDetails, setShowCardDetails] = useState(false);
   // ① read the URL hash (#nfc, #bookings …)
@@ -45,13 +48,37 @@ const Profile = () => {
   })();
   // ② keep Tabs state in React so the URL can update as the user clicks tabs
   const [activeTab, setActiveTab] = useState<string>(initialTab);
+  const [openFeedbackId, setOpenFeedbackId] = useState<number | null>(null);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [rating, setRating] = useState<number | null>(null);
 
   // Mock data
   const userInfo = {
+    id: "12345",
     name: "Ahmed Mohamed Hassan",
     phone: "+20 123 456 7890",
     email: "ahmed.mohamed@example.com",
+    emergencyContact: "01100777223",
+    bloodType: "A",
+    profileImage: "/public/Portrait_Placeholder.png",
+    CardActive: true,
   };
+  const firstName = userInfo.name.split(" ")[0];
+
+  const hasActiveNfcCard = userInfo?.CardActive ?? false;
+
+  const [profile, setProfile] = useState(() => {
+    const stored = localStorage.getItem("userProfile");
+    return stored ? JSON.parse(stored) : userInfo;
+  });
+  const [profileImage, setProfileImage] = useState<string>(() => {
+    return localStorage.getItem("profileImage") || userInfo.profileImage;
+  });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [bloodType, setBloodType] = useState(userInfo.bloodType || "");
+  const [emergencyContact, setEmergencyContact] = useState(
+    userInfo.emergencyContact || ""
+  );
 
   const bookings = [
     {
@@ -63,7 +90,7 @@ const Profile = () => {
       ticketPrice: 250,
       quantity: 2,
       qrEnabled: true,
-      status: "confirmed",
+      status: "Wallet",
     },
     {
       id: 2,
@@ -74,7 +101,7 @@ const Profile = () => {
       ticketPrice: 150,
       quantity: 1,
       qrEnabled: false,
-      status: "pending",
+      status: "Card",
     },
   ];
 
@@ -124,6 +151,7 @@ const Profile = () => {
     issueDate: "2025-07-15",
     expiryDate: "2026-07-15",
   };
+
   // ③ whenever the tab changes, push the new hash to the URL (nice for reload / share)
   const navigate = useNavigate();
   useEffect(() => {
@@ -166,9 +194,49 @@ const Profile = () => {
     URL.revokeObjectURL(url);
     toast({ title: "Calendar file downloaded" });
   };
+  const handleSubmitFeedback = () => {
+    if (!openFeedbackId) return;
+    // TODO: Submit feedback to API
+    console.log({
+      visitId: openFeedbackId,
+      feedback: feedbackText,
+      rating,
+    });
+    setOpenFeedbackId(null);
+    setFeedbackText("");
+    setRating(0);
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    setProfile((prev) => ({ ...prev, [field]: value }));
+  };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile((prev) => ({ ...prev, profileImage: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSave = () => {
+    localStorage.setItem("userProfile", JSON.stringify(profile));
+    alert("Profile saved locally.");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-dark">
+      <div className="mx-10 flex gap-2 items-center">
+        <img
+          src={userInfo.profileImage}
+          alt="Profile Preview"
+          className="w-24 h-24 rounded-full object-cover border"
+        />
+        <CardTitle> {t("profilepage.settingsTab.ID")}</CardTitle>
+        <CardTitle> {userInfo.id}</CardTitle>
+      </div>
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
@@ -399,8 +467,41 @@ const Profile = () => {
                           </span>
                         </div>
                       )}
+                      <div className="pt-2">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setOpenFeedbackId(visit.id)}
+                        >
+                          {t("profilepage.visits.feedback.button")}
+                        </Button>
+                      </div>
                     </div>
                   ))}
+                  <Dialog
+                    open={!!openFeedbackId}
+                    onOpenChange={() => setOpenFeedbackId(null)}
+                  >
+                    <DialogContent>
+                      <DialogHeader>
+                        {t("profilepage.visits.feedback.title")}
+                      </DialogHeader>
+
+                      <div className="space-y-4">
+                        <Textarea
+                          placeholder={t(
+                            "profilepage.visits.feedback.placeholder"
+                          )}
+                          value={feedbackText}
+                          onChange={(e) => setFeedbackText(e.target.value)}
+                        />
+
+                        <Button onClick={handleSubmitFeedback}>
+                          {t("profilepage.visits.feedback.submit")}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -463,116 +564,167 @@ const Profile = () => {
               </Card>
             </TabsContent>
             {/* NFC Card */}
-            <TabsContent value="nfc" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Smartphone className="h-5 w-5 text-primary" />
-                    {t("profilepage.nfc.title")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("profilepage.nfc.description")}
-                  </CardDescription>
-                </CardHeader>
-                <div className="relative mx-auto w-80 h-48 perspective mb-6">
-                  <div className="card-3d hover:skew hover:rotate">
-                    <div className="bg-gradient-to-br from-primary to-blue-600 text-white p-10 rounded-xl shadow-xl w-full h-full flex flex-col justify-between">
-                      <div className="text-sm font-semibold tracking-widest uppercase">
-                        {t("profilepage.nfc.cardTitle")}{" "}
-                      </div>
-                      <div className="text-lg font-mono font-bold">
-                        **** **** **** 1234
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <div>
-                          <div>{t("profilepage.nfc.issued")}</div>{" "}
-                          <div className="font-semibold">07/2025</div>
-                        </div>
-                        <div>
-                          <div>{t("profilepage.nfc.expires")}</div>{" "}
-                          <div className="font-semibold">07/2026</div>
+            <div className="relative">
+              <div
+                className={
+                  hasActiveNfcCard
+                    ? ""
+                    : "blur-xs pointer-events-none select-none"
+                }
+              >
+                <TabsContent value="nfc" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Smartphone className="h-5 w-5 text-primary" />
+                        {t("profilepage.nfc.title")}
+                      </CardTitle>
+                      <CardDescription>
+                        {t("profilepage.nfc.description")}
+                      </CardDescription>
+                    </CardHeader>
+                    <div className="relative w-auto h-96 overflow-hidden rounded-xl bg-transparent mx-auto">
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        {/* Hover Target - Wrap images in group */}
+                        <div className="relative group w-44 h-auto flex items-center justify-center">
+                          {/* Front Image */}
+                          <div className="transition-opacity duration-500 ease-in-out group-hover:opacity-0 z-10">
+                            <img
+                              src="/public/NFC CARD Front -1.png"
+                              alt="NFC Front"
+                              className="shadow-2xl w-44 rounded-lg"
+                            />
+                          </div>
+
+                          {/* Back Image + Overlays */}
+                          <div className="absolute transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100 z-20 flex items-center justify-center">
+                            <img
+                              src="/public/NFC CARD Back-1.png"
+                              alt="NFC Card Back"
+                              className="shadow-2xl w-44 rounded-lg"
+                            />
+
+                            {/* Name */}
+                            <div className="absolute top-[83%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                              <span className="text-black text-xs font-bold drop-shadow-md">
+                                {firstName}
+                              </span>
+                            </div>
+
+                            {/* ID */}
+                            <div className="absolute top-[93%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                              <span className="text-white text-xs font-bold drop-shadow-md">
+                                {userInfo.id}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+
+                    <CardContent className="space-y-6">
+                      <div className="border border-border rounded-lg p-4">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="font-semibold text-foreground">
+                            {t("profilepage.nfc.cardStatus")}
+                          </h3>
+                          <Badge variant="default">
+                            {t(`profilepage.nfc.status.${nfcCard.status}`)}
+                          </Badge>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">
+                              {t("profilepage.nfc.cardNumber")}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono">
+                                {showCardDetails
+                                  ? "1234 5678 9012 1234"
+                                  : nfcCard.cardNumber}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  setShowCardDetails(!showCardDetails)
+                                }
+                              >
+                                {showCardDetails ? (
+                                  <EyeOff className="h-4 w-4" />
+                                ) : (
+                                  <Eye className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">
+                              {t("profilepage.nfc.issueDate")}
+                            </span>
+                            <span>{nfcCard.issueDate}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">
+                              {t("profilepage.nfc.expiryDate")}
+                            </span>
+                            <span>{nfcCard.expiryDate}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">
+                              {t("profilepage.nfc.walletexpiryDate")}
+                            </span>
+                            <span>{nfcCard.expiryDate}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                        <Button
+                          variant="outline"
+                          disabled={nfcCard.status !== "Active"}
+                        >
+                          {t("profilepage.nfc.deactivateCard")}
+                        </Button>
+                        <Button variant="gradient" className="w-full sm:w-auto">
+                          {t("profilepage.nfc.buyNewCard")}
+                        </Button>
+                        <Button
+                          variant="default"
+                          className="block sm:hidden w-full"
+                          onClick={() => {
+                            // TODO: Add-to-wallet logic
+                            toast({ title: "Wallet integration coming soon" });
+                          }}
+                        >
+                          {t("profilepage.nfc.addToWallet")}
+                        </Button>
+                      </div>
+
+                      <div className="bg-muted/20 rounded-lg p-4">
+                        <h4 className="font-semibold mb-2">
+                          {t("profilepage.nfc.cardFeaturesTitle")}
+                        </h4>
+                        <ul className="text-sm space-y-1 text-muted-foreground">
+                          <li>• {t("profilepage.nfc.feature1")}</li>
+                          <li>• {t("profilepage.nfc.feature2")}</li>
+                          <li>• {t("profilepage.nfc.feature3")}</li>
+                          <li>• {t("profilepage.nfc.feature4")}</li>
+                        </ul>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </div>
+              {!hasActiveNfcCard && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm z-10 text-center p-4">
+                  <p className="text-foreground ">
+                    {t("profilepage.nfc.notice")}
+                  </p>
                 </div>
-
-                <CardContent className="space-y-6">
-                  <div className="border border-border rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="font-semibold text-foreground">
-                        {t("profilepage.nfc.cardStatus")}
-                      </h3>
-                      <Badge variant="default">
-                        {t(`profilepage.nfc.status.${nfcCard.status}`)}
-                      </Badge>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          {t("profilepage.nfc.cardNumber")}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono">
-                            {showCardDetails
-                              ? "1234 5678 9012 1234"
-                              : nfcCard.cardNumber}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowCardDetails(!showCardDetails)}
-                          >
-                            {showCardDetails ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          {t("profilepage.nfc.issueDate")}
-                        </span>
-                        <span>{nfcCard.issueDate}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          {t("profilepage.nfc.expiryDate")}
-                        </span>
-                        <span>{nfcCard.expiryDate}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                    <Button
-                      variant="outline"
-                      disabled={nfcCard.status !== "Active"}
-                    >
-                      {t("profilepage.nfc.deactivateCard")}
-                    </Button>
-                    <Button variant="gradient" className="w-full sm:w-auto">
-                      {t("profilepage.nfc.buyNewCard")}
-                    </Button>
-                  </div>
-
-                  <div className="bg-muted/20 rounded-lg p-4">
-                    <h4 className="font-semibold mb-2">
-                      {t("profilepage.nfc.cardFeaturesTitle")}
-                    </h4>
-                    <ul className="text-sm space-y-1 text-muted-foreground">
-                      <li>• {t("profilepage.nfc.feature1")}</li>
-                      <li>• {t("profilepage.nfc.feature2")}</li>
-                      <li>• {t("profilepage.nfc.feature3")}</li>
-                      <li>• {t("profilepage.nfc.feature4")}</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+              )}
+            </div>
             {/* Account Settings */}
             <TabsContent value="settings" className="space-y-6">
               <Card>
@@ -581,10 +733,11 @@ const Profile = () => {
                     <Settings className="h-5 w-5 text-primary" />
                     {t("profilepage.settingsTab.tab")}
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="mb-2">
                     {t("profilepage.settingsTab.description")}
                   </CardDescription>
                 </CardHeader>
+
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -607,6 +760,77 @@ const Profile = () => {
                         id="email"
                         type="email"
                         defaultValue={userInfo.email}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="profileImage">
+                        {t("profilepage.settingsTab.profileImage")}
+                      </Label>
+                      <div className="flex items-center space-x-2">
+                        {/* Preview current or selected image */}
+                        {profileImage && (
+                          <img
+                            src={userInfo.profileImage}
+                            alt="Profile Preview"
+                            className="w-24 h-24 rounded-full object-cover border"
+                          />
+                        )}
+
+                        <Input
+                          id="profileImage"
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                const base64 = reader.result?.toString() || "";
+                                setProfileImage(base64); // base64 string
+                                localStorage.setItem(
+                                  "userProfileImage",
+                                  base64
+                                );
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="bloodType">
+                        {t("profilepage.settingsTab.bloodType")}
+                      </Label>
+                      <select
+                        id="bloodType"
+                        className="w-full rounded-md border border-input bg-input px-3 py-2 text-sm text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        value={bloodType}
+                        onChange={(e) => setBloodType(e.target.value)}
+                      >
+                        <option value="">
+                          {t("profilepage.settingsTab.selectOption")}
+                        </option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A−</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B−</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB−</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O−</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="emergencyContact">
+                        {t("profilepage.settingsTab.emergencyContact")}
+                      </Label>
+                      <Input
+                        id="emergencyContact"
+                        type="tel"
+                        value={emergencyContact}
+                        onChange={(e) => setEmergencyContact(e.target.value)}
                       />
                     </div>
                   </div>
@@ -685,7 +909,7 @@ const Profile = () => {
                   </div>
 
                   <div className="flex justify-end">
-                    <Button variant="gradient">
+                    <Button variant="gradient" onClick={handleSave}>
                       {t("profilepage.settingsTab.saveChanges")}
                     </Button>
                   </div>

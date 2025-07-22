@@ -237,3 +237,39 @@ All colors MUST be HSL.
 .card-3d:hover {
   transform: rotateY(10deg) rotateX(5deg) skewY(1deg) skewX(1deg);
 }
+
+.swiper-button-prev,
+.swiper-button-next {
+  color: hsl(82 39% 35%);
+  /* or use your theme green */
+}
+
+.swiper-pagination-bullet {
+  background-color: #ccc;
+  /* default state */
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: hsl(82 39% 35%);
+  ;
+  /* your green color */
+}
+
+.swiper-button-prev {
+  left: -2rem;
+}
+
+.swiper-button-next {
+  right: -2rem;
+}
+
+@media (max-width: 768px) {
+  .swiper-button-prev {
+    left: -1rem;
+  }
+
+  .swiper-button-next {
+    right: -1rem;
+  }
+}

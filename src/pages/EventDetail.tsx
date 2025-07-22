@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,11 +15,18 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface EventImage {
   url: string;
@@ -37,6 +44,7 @@ interface EventData {
   title: string;
   videoUrl?: string;
   images: EventImage[];
+  layoutImageUrl?: string;
   date: string;
   time: string;
   location: string;
@@ -46,6 +54,7 @@ interface EventData {
   rating: number;
   attendees: number;
   description: string;
+  venueInfo: string;
   isFeatured?: boolean;
   organizer: Organizer;
 }
@@ -55,19 +64,22 @@ const EventDetail: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const [showTerms, setShowTerms] = useState(true);
+  const locale = i18n.language === "ar" ? "ar-EG" : i18n.language || "en-US";
+  const [showLayout, setShowLayout] = useState(false);
 
   // Mock event and organizer; replace with API call later
   const event: EventData = React.useMemo(
     () => ({
       id,
       title: t("eventDetail.title"),
-      videoUrl: "/public/SampleVideo.mp4",
+      videoUrl: "/SampleVideo.mp4",
       images: [
         { url: "/event1.jpg", isPrimary: true },
         { url: "/event2.jpg" },
         { url: "/event3.jpg" },
       ],
-      date: t("eventDetail.date"),
+      date: "2025-03-15", // ISO format; do not localize
       time: t("eventDetail.time"),
       location: t("eventDetail.location"),
       price: 150,
@@ -76,11 +88,13 @@ const EventDetail: React.FC = () => {
       rating: 4.8,
       attendees: 1250,
       description: t("eventDetail.description"),
+      venueInfo: t("eventDetail.venueInfo"),
+      layoutImageUrl: "/layoutPlaceholder.png",
       isFeatured: true,
       organizer: {
         id: "org-12",
         name: t("eventDetail.organizer.name"),
-        logoUrl: "/public/placeholderLogo.png",
+        logoUrl: "/placeholderLogo.png",
       },
     }),
     [id, t]
@@ -95,6 +109,16 @@ const EventDetail: React.FC = () => {
     images.forEach(({ url }) => items.push({ type: "image", url }));
     return items;
   }, [event]);
+
+  const date = new Date(event.date);
+  const formattedDate =
+    isNaN(date.getTime()) || !event.date
+      ? t("common.invalidDate") // fallback text
+      : new Intl.DateTimeFormat(locale, {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }).format(date);
 
   const handleBooking = () => navigate(`/booking/${id}`);
   const handleShare = () => {
@@ -148,16 +172,43 @@ const EventDetail: React.FC = () => {
   const goToOrganizer = () => navigate(`/ViewOrganizers/${event.organizer.id}`);
   return (
     <div className="min-h-screen bg-gradient-dark">
+      <Dialog open={showTerms} onOpenChange={setShowTerms}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Terms and Conditions</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto">
+            <p>
+              By purchasing a ticket to this event, you agree to the following
+              terms and conditions...
+            </p>
+            <ul className="list-disc pl-4">
+              <li>No refunds unless the event is cancelled.</li>
+              <li>Entry requires a valid digital or printed ticket.</li>
+              <li>Event organizers reserve the right to deny entry.</li>
+              {/* Add more as needed */}
+            </ul>
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button onClick={() => setShowTerms(false)}>Accept</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Media Carousel */}
-          <div className="relative rounded-xl overflow-hidden mb-8">
+          <div className="relative rounded-xl overflow-hidden mb-8" dir="ltr">
             <Swiper
-              modules={[Navigation, Pagination]}
+              modules={[Navigation, Pagination, Autoplay]}
               navigation
               pagination={{ clickable: true }}
               spaceBetween={16}
               slidesPerView={1}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
               loop={mediaItems.length > 1}
               className="h-96 w-full"
             >
@@ -175,7 +226,7 @@ const EventDetail: React.FC = () => {
                       playsInline
                       preload="none"
                       poster="/video-placeholder.jpg"
-                      className="w-full h-full object-contain aspect-video"
+                      className="w-full h-full object-cover aspect-video"
                     />
                   ) : (
                     <img
@@ -250,29 +301,26 @@ const EventDetail: React.FC = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex items-center text-muted-foreground">
                   <Calendar className="h-5 w-5 mx-3" />
-                  <span>{event.date}</span>
+                  <div dir={locale.startsWith("ar") ? "rtl" : "ltr"}>
+                    {formattedDate}
+                  </div>
                 </div>
                 <div className="flex items-center text-muted-foreground">
                   <Clock className="h-5 w-5 mx-3" />
                   <span>{event.time}</span>
                 </div>
                 <div className="flex items-center text-muted-foreground">
-                  <MapPin className="h-5 w-5 mx-3" />
-                  <span>{event.location}</span>
-                </div>
-              </div>
-
-              {/* Rating & Attendees */}
-              <div className="flex items-center space-x-6 mb-6">
-                <div className="flex items-center">
-                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400 mx-2" />
-                  <span className="font-medium">{event.rating}</span>
-                </div>
-                <div className="flex items-center text-muted-foreground">
-                  <Users className="h-5 w-5 mx-2" />
-                  <span>
-                    {t("eventDetail.attendees", { count: event.attendees })}
-                  </span>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                      event?.location
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <MapPin className="h-5 w-5 mx-3" />
+                    {event?.location}
+                  </a>
                 </div>
               </div>
 
@@ -282,6 +330,12 @@ const EventDetail: React.FC = () => {
                   {t("eventDetail.aboutEvent")}
                 </h2>
                 <p className="text-muted-foreground">{event.description}</p>
+              </div>
+              <div className="pt-6 space-y-2">
+                <h3 className="text-lg font-semibold">
+                  {t("eventDetail.venueInfoTitle")}
+                </h3>
+                <p className="text-muted-foreground">{event.venueInfo}</p>
               </div>
             </div>
 
@@ -334,6 +388,25 @@ const EventDetail: React.FC = () => {
                     </span>
                   </div>
                 </div>
+                {event.layoutImageUrl && (
+                  <div className="mt-4 text-center m-auto">
+                    <Button
+                      variant="gradient"
+                      onClick={() => setShowLayout(true)}
+                    >
+                      {t("eventDetail.showLayoutButton", "Show Layout Image")}
+                    </Button>
+                  </div>
+                )}
+                <Dialog open={showLayout} onOpenChange={setShowLayout}>
+                  <DialogContent className="max-w-3xl p-0 overflow-hidden">
+                    <img
+                      src={event.layoutImageUrl}
+                      alt="Venue Layout"
+                      className="w-full h-auto object-contain"
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </div>

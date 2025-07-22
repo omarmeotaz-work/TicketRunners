@@ -21,6 +21,9 @@ import { AuthModals } from "./AuthModals";
 import i18n from "@/lib/i18n";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/Contexts/AuthContext";
+import AsyncSelect from "react-select/async";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const getInitialTheme = (): boolean => {
   if (typeof window === "undefined") return true;
@@ -34,6 +37,7 @@ export function Header() {
   const { user, openLogin, openSignup, logout } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,6 +49,40 @@ export function Header() {
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
   const [language, setLanguage] = useState("EN");
+
+  const loadOptions = async (inputValue: string) => {
+    if (!inputValue) return [];
+
+    const response = await axios.get(`/api/events/search`, {
+      params: { query: inputValue },
+    });
+
+    return response.data.events.map((event: any) => ({
+      label: event.name,
+      value: event.id,
+      image: event.cover_image,
+      date: event.date,
+      location: event.location,
+    }));
+  };
+
+  const formatOptionLabel = ({ label, image, date, location }: any) => (
+    <div className="flex items-center gap-4">
+      <img src={image} alt={label} className="w-12 h-12 object-cover rounded" />
+      <div>
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-xs text-muted-foreground">
+          {date} – {location}
+        </div>
+      </div>
+    </div>
+  );
+
+  const handleChange = (selected: any) => {
+    if (selected?.value) {
+      navigate(`/events/${selected.value}`);
+    }
+  };
 
   useEffect(() => {
     const html = document.documentElement;
@@ -148,11 +186,45 @@ export function Header() {
           {/* Search (hidden on mobile) */}
           <div className="hidden md:flex flex-1 min-w-0 max-w-lg mx-4">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-              <input
-                type="text"
+              <AsyncSelect
+                cacheOptions
+                loadOptions={loadOptions}
+                defaultOptions
+                onChange={handleChange}
+                formatOptionLabel={formatOptionLabel}
                 placeholder={t("searchEvents")}
-                className="w-full h-10 pl-10 pr-4 rounded-xl border border-border bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-300"
+                classNamePrefix="react-select"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    backgroundColor: "hsl(var(--input))",
+                    borderColor: "hsl(var(--border))",
+                    color: "white",
+                  }),
+                  input: (base) => ({
+                    ...base,
+                    color: "white",
+                  }),
+                  singleValue: (base) => ({
+                    ...base,
+                    color: "white",
+                  }),
+                  placeholder: (base) => ({
+                    ...base,
+                    color: "hsl(0, 0%, 70%)", // muted placeholder
+                  }),
+                  option: (base, { isFocused }) => ({
+                    ...base,
+                    backgroundColor: isFocused
+                      ? "hsl(var(--muted))"
+                      : "transparent",
+                    color: "white",
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    backgroundColor: "hsl(var(--popover))",
+                  }),
+                }}
               />
             </div>
           </div>
@@ -211,11 +283,45 @@ export function Header() {
             <div className="space-y-4">
               {/* Mobile Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                <input
-                  type="text"
-                  placeholder="Search events..."
-                  className="w-full h-10 pl-10 pr-4 rounded-xl border border-border bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-300"
+                <AsyncSelect
+                  cacheOptions
+                  loadOptions={loadOptions}
+                  defaultOptions
+                  onChange={handleChange}
+                  formatOptionLabel={formatOptionLabel}
+                  placeholder={t("searchEvents")}
+                  classNamePrefix="react-select"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: "hsl(var(--input))",
+                      borderColor: "hsl(var(--border))",
+                      color: "white",
+                    }),
+                    input: (base) => ({
+                      ...base,
+                      color: "white",
+                    }),
+                    singleValue: (base) => ({
+                      ...base,
+                      color: "white",
+                    }),
+                    placeholder: (base) => ({
+                      ...base,
+                      color: "hsl(0, 0%, 70%)", // muted placeholder
+                    }),
+                    option: (base, { isFocused }) => ({
+                      ...base,
+                      backgroundColor: isFocused
+                        ? "hsl(var(--muted))"
+                        : "transparent",
+                      color: "white",
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      backgroundColor: "hsl(var(--popover))",
+                    }),
+                  }}
                 />
               </div>
               {/* Mobile Navigation Bar */}

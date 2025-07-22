@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +37,8 @@ interface Organizer {
 const ViewOrganizersPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [pastEvents, setPastEvents] = useState<Event[]>([]);
 
   // ────────────────────────────────────────────────────────────────
   // Mock organizer & events — replace with API fetch later
@@ -88,6 +90,8 @@ const ViewOrganizersPage: React.FC = () => {
 
   // Navigate handlers
   const goToEvent = (eventId: string) => navigate(`/event/${eventId}`);
+  const goToExpiredEvent = (eventId: string) =>
+    navigate(`/Expiredevent/${eventId}`);
   const { t } = useTranslation();
 
   return (
@@ -108,10 +112,10 @@ const ViewOrganizersPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Events Section */}
+        {/* Upcoming Events Section */}
         <section>
           <h2 className="text-2xl font-semibold text-foreground mb-6">
-            {t("organizers.title")}
+            {t("organizers.Utitle")}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -171,12 +175,75 @@ const ViewOrganizersPage: React.FC = () => {
                   {/* Category Badge */}
                   <div className="flex items-center justify-between mt-2">
                     <Badge variant="secondary">{evt.category}</Badge>
-                    <div className="flex items-center gap-1 text-sm">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span>
-                        {t("organizers.rating")}: {evt.rating}
-                      </span>
-                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+        {/* former Events Section */}
+        <section className="mt-10">
+          <h2 className="text-2xl font-semibold text-foreground mb-6">
+            {t("organizers.Ftitle")}
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {organizer.events.map((evt) => (
+              <div
+                key={evt.id}
+                className="card-elevated rounded-xl overflow-hidden hover-scale cursor-pointer"
+                onClick={() => goToExpiredEvent(evt.id)}
+              >
+                {/* Event Image / Carousel (single image here) */}
+                <Swiper
+                  modules={[Navigation, Pagination]}
+                  pagination={{ clickable: true }}
+                  navigation
+                  loop={false}
+                  slidesPerView={1}
+                  className="h-56 w-full"
+                >
+                  {evt.images.map((img, idx) => (
+                    <SwiperSlide key={idx} className="h-full">
+                      <img
+                        src={img.url}
+                        alt={evt.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+
+                {/* Event Info */}
+                <div className="p-4 flex flex-col gap-2">
+                  <h3 className="font-semibold text-lg text-foreground line-clamp-2 min-h-[48px]">
+                    {evt.title}
+                  </h3>
+
+                  <div className="flex items-center text-sm text-muted-foreground gap-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>
+                      {t("organizers.date")}: {evt.date}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center text-sm text-muted-foreground gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>
+                      {t("organizers.time")}: {evt.time}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center text-sm text-muted-foreground gap-2">
+                    <MapPin className="h-4 w-4" />
+                    <span className="line-clamp-1">
+                      {t("organizers.location")}: {evt.location}
+                    </span>
+                  </div>
+
+                  {/* Category Badge */}
+                  <div className="flex items-center justify-between mt-2">
+                    <Badge variant="secondary">{evt.category}</Badge>
                   </div>
                 </div>
               </div>

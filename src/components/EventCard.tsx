@@ -1,14 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Calendar,
   MapPin,
   Clock,
-  Star,
   Heart,
   Share2,
-  Users,
   Ticket,
   Banknote,
 } from "lucide-react";
@@ -25,8 +23,6 @@ interface EventCardProps {
   price: number;
   originalPrice?: number;
   category: string;
-  rating: number;
-  attendees: number;
   isFeatured?: boolean;
   isLiked?: boolean;
 }
@@ -41,8 +37,6 @@ export function EventCard({
   price,
   originalPrice,
   category,
-  rating,
-  attendees,
   isFeatured = false,
   isLiked = false,
 }: EventCardProps) {
@@ -50,10 +44,14 @@ export function EventCard({
   const { toast } = useToast();
   const { t } = useTranslation();
   const { i18n } = useTranslation();
-
-  const formattedDate = new Intl.DateTimeFormat(i18n.language, {
-    dateStyle: "long",
-  }).format(new Date(date));
+  const formattedDate = useMemo(() => {
+    const locale = i18n.language === "en" ? "en-GB" : i18n.language;
+    return new Intl.DateTimeFormat(locale, {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(date));
+  }, [i18n.language, date]);
 
   const formattedTime = new Intl.DateTimeFormat(i18n.language, {
     hour: "2-digit",
@@ -177,19 +175,6 @@ export function EventCard({
               <strong className="mx-1">{t("eventCard.price")}:</strong>
               {price} {t("eventCard.currency")}
             </span>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mx-1" />
-              <span className="text-sm font-medium">{rating}</span>
-            </div>
-            <div className="flex items-center text-muted-foreground">
-              <Users className="h-4 w-4 mx-1" />
-              <span className="text-sm">{attendees}</span>
-            </div>
           </div>
         </div>
 
