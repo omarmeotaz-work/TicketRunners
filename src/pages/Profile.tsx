@@ -33,6 +33,8 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { InvoicePreview } from "@/components/invoicePreview";
+import { PhoneOTPVerification } from "@/components/PhoneOTPVerification";
+import { EmailVerification } from "@/components/EmailVerification";
 const Profile = () => {
   const [showCardDetails, setShowCardDetails] = useState(false);
   // ① read the URL hash (#nfc, #bookings …)
@@ -45,6 +47,15 @@ const Profile = () => {
   })();
   // ② keep Tabs state in React so the URL can update as the user clicks tabs
   const [activeTab, setActiveTab] = useState<string>(initialTab);
+
+  // State for verification components
+  const [userSettings, setUserSettings] = useState({
+    name: "Ahmed Mohamed Hassan",
+    phone: "+20 123 456 7890",
+    email: "ahmed.mohamed@example.com",
+    isPhoneVerified: false,
+    isEmailVerified: false,
+  });
 
   // Mock data
   const userInfo = {
@@ -165,6 +176,47 @@ const Profile = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     toast({ title: "Calendar file downloaded" });
+  };
+
+  // Handlers for verification components
+  const handlePhoneVerificationSuccess = (phone: string) => {
+    setUserSettings(prev => ({
+      ...prev,
+      phone,
+      isPhoneVerified: true,
+    }));
+  };
+
+  const handleEmailVerificationSuccess = (email: string) => {
+    setUserSettings(prev => ({
+      ...prev,
+      email,
+      isEmailVerified: true,
+    }));
+  };
+
+  const handlePhoneChange = (phone: string) => {
+    setUserSettings(prev => ({
+      ...prev,
+      phone,
+      isPhoneVerified: false,
+    }));
+  };
+
+  const handleEmailChange = (email: string) => {
+    setUserSettings(prev => ({
+      ...prev,
+      email,
+      isEmailVerified: false,
+    }));
+  };
+
+  const handleSaveSettings = () => {
+    // Here you would typically save to your backend
+    toast({
+      title: "Settings Updated",
+      description: "Your profile settings have been saved successfully.",
+    });
   };
 
   return (
@@ -586,27 +638,29 @@ const Profile = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="fullName">
                         {t("profilepage.settingsTab.fullName")}
                       </Label>
-                      <Input id="fullName" defaultValue={userInfo.name} />
+                      <Input 
+                        id="fullName" 
+                        value={userSettings.name}
+                        onChange={(e) => setUserSettings(prev => ({ ...prev, name: e.target.value }))}
+                      />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">
-                        {t("profilepage.settingsTab.phone")}
-                      </Label>
-                      <Input id="phone" defaultValue={userInfo.phone} />
+                    <div className="md:col-span-2">
+                      <PhoneOTPVerification
+                        initialPhone={userSettings.phone}
+                        onVerificationSuccess={handlePhoneVerificationSuccess}
+                        onPhoneChange={handlePhoneChange}
+                      />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">
-                        {t("profilepage.settingsTab.email")}
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        defaultValue={userInfo.email}
+                    <div className="md:col-span-2">
+                      <EmailVerification
+                        initialEmail={userSettings.email}
+                        onVerificationSuccess={handleEmailVerificationSuccess}
+                        onEmailChange={handleEmailChange}
                       />
                     </div>
                   </div>
@@ -685,7 +739,7 @@ const Profile = () => {
                   </div>
 
                   <div className="flex justify-end">
-                    <Button variant="gradient">
+                    <Button variant="gradient" onClick={handleSaveSettings}>
                       {t("profilepage.settingsTab.saveChanges")}
                     </Button>
                   </div>
