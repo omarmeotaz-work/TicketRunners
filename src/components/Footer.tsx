@@ -49,14 +49,8 @@ export function Footer() {
               {t("footer.tagline")}
             </p>
             <div className="flex space-x-3">
-              <Button variant="icon" size="icon" aria-label="Facebook">
-                <Facebook className="h-4 w-4" />
-              </Button>
               <Button variant="icon" size="icon" aria-label="Instagram">
                 <Instagram className="h-4 w-4" />
-              </Button>
-              <Button variant="icon" size="icon" aria-label="Twitter">
-                <Twitter className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -127,6 +121,19 @@ export function Footer() {
             <div className="text-muted-foreground text-sm">
               © {currentYear} TicketRunners | {t("footer.trustSlogan")}
             </div>
+
+            <div className="text-muted-foreground text-center">
+              {t("footer.poweredBy")}{" "}
+              <a
+                href="https://flokisystems.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:text-primary/80 transition-colors duration-300"
+              >
+                Floki Systems
+              </a>
+            </div>
+
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>{t("footer.techSupport")}:</span>
               <a

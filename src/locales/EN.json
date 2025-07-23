@@ -45,7 +45,8 @@
     "contact": "Contact",
     "location": "Cairo, Egypt",
     "trustSlogan": "Your Trusted Ticket Marketplace",
-    "techSupport": "Technical Support"
+    "techSupport": "Technical Support",
+    "poweredBy": "Powered by"
   },
   "eventCard": {
     "featured": "Featured",
@@ -147,6 +148,7 @@
     "title": "Book Your Tickets",
     "description": "Complete your booking for {{event}}",
     "eventDetails": "Event Details",
+    "ageRestrictionNotice": "You must be at least {{age}} years old to book tickets for this event.",
     "ticketQuantities": "Ticket Quantities",
     "subtotal": "Subtotal",
     "customerInfo": "Customer Information",
@@ -154,7 +156,10 @@
     "mobile": "Mobile Number",
     "dependentsInfo": "Dependents Information",
     "dependent": "Dependent",
+    "dependentDisclaimer": "Each dependent must have a separate account to receive their ticket.",
     "name": "Name",
+    "assigned": "Assigned",
+    "child": "Child",
     "mobilePlaceholder": "Mobile number",
     "email": "Dependant's Email",
     "EmailPlaceholder": "Enter an Email",
@@ -224,6 +229,14 @@
       "date": "Date",
       "time": "Time",
       "location": "Location"
+    },
+    "dependentBookings": {
+      "title": "Dependents’ Tickets",
+      "description": "Tickets purchased for your added dependents.",
+      "status": {
+        "claimed": "Claimed",
+        "pending": "Pending"
+      }
     },
     "visits": {
       "title": "My Visits",
@@ -296,6 +309,7 @@
       "profileImage": "Profile Image",
       "bloodType": "Blood Type",
       "emergencyContact": "Emergency Contact",
+      "emergencyContactName": "Emergency Contact Name",
       "selectOption": "Select an option",
       "changesSaved": "Changes saved successfully",
       "browse": "Upload new image"
@@ -397,6 +411,8 @@
     "title": "Ahmed Sheba Live Concert",
     "date": "March 15, 2025",
     "time": "8:00 PM",
+    "gateOpen": "Gates Open:",
+    "gateClose": "Gates Close:",
     "location": "Cairo Opera House",
     "category": "Music",
     "venueInfoTitle": "About the Venue",
@@ -407,8 +423,18 @@
     },
     "attendees": "{{count}} attending",
     "aboutEvent": "About this event",
+    "showLayout": "Show Layout",
+    "facilitiesTitle": "Facilities",
+    "facilities": {
+      "Parking": "Parking",
+      "Wheelchair Access": "Wheelchair Access",
+      "Wi-Fi": "Wi-Fi",
+      "Food": "Food"
+    },
     "perTicket": "per ticket",
     "organizers": "Organizers",
+    "termsTitle": "Terms and Conditions",
+    "termsContent": "By purchasing a ticket, you agree to abide by the venue rules and event policies. Tickets are non-refundable and non-transferable unless the event is cancelled or rescheduled.",
     "shareToast": {
       "title": "Link copied!",
       "description": "Event link copied to clipboard"
@@ -418,9 +444,7 @@
   "badges": {
     "featured": "Featured"
   },
-  "buttons": {
-    "bookNow": "Book Now"
-  },
+
   "ariaLabels": {
     "share": "Share",
     "addToCalendar": "Add to calendar",
@@ -528,6 +552,7 @@
     "verify": "Verify",
     "otp_sent": "OTP sent",
     "otp_verified": "Phone number verified",
+    "resend_otp": "resend OTP",
     "verify_otp": "Verify OTP",
     "placeholders": {
       "otp": "Enter OTP"
@@ -578,5 +603,94 @@
     "accept": "Accept",
     "cancel": "Cancel",
     "invalidDate": "Invalid date"
+  },
+  "buttons": {
+    "book_now": "Book Now",
+    "view_event": "View Event"
+  },
+  "wallet": {
+    "expiresOn": "Expires on",
+    "virtualExpired": "Your temporary virtual access has expired.",
+    "renewTemporaryAccess": "Renew Temporary Access",
+    "add": "Add to Wallet",
+    "added": "Added to Wallet"
+  },
+
+  "how_it_works": {
+    "title": "How It Works",
+    "step1": {
+      "title": "Browse Events",
+      "text": "Discover a wide range of events tailored to your interests."
+    },
+    "step2": {
+      "title": "Secure Your Tickets",
+      "text": "Easily purchase tickets with our secure platform."
+    },
+    "step3": {
+      "title": "Enjoy the Experience",
+      "text": "Attend your event and have a great time!"
+    }
+  },
+  "termspage": {
+    "title": "Terms & Conditions",
+    "section1": {
+      "title": "User Agreement",
+      "text": "By using our service, you agree to..."
+    },
+    "section2": { "title": "Usage Restrictions", "text": "Users may not..." },
+    "section3": {
+      "title": "Modifications",
+      "text": "We reserve the right to change..."
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "data_collection": {
+      "title": "Data Collection",
+      "text": "We collect data to improve..."
+    },
+    "usage": { "title": "Use of Data", "text": "Your data is used for..." },
+    "sharing": { "title": "Data Sharing", "text": "We may share data with..." }
+  },
+  "refund": {
+    "title": "Refund Policy",
+    "eligibility": {
+      "title": "Eligibility",
+      "text": "Refunds are available if..."
+    },
+    "process": { "title": "Refund Process", "text": "To request a refund..." },
+    "exceptions": {
+      "title": "Exceptions",
+      "text": "Refunds are not applicable for..."
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": {
+      "question": "How do I book a ticket?",
+      "answer": "You can book a ticket by selecting your desired event and following the checkout process."
+    },
+    "q2": {
+      "question": "Can I refund my ticket?",
+      "answer": "Refunds depend on the event organizer's policy. Please check the refund policy before booking."
+    },
+    "q3": {
+      "question": "Is my payment secure?",
+      "answer": "Yes, all payments are securely processed using industry-standard encryption."
+    }
+  },
+  "nearby_merchants": {
+    "title": "Nearby Merchants",
+    "view_on_map": "View On Map"
+  },
+  "share": {
+    "title": "Share this Event",
+    "copy": "Copy Link",
+    "copied": "Link Copied",
+    "copied_description": "You can now share it anywhere.",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "linkedin": "LinkedIn",
+    "email": "Email"
   }
 }

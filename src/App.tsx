@@ -35,6 +35,12 @@ import { AuthModals } from "./components/AuthModals";
 import { useTranslation } from "react-i18next";
 import { AuthProvider } from "./Contexts/AuthContext";
 import ExpiredEventDetail from "./pages/ExpiredEvent";
+import HowItWorks from "./pages/HowItWorks";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/refundPolicy";
+import FAQ from "./pages/FAQsPage";
+import NearbyMerchants from "./pages/NearbyMerchants";
 /* -------------------------------------------------------------------------- */
 /*                              Theme Context                                 */
 /* -------------------------------------------------------------------------- */
@@ -152,7 +158,16 @@ export default function App() {
                   />
                   <Route path="contact" element={<ContactUs />} />
                   <Route path="about" element={<AboutUs />} />
+                  <Route path="/faqs" element={<FAQ />} />
+                  <Route path="/howitworks" element={<HowItWorks />} />
+                  <Route path="/terms" element={<TermsAndConditions />} />
+                  <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+                  <Route path="/refundpolicy" element={<RefundPolicy />} />
                   <Route path="merchant" element={<MerchantPage />} />
+                  <Route
+                    path="/nearbymerchants"
+                    element={<NearbyMerchants />}
+                  />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>

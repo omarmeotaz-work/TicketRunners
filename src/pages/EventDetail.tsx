@@ -12,6 +12,15 @@ import {
   Share2,
   Heart,
   CalendarPlus,
+  ParkingCircle,
+  Accessibility,
+  Wifi,
+  Baby,
+  Leaf,
+  Utensils,
+  ShowerHead,
+  Music,
+  Sun,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -27,6 +36,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ShareModal } from "@/components/ShareModal";
 
 interface EventImage {
   url: string;
@@ -37,6 +47,10 @@ interface Organizer {
   id: string;
   name: string;
   logoUrl: string;
+}
+interface Facility {
+  name: string;
+  icon: string; // Icon key to map to a Lucide icon
 }
 
 interface EventData {
@@ -55,6 +69,7 @@ interface EventData {
   attendees: number;
   description: string;
   venueInfo: string;
+  facilities?: Facility[];
   isFeatured?: boolean;
   organizer: Organizer;
 }
@@ -67,6 +82,12 @@ const EventDetail: React.FC = () => {
   const [showTerms, setShowTerms] = useState(true);
   const locale = i18n.language === "ar" ? "ar-EG" : i18n.language || "en-US";
   const [showLayout, setShowLayout] = useState(false);
+
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  const handleShare = () => {
+    setShowShareModal(true);
+  };
 
   // Mock event and organizer; replace with API call later
   const event: EventData = React.useMemo(
@@ -89,6 +110,12 @@ const EventDetail: React.FC = () => {
       attendees: 1250,
       description: t("eventDetail.description"),
       venueInfo: t("eventDetail.venueInfo"),
+      facilities: [
+        { name: "Parking", icon: "parking" },
+        { name: "Wheelchair Access", icon: "accessibility" },
+        { name: "Wi-Fi", icon: "wifi" },
+        { name: "Food", icon: "food" },
+      ],
       layoutImageUrl: "/layoutPlaceholder.png",
       isFeatured: true,
       organizer: {
@@ -99,6 +126,17 @@ const EventDetail: React.FC = () => {
     }),
     [id, t]
   );
+  const facilityIcons: Record<string, JSX.Element> = {
+    parking: <ParkingCircle className="w-5 h-5 text-primary" />,
+    accessibility: <Accessibility className="w-5 h-5 text-primary" />,
+    wifi: <Wifi className="w-5 h-5 text-primary" />,
+    baby: <Baby className="w-5 h-5 text-primary" />,
+    greenArea: <Leaf className="w-5 h-5 text-primary" />,
+    food: <Utensils className="w-5 h-5 text-primary" />,
+    showers: <ShowerHead className="w-5 h-5 text-primary" />,
+    music: <Music className="w-5 h-5 text-primary" />,
+    outdoor: <Sun className="w-5 h-5 text-primary" />,
+  };
 
   const mediaItems = useMemo(() => {
     const items: { type: "video" | "image"; url: string }[] = [];
@@ -121,13 +159,6 @@ const EventDetail: React.FC = () => {
         }).format(date);
 
   const handleBooking = () => navigate(`/booking/${id}`);
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: t("eventDetail.shareToast.title"),
-      description: t("eventDetail.shareToast.description"),
-    });
-  };
 
   const handleAddToCalendar = () => {
     // 1. Build ICS content
@@ -309,6 +340,7 @@ const EventDetail: React.FC = () => {
                   <Clock className="h-5 w-5 mx-3" />
                   <span>{event.time}</span>
                 </div>
+
                 <div className="flex items-center text-muted-foreground">
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
@@ -322,6 +354,12 @@ const EventDetail: React.FC = () => {
                     {event?.location}
                   </a>
                 </div>
+                <p className="mx-4 text-sm text-muted-foreground">
+                  {t("eventDetail.gateOpen")} {event.time}
+                </p>
+                <p className="mx-4 text-sm text-muted-foreground">
+                  {t("eventDetail.gateClose")} {event.time}
+                </p>
               </div>
 
               {/* Description */}
@@ -336,7 +374,46 @@ const EventDetail: React.FC = () => {
                   {t("eventDetail.venueInfoTitle")}
                 </h3>
                 <p className="text-muted-foreground">{event.venueInfo}</p>
+                {event.layoutImageUrl && (
+                  <div className="mt-4 text-center m-auto">
+                    <Button
+                      variant="gradient"
+                      onClick={() => setShowLayout(true)}
+                    >
+                      {t("eventDetail.showLayout")}{" "}
+                    </Button>
+                  </div>
+                )}
+                <Dialog open={showLayout} onOpenChange={setShowLayout}>
+                  <DialogContent className="max-w-3xl p-0 overflow-hidden">
+                    <img
+                      src={event.layoutImageUrl}
+                      alt="Venue Layout"
+                      className="w-full h-auto object-contain"
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
+              {event.facilities && event.facilities.length > 0 && (
+                <div className="pt-6">
+                  <h3 className="text-lg font-semibold mb-2">
+                    {t("eventDetail.facilitiesTitle")}
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {event.facilities.map((facility) => (
+                      <div
+                        key={facility.name}
+                        className="flex items-center gap-2"
+                      >
+                        {facilityIcons[facility.icon] || null}
+                        <span className="text-sm text-muted-foreground">
+                          {t(`eventDetail.facilities.${facility.name}`)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right Column – Booking Card & Organizer */}
@@ -366,7 +443,7 @@ const EventDetail: React.FC = () => {
                   onClick={handleBooking}
                 >
                   <Ticket className="h-4 w-4 mx-2 transition-transform group-hover/btn:scale-110" />
-                  {t("buttons.bookNow")}
+                  {t("buttons.book_now")}
                 </Button>
 
                 {/* Organizer Card */}
@@ -388,30 +465,25 @@ const EventDetail: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                {event.layoutImageUrl && (
-                  <div className="mt-4 text-center m-auto">
-                    <Button
-                      variant="gradient"
-                      onClick={() => setShowLayout(true)}
-                    >
-                      {t("eventDetail.showLayoutButton", "Show Layout Image")}
-                    </Button>
-                  </div>
-                )}
-                <Dialog open={showLayout} onOpenChange={setShowLayout}>
-                  <DialogContent className="max-w-3xl p-0 overflow-hidden">
-                    <img
-                      src={event.layoutImageUrl}
-                      alt="Venue Layout"
-                      className="w-full h-auto object-contain"
-                    />
-                  </DialogContent>
-                </Dialog>
               </div>
             </div>
+
+            <section className="mt-8">
+              <h2 className="text-xl font-semibold mb-2">
+                {t("eventDetail.termsTitle")}
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {t("eventDetail.termsContent")}
+              </p>
+            </section>
           </div>
         </div>
       </main>
+      <ShareModal
+        open={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        shareUrl={""}
+      />
     </div>
   );
 };

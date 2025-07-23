@@ -104,12 +104,9 @@ export function HeroSection({
             }`}
           >
             {/* Welcome Badge */}
-            <div className="inline-flex items-center space-x-2 bg-card/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 mb-2 animate-fade-in">
+            <div className="inline-flex items-center space-x-2 bg-card/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 mb-4 animate-fade-in">
               <Sparkles className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium">{t("hero.badge")}</span>
-              <span className="text-primary text-sm font-semibold">
-                {t("hero.badge_sub")}
-              </span>
             </div>
 
             {/* Title */}

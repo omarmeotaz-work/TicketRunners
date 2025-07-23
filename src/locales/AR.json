@@ -146,6 +146,7 @@
   "booking": {
     "title": "احجز تذاكرك",
     "description": "أكمل حجزك لـ {{event}}",
+    "ageRestrictionNotice": "يجب أن يكون عمرك {{age}} سنة على الأقل لحجز التذاكر لهذا الحدث",
     "eventDetails": "تفاصيل الحدث",
     "ticketQuantities": "عدد التذاكر",
     "subtotal": "الإجمالي الفرعي",
@@ -155,6 +156,8 @@
     "dependentsInfo": "معلومات المرافقين",
     "dependent": "المرافق",
     "name": "الاسم",
+    "assigned": "مُعَيَّن",
+    "child": "طفل",
     "mobilePlaceholder": "رقم الجوال",
     "socialMedia": "وسائل التواصل الاجتماعي",
     "optionalUsername": "@اسم_المستخدم (اختياري)",
@@ -178,6 +181,7 @@
     "firstPurchaseNotice": "تنويه بخصوص أول عملية شراء",
     "nfcInstruction": "ستحتاج إلى الحصول على بطاقة NFC من أحد وكلائنا",
     "dependentsOptional": "معلومات الشخص المرافق",
+    "dependentDisclaimer": "يجب أن يكون لكل تابع حساب منفصل لتلقي التذكرة.",
     "namePlaceholder": "أدخل الاسم",
     "ticketType": "فئة التذكرة",
     "mainUserInfo": "تذكرتكt",
@@ -232,6 +236,14 @@
       "expires": "تاريخ الانتهاء",
       "addToWallet": "أضف إلى المحفظة",
       "notice": "يرجى شراء البطاقة من أقرب تاجر"
+    },
+    "dependentBookings": {
+      "title": "Dependents’ Tickets",
+      "description": "Tickets purchased for your added dependents.",
+      "status": {
+        "claimed": "Claimed",
+        "pending": "Pending"
+      }
     },
     "myBookings": {
       "title": "حجوزاتي",
@@ -290,6 +302,8 @@
       "profileImage": "صورة الملف الشخصي",
       "bloodType": "فصيلة الدم",
       "emergencyContact": "رقم الطوارئ",
+      "emergency_contact_name": "اسم جهة اتصال الطوارئ",
+
       "selectOption": "اختر خيارًا",
       "changesSaved": "تم حفظ التغييرات بنجاح",
       "browse": "تحميل صورة جديدة"
@@ -394,6 +408,8 @@
     "title": "حفل أحمد شيبة مباشر",
     "date": "15 مارس 2025",
     "time": "8:00 مساءً",
+    "gateOpen": "يفتح البوابة:",
+    "gateClose": "تغلق البوابة:",
     "location": "دار الأوبرا المصرية",
     "category": "موسيقى",
     "description": "انضم إلينا في أمسية لا تُنسى مع أحمد شيبة، أحد أشهر الموسيقيين المحبوبين في مصر. استمتع بأعظم أغانيه في جو حميمي في دار الأوبرا المصرية المرموقة.",
@@ -406,6 +422,16 @@
     "aboutEvent": "حول هذا الحدث",
     "perTicket": "لكل تذكرة",
     "organizers": "المنظمون",
+    "showLayout": "عرض المخطط",
+    "facilitiesTitle": "Facilities",
+    "facilities": {
+      "Parking": "Parking",
+      "Wheelchair Access": "Wheelchair Access",
+      "Wi-Fi": "Wi-Fi",
+      "Food": "Food"
+    },
+    "termsTitle": "الشروط والأحكام",
+    "termsContent": "بشراء تذكرة، فإنك توافق على الالتزام بقواعد مكان الفعالية وسياساتها. التذاكر غير قابلة للاسترداد أو التنازل إلا في حال إلغاء الفعالية أو إعادة جدولتها",
     "shareToast": {
       "title": "تم نسخ الرابط!",
       "description": "تم نسخ رابط الحدث إلى الحافظة"
@@ -415,9 +441,7 @@
   "badges": {
     "featured": "مميز"
   },
-  "buttons": {
-    "bookNow": "احجز الآن"
-  },
+
   "ariaLabels": {
     "share": "مشاركة",
     "addToCalendar": "إضافة إلى التقويم",
@@ -574,5 +598,106 @@
     "accept": "أوافق",
     "cancel": "إلغاء",
     "invalidDate": "تاريخ غير صالح"
+  },
+  "buttons": {
+    "book_now": "احجز الآن",
+    "view_event": "عرض الحدث"
+  },
+  "wallet": {
+    "expiresOn": "Expires on",
+    "virtualExpired": "Your temporary virtual access has expired.",
+    "renewTemporaryAccess": "Renew Temporary Access",
+    "add": "أضف إلى المحفظة",
+    "added": "تمت الإضافة إلى المحفظة"
+  },
+
+  "how_it_works": {
+    "title": "كيف يعمل",
+    "step1": {
+      "title": "تصفح الفعاليات",
+      "text": "اكتشف مجموعة واسعة من الفعاليات المصممة وفقًا لاهتماماتك."
+    },
+    "step2": {
+      "title": "احجز تذاكرك بأمان",
+      "text": "قم بشراء التذاكر بسهولة من خلال منصتنا الآمنة."
+    },
+    "step3": {
+      "title": "استمتع بالتجربة",
+      "text": "احضر الفعالية واستمتع بوقتك!"
+    }
+  },
+  "termspage": {
+    "title": "الشروط والأحكام",
+    "section1": {
+      "title": "اتفاقية المستخدم",
+      "text": "باستخدامك لخدمتنا، فإنك توافق على..."
+    },
+    "section2": {
+      "title": "قيود الاستخدام",
+      "text": "لا يجوز للمستخدمين..."
+    },
+    "section3": {
+      "title": "التعديلات",
+      "text": "نحتفظ بالحق في تغيير..."
+    }
+  },
+  "privacy": {
+    "title": "سياسة الخصوصية",
+    "data_collection": {
+      "title": "جمع البيانات",
+      "text": "نجمع البيانات لتحسين..."
+    },
+    "usage": {
+      "title": "استخدام البيانات",
+      "text": "يتم استخدام بياناتك من أجل..."
+    },
+    "sharing": {
+      "title": "مشاركة البيانات",
+      "text": "قد نقوم بمشاركة البيانات مع..."
+    }
+  },
+  "refund": {
+    "title": "سياسة الاسترجاع",
+    "eligibility": {
+      "title": "شروط الاستحقاق",
+      "text": "الاسترجاع متاح في حال..."
+    },
+    "process": {
+      "title": "عملية الاسترجاع",
+      "text": "لطلب استرجاع..."
+    },
+    "exceptions": {
+      "title": "الاستثناءات",
+      "text": "لا يمكن الاسترجاع في الحالات التالية..."
+    }
+  },
+  "faq": {
+    "title": "الأسئلة الشائعة",
+    "q1": {
+      "question": "كيف يمكنني حجز تذكرة؟",
+      "answer": "يمكنك حجز تذكرة عن طريق اختيار الحدث المطلوب واتباع خطوات الدفع."
+    },
+    "q2": {
+      "question": "هل يمكنني استرداد قيمة التذكرة؟",
+      "answer": "الاسترداد يعتمد على سياسة منظم الحدث. يرجى التحقق من سياسة الاسترداد قبل الحجز."
+    },
+    "q3": {
+      "question": "هل الدفع آمن؟",
+      "answer": "نعم، جميع عمليات الدفع تتم بشكل آمن باستخدام تقنيات التشفير القياسية."
+    }
+  },
+  "nearby_merchants": {
+    "title": "المتاجر القريبة",
+    "view_on_map": "عرض على الخريطة"
+  },
+  "share": {
+    "title": "شارك هذا الحدث",
+    "copy": "نسخ الرابط",
+    "copied": "تم نسخ الرابط",
+    "copied_description": "يمكنك الآن مشاركته في أي مكان.",
+    "facebook": "فيسبوك",
+    "twitter": "تويتر",
+    "linkedin": "لينكدإن",
+    "email": "بريد إلكتروني"
   }
 }

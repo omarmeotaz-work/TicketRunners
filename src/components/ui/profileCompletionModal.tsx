@@ -28,6 +28,7 @@ export const ProfileCompletionModal: React.FC<Props> = ({ open, onClose }) => {
 
   const [image, setImage] = useState<File | null>(null);
   const [bloodType, setBloodType] = useState("");
+  const [emergencyContactName, setEmergencyContactName] = useState("");
   const [emergencyContact, setEmergencyContact] = useState("");
 
   const handleSubmit = () => {
@@ -36,7 +37,7 @@ export const ProfileCompletionModal: React.FC<Props> = ({ open, onClose }) => {
       return;
     }
 
-    // Submit logic here...
+    // Submit logic here (blood type and emergency contact info are optional)
     toast({ title: t("profileSetup.submitted") });
     onClose();
   };
@@ -75,6 +76,13 @@ export const ProfileCompletionModal: React.FC<Props> = ({ open, onClose }) => {
               )}
             </SelectContent>
           </Select>
+
+          <Input
+            type="text"
+            placeholder={t("profileSetup.emergency_contact_name")}
+            value={emergencyContactName}
+            onChange={(e) => setEmergencyContactName(e.target.value)}
+          />
 
           <Input
             type="text"

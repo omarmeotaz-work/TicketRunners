@@ -29,6 +29,10 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
   const [otpVerified, setOtpVerified] = useState(false);
   const [otpError, setOtpError] = useState("");
   const [showCardExpiredModal, setShowCardExpiredModal] = useState(false);
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [emailOtp, setEmailOtp] = useState("");
+  const [emailOtpVerified, setEmailOtpVerified] = useState(false);
+  const [emailOtpError, setEmailOtpError] = useState("");
 
   const checkCardExpiration = () => {
     const isExpired = true; // Replace this with real check
@@ -124,6 +128,29 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
       setOtpError(t("auth.errors.otp_invalid"));
     }
   };
+  const sendEmailOtp = async () => {
+    if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) {
+      setErrors((prev) => ({
+        ...prev,
+        email: t("auth.errors.email_invalid"),
+      }));
+      return;
+    }
+    setEmailOtpSent(true);
+    setEmailOtpError("");
+    toast({ title: t("auth.otp_sent"), description: form.email });
+    // TODO: await api.sendEmailOtp(form.email);
+  };
+  const verifyEmailOtp = async () => {
+    // Simulate
+    if (emailOtp === "123456") {
+      setEmailOtpVerified(true);
+      setEmailOtpError("");
+      toast({ title: t("auth.otp_verified") });
+    } else {
+      setEmailOtpError(t("auth.errors.otp_invalid"));
+    }
+  };
 
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -160,7 +187,8 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
   const renderField = (
     key: keyof typeof form,
     label: string,
-    type: "text" | "email" | "password" = "text"
+    type: "text" | "email" | "password" = "text",
+    disabled: boolean = false
   ) => (
     <div className="space-y-1">
       <Input
@@ -169,6 +197,7 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
         placeholder={t(`auth.placeholders.${key}`, label)}
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
         autoComplete="off"
+        disabled={disabled}
       />
       {errors[key] && <p className="text-sm text-red-500">{errors[key]}</p>}
     </div>
@@ -200,15 +229,21 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
             <>
               {renderField("firstName", t("auth.first_name"))}
               {renderField("lastName", t("auth.last_name"))}
-              {renderField("phone", t("auth.phone_number"))}
 
-              {!otpVerified && (
-                <div className="flex gap-2">
+              {/* Phone field + verify */}
+              <div className="flex gap-2 items-end">
+                {renderField(
+                  "phone",
+                  t("auth.phone_number"),
+                  "text",
+                  otpVerified
+                )}
+                {!otpVerified && (
                   <Button type="button" size="sm" onClick={sendOtp}>
                     {otpSent ? t("auth.resend_otp") : t("auth.verify")}
                   </Button>
-                </div>
-              )}
+                )}
+              </div>
 
               {otpSent && !otpVerified && (
                 <div className="space-y-1 mt-2">
@@ -226,10 +261,45 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
                   </Button>
                 </div>
               )}
+
+              {/* Email field + verify */}
+              <div className="flex gap-2 items-end">
+                {renderField(
+                  "email",
+                  t("auth.email"),
+                  "email",
+                  emailOtpVerified
+                )}
+                {!emailOtpVerified && (
+                  <Button type="button" size="sm" onClick={sendEmailOtp}>
+                    {emailOtpSent ? t("auth.resend_otp") : t("auth.verify")}
+                  </Button>
+                )}
+              </div>
+
+              {emailOtpSent && !emailOtpVerified && (
+                <div className="space-y-1 mt-2">
+                  <Input
+                    type="text"
+                    value={emailOtp}
+                    placeholder={t("auth.placeholders.otp")}
+                    onChange={(e) => setEmailOtp(e.target.value)}
+                  />
+                  {emailOtpError && (
+                    <p className="text-sm text-red-500">{emailOtpError}</p>
+                  )}
+                  <Button type="button" size="sm" onClick={verifyEmailOtp}>
+                    {t("auth.verify_otp")}
+                  </Button>
+                </div>
+              )}
             </>
           )}
-          {renderField("email", t("auth.email"), "email")}
+
+          {!isSignup && renderField("email", t("auth.email"), "email")}
+
           {renderField("password", t("auth.password"), "password")}
+
           {isSignup &&
             renderField(
               "confirmPassword",
@@ -266,6 +336,7 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
           )}
         </div>
       </DialogContent>
+
       <ProfileCompletionModal
         open={showProfileModal}
         onClose={() => setShowProfileModal(false)}

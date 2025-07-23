@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Search,
@@ -12,6 +12,8 @@ import {
   Menu,
   X,
   Calendar,
+  Clock,
+  MapPin,
   Smartphone,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +26,9 @@ import { useAuth } from "@/Contexts/AuthContext";
 import AsyncSelect from "react-select/async";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { mockEvents } from "@/Data/MockEvents";
+import { EventPreviewCard } from "@/components/EventPreviewCard";
+import useClickAway from "react-use/lib/useClickAway";
 
 const getInitialTheme = (): boolean => {
   if (typeof window === "undefined") return true;
@@ -39,6 +44,7 @@ export function Header() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -49,6 +55,10 @@ export function Header() {
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
   const [language, setLanguage] = useState("EN");
+  const searchWrapperRef = useRef(null);
+  useClickAway(searchWrapperRef, () => {
+    setIsSearchFocused(false);
+  });
 
   const loadOptions = async (inputValue: string) => {
     if (!inputValue) return [];
@@ -66,13 +76,24 @@ export function Header() {
     }));
   };
 
-  const formatOptionLabel = ({ label, image, date, location }: any) => (
-    <div className="flex items-center gap-4">
-      <img src={image} alt={label} className="w-12 h-12 object-cover rounded" />
-      <div>
-        <div className="text-sm font-medium">{label}</div>
-        <div className="text-xs text-muted-foreground">
-          {date} – {location}
+  const formatOptionLabel = (option: any) => (
+    <div className="flex gap-2 items-center">
+      <img
+        src={option.image}
+        alt={option.title}
+        className="w-12 h-12 object-cover rounded"
+      />
+      <div className="flex flex-col">
+        <span className="text-sm font-medium">{option.title}</span>
+        <div className="flex items-center text-xs text-muted-foreground gap-1">
+          <Calendar className="w-3 h-3" />
+          <span>{option.date}</span>
+          <Clock className="w-3 h-3 ml-2" />
+          <span>{option.time}</span>
+        </div>
+        <div className="flex items-center text-xs text-muted-foreground gap-1">
+          <MapPin className="w-3 h-3" />
+          <span>{option.location}</span>
         </div>
       </div>
     </div>
@@ -184,49 +205,60 @@ export function Header() {
           </div>
 
           {/* Search (hidden on mobile) */}
-          <div className="hidden md:flex flex-1 min-w-0 max-w-lg mx-4">
-            <div className="relative w-full">
-              <AsyncSelect
-                cacheOptions
-                loadOptions={loadOptions}
-                defaultOptions
-                onChange={handleChange}
-                formatOptionLabel={formatOptionLabel}
-                placeholder={t("searchEvents")}
-                classNamePrefix="react-select"
-                styles={{
-                  control: (base) => ({
-                    ...base,
-                    backgroundColor: "hsl(var(--input))",
-                    borderColor: "hsl(var(--border))",
-                    color: "white",
-                  }),
-                  input: (base) => ({
-                    ...base,
-                    color: "white",
-                  }),
-                  singleValue: (base) => ({
-                    ...base,
-                    color: "white",
-                  }),
-                  placeholder: (base) => ({
-                    ...base,
-                    color: "hsl(0, 0%, 70%)", // muted placeholder
-                  }),
-                  option: (base, { isFocused }) => ({
-                    ...base,
-                    backgroundColor: isFocused
-                      ? "hsl(var(--muted))"
-                      : "transparent",
-                    color: "white",
-                  }),
-                  menu: (base) => ({
-                    ...base,
-                    backgroundColor: "hsl(var(--popover))",
-                  }),
-                }}
-              />
-            </div>
+          <div
+            className="hidden md:flex flex-col flex-1 min-w-0 max-w-lg mx-4 gap-2 relative z-10"
+            ref={searchWrapperRef}
+          >
+            {/* Search Input */}
+            <AsyncSelect
+              cacheOptions
+              loadOptions={loadOptions}
+              defaultOptions
+              onChange={handleChange}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              formatOptionLabel={formatOptionLabel}
+              placeholder={t("searchEvents")}
+              classNamePrefix="react-select"
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: "hsl(var(--input))",
+                  borderColor: "hsl(var(--border))",
+                  color: "white",
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "white",
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: "white",
+                }),
+                placeholder: (base) => ({
+                  ...base,
+                  color: "hsl(0, 0%, 70%)",
+                }),
+                option: (base, { isFocused }) => ({
+                  ...base,
+                  backgroundColor: isFocused
+                    ? "hsl(var(--muted))"
+                    : "transparent",
+                  color: "white",
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: "hsl(var(--popover))",
+                }),
+              }}
+            />
+
+            {/* Preview Below Input */}
+            {isSearchFocused && mockEvents[0] && (
+              <div className="absolute top-full left-0 w-full mt-2 bg-card border border-border rounded-xl shadow-lg z-20">
+                <EventPreviewCard {...mockEvents[0]} />
+              </div>
+            )}
           </div>
 
           {/* Desktop nav */}

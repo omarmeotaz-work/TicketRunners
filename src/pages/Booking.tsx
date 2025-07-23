@@ -100,6 +100,8 @@ const Booking = () => {
       socialMedia: string;
       assignedTicketNumber: number;
       ticketType: string;
+      assigned?: boolean;
+      child?: boolean;
     }[]
   >([]);
 
@@ -127,6 +129,7 @@ const Booking = () => {
     date: "2024-02-15",
     time: "10:00",
     location: "Cairo Opera House",
+    minimumAge: "13",
     price: 250,
   };
 
@@ -136,7 +139,11 @@ const Booking = () => {
       [tier]: Math.max(0, prev[tier] + delta),
     }));
 
-  const updateDependent = (index: number, field: string, value: string) => {
+  const updateDependent = (
+    index: number,
+    field: string,
+    value: string | boolean
+  ) => {
     const updated = [...dependents];
     updated[index] = { ...updated[index], [field]: value };
     setDependents(updated);
@@ -283,6 +290,11 @@ const Booking = () => {
               {t("booking.title")}
             </h1>
           </div>
+          {eventData.minimumAge && (
+            <div className="mb-4 text-sm text-destructive">
+              {t("booking.ageRestrictionNotice", { age: eventData.minimumAge })}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Booking Form */}
@@ -404,6 +416,9 @@ const Booking = () => {
               {dependents.length > 0 && (
                 <Card>
                   <CardHeader>
+                    <p className="text-red-500 mb-2">
+                      {t("booking.dependentDisclaimer")}
+                    </p>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-primary" />
                       {t("booking.dependentsInfo")}
@@ -431,29 +446,6 @@ const Booking = () => {
                           </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div className="space-y-2">
-                              <Label>{t("booking.name")}</Label>
-                              <Input
-                                value={dependent.name}
-                                onChange={(e) =>
-                                  updateDependent(index, "name", e.target.value)
-                                }
-                                placeholder={t("booking.namePlaceholder")}
-                              />
-                              <Label>{t("booking.email")}</Label>
-
-                              <Input
-                                value={dependent.name}
-                                onChange={(e) =>
-                                  updateDependent(
-                                    index,
-                                    "email",
-                                    e.target.value
-                                  )
-                                }
-                                placeholder={t("booking.EmailPlaceholder")}
-                              />
-                            </div>
-                            <div className="space-y-2">
                               <Label>{t("booking.ticketType")}</Label>
                               <Input
                                 value={
@@ -462,6 +454,70 @@ const Booking = () => {
                                 }
                                 disabled
                               />
+
+                              <div className="flex flex-col gap-2 pt-2">
+                                <label className="inline-flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={dependent.assigned || false}
+                                    onChange={(e) =>
+                                      updateDependent(
+                                        index,
+                                        "assigned",
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+                                  <span>{t("booking.assigned")}</span>
+                                </label>
+
+                                <label className="inline-flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={dependent.child || false}
+                                    onChange={(e) =>
+                                      updateDependent(
+                                        index,
+                                        "child",
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+                                  <span>{t("booking.child")}</span>
+                                </label>
+                              </div>
+
+                              <div className="space-y-2">
+                                <Label>{t("booking.name")}</Label>
+                                <Input
+                                  value={dependent.name || ""}
+                                  onChange={(e) =>
+                                    updateDependent(
+                                      index,
+                                      "name",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder={t("booking.name")}
+                                />
+                              </div>
+                              {!dependent.child && (
+                                <div className="space-y-2">
+                                  <Label>{t("booking.email")}</Label>
+                                  <Input
+                                    type="email"
+                                    value={dependent.mobile || ""}
+                                    onChange={(e) =>
+                                      updateDependent(
+                                        index,
+                                        "mobile",
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder={t("booking.mobile")}
+                                  />
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

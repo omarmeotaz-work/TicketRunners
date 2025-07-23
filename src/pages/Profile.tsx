@@ -36,6 +36,7 @@ import { InvoicePreview } from "@/components/invoicePreview";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Toast } from "@/components/ui/toast";
+import { format, isBefore, parseISO } from "date-fns";
 const Profile = () => {
   const [showCardDetails, setShowCardDetails] = useState(false);
   // ① read the URL hash (#nfc, #bookings …)
@@ -54,11 +55,12 @@ const Profile = () => {
 
   // Mock data
   const userInfo = {
-    id: "12345",
+    id: "AB12345",
     name: "Ahmed Mohamed Hassan",
     phone: "+20 123 456 7890",
     email: "ahmed.mohamed@example.com",
     emergencyContact: "01100777223",
+    emergencyContactName: "ahmed",
     bloodType: "A",
     profileImage: "/public/Portrait_Placeholder.png",
     CardActive: true,
@@ -78,6 +80,9 @@ const Profile = () => {
   const [bloodType, setBloodType] = useState(userInfo.bloodType || "");
   const [emergencyContact, setEmergencyContact] = useState(
     userInfo.emergencyContact || ""
+  );
+  const [emergencyContactName, setEmergencyContactName] = useState(
+    userInfo.emergencyContactName || ""
   );
 
   const bookings = [
@@ -102,6 +107,30 @@ const Profile = () => {
       quantity: 1,
       qrEnabled: false,
       status: "Card",
+    },
+  ];
+  const dependants = [
+    {
+      id: 1,
+      eventTitle: "Cairo Jazz Festival 2024",
+      date: "2024-02-15",
+      time: "20:00",
+      location: "Cairo Opera House",
+      ticketPrice: 250,
+      quantity: 2,
+      qrEnabled: true,
+      status: "pending",
+    },
+    {
+      id: 2,
+      eventTitle: "Comedy Night with Ahmed Ahmed",
+      date: "2024-02-20",
+      time: "21:00",
+      location: "Al-Azhar Park",
+      ticketPrice: 150,
+      quantity: 1,
+      qrEnabled: false,
+      status: "claimed",
     },
   ];
 
@@ -150,10 +179,28 @@ const Profile = () => {
     cardNumber: "**** **** **** 1234",
     issueDate: "2025-07-15",
     expiryDate: "2026-07-15",
+    isVirtual: true, // distinguish between physical and virtual
   };
 
+  const [addedToWallet, setAddedToWallet] = useState(false);
+  const now = new Date();
+  const expiry = parseISO(nfcCard.expiryDate);
+  const isExpired = isBefore(expiry, now);
   // ③ whenever the tab changes, push the new hash to the URL (nice for reload / share)
   const navigate = useNavigate();
+
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [enteredOtp, setEnteredOtp] = useState("");
+  const [mockOtp, setMockOtp] = useState("");
+
+  // Trigger when user updates phone
+  const handlePhoneSave = () => {
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setMockOtp(generatedOtp);
+    console.log("OTP sent (mock):", generatedOtp);
+    setShowOtpModal(true);
+  };
+
   useEffect(() => {
     navigate(`#${activeTab}`, { replace: true });
   }, [activeTab, navigate]);
@@ -220,10 +267,23 @@ const Profile = () => {
       reader.readAsDataURL(file);
     }
   };
+  const handleRenewTemporaryAccess = () => {
+    toast({
+      title: "Temporary Access Renewal",
+      description: "Your request to renew temporary access has been submitted.",
+      variant: "default", // You can use "destructive" or "success" if your UI supports it
+      duration: 4000, // Optional: time in ms the toast is shown
+    });
+  };
 
   const handleSave = () => {
     localStorage.setItem("userProfile", JSON.stringify(profile));
     alert("Profile saved locally.");
+  };
+
+  const handleAddToWallet = () => {
+    // Add any actual logic here (e.g. Apple/Google Wallet API)
+    setAddedToWallet(true);
   };
 
   return (
@@ -408,6 +468,99 @@ const Profile = () => {
                   ))}
                 </CardContent>
               </Card>
+              {/* Dependent Tickets Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-primary" />
+                    {t("profilepage.dependentBookings.title")}
+                  </CardTitle>
+                  <CardDescription>
+                    {t("profilepage.dependentBookings.description")}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {dependants.map((ticket) => (
+                    <div
+                      key={ticket.id}
+                      className="border border-border rounded-lg p-4 space-y-3"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                        <div>
+                          <h3 className="font-semibold text-foreground">
+                            {ticket.eventTitle}
+                          </h3>
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-4 w-4" />
+                              <span className="font-medium">
+                                {t("profilepage.myBookings.date")}:
+                              </span>{" "}
+                              {ticket.date}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-4 w-4" />
+                              <span className="font-medium">
+                                {t("profilepage.myBookings.time")}:
+                              </span>{" "}
+                              {ticket.time}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MapPin className="h-4 w-4" />
+                              <span className="font-medium">
+                                {t("profilepage.myBookings.location")}:
+                              </span>{" "}
+                              {ticket.location}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="self-start sm:self-auto">
+                          <Badge
+                            variant={
+                              ticket.status === "claimed"
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="text-xs"
+                          >
+                            {t(
+                              `profilepage.dependentBookings.status.${ticket.status}`
+                            )}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0 items-start sm:items-center">
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">
+                            {t("profilepage.myBookings.quantity")}{" "}
+                          </span>
+                          <span className="font-medium">{ticket.quantity}</span>
+                          <span className="text-muted-foreground ml-4">
+                            {t("profilepage.myBookings.total")}{" "}
+                          </span>
+                          <span className="font-medium">
+                            {ticket.ticketPrice * ticket.quantity} EGP
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          {ticket.status === "pending" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewDetails(ticket.id)}
+                            >
+                              {t("profilepage.myBookings.viewDetails")}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
             </TabsContent>
             {/* My Visits */}
             <TabsContent value="visits" className="space-y-6">
@@ -432,7 +585,7 @@ const Profile = () => {
                           <h3 className="font-semibold text-foreground">
                             {visit.eventTitle}
                           </h3>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                          <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-sm text-muted-foreground mt-1">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
                               <span className="font-medium">
@@ -583,40 +736,45 @@ const Profile = () => {
                         {t("profilepage.nfc.description")}
                       </CardDescription>
                     </CardHeader>
-                    <div className="relative w-auto h-96 overflow-hidden rounded-xl bg-transparent mx-auto">
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        {/* Hover Target - Wrap images in group */}
-                        <div className="relative group w-44 h-auto flex items-center justify-center">
-                          {/* Front Image */}
-                          <div className="transition-opacity duration-500 ease-in-out group-hover:opacity-0 z-10">
-                            <img
-                              src="/public/NFC CARD Front -1.png"
-                              alt="NFC Front"
-                              className="shadow-2xl w-44 rounded-lg"
-                            />
+
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      {/* Hover Target - Wrap images in group */}
+                      <div className="relative group w-44 h-auto flex items-center justify-center">
+                        {/* Front Image */}
+                        <div className="transition-opacity duration-500 ease-in-out group-hover:opacity-0 z-10">
+                          <img
+                            src="/public/NFC CARD Front -1.png"
+                            alt="NFC Front"
+                            className="shadow-2xl w-44 rounded-lg"
+                          />
+                        </div>
+
+                        {/* Back Image + Overlays */}
+                        <div className="absolute transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100 z-20 flex items-center justify-center">
+                          <img
+                            src="/public/NFC CARD Back-1.png"
+                            alt="NFC Card Back"
+                            className="shadow-2xl w-44 rounded-lg"
+                          />
+
+                          {/* Name */}
+                          <div className="absolute top-[83%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                            <span className="text-black text-xs font-bold drop-shadow-md">
+                              {firstName}
+                            </span>
                           </div>
 
-                          {/* Back Image + Overlays */}
-                          <div className="absolute transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100 z-20 flex items-center justify-center">
-                            <img
-                              src="/public/NFC CARD Back-1.png"
-                              alt="NFC Card Back"
-                              className="shadow-2xl w-44 rounded-lg"
-                            />
-
-                            {/* Name */}
-                            <div className="absolute top-[83%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                              <span className="text-black text-xs font-bold drop-shadow-md">
-                                {firstName}
-                              </span>
-                            </div>
-
-                            {/* ID */}
-                            <div className="absolute top-[93%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                              <span className="text-white text-xs font-bold drop-shadow-md">
-                                {userInfo.id}
-                              </span>
-                            </div>
+                          {/* ID */}
+                          <div className="absolute top-[93%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                            <span className="text-white text-xs font-bold drop-shadow-md">
+                              {userInfo.id}
+                            </span>
+                          </div>
+                          {/* Expiry */}
+                          <div className="absolute top-[15%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                            <span className="text-white text-xs font-bold drop-shadow-md">
+                              {nfcCard.expiryDate}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -690,16 +848,48 @@ const Profile = () => {
                         <Button variant="gradient" className="w-full sm:w-auto">
                           {t("profilepage.nfc.buyNewCard")}
                         </Button>
-                        <Button
-                          variant="default"
-                          className="block sm:hidden w-full"
-                          onClick={() => {
-                            // TODO: Add-to-wallet logic
-                            toast({ title: "Wallet integration coming soon" });
-                          }}
-                        >
-                          {t("profilepage.nfc.addToWallet")}
-                        </Button>
+                        <div className="space-y-2 z-30">
+                          {/* Wallet button or expiry message */}
+                          <Button
+                            className="duration-300 disabled:opacity-50 w-full text-center sm:w-auto"
+                            onClick={handleAddToWallet}
+                            variant="gradient"
+                            disabled={addedToWallet}
+                          >
+                            {addedToWallet
+                              ? t("wallet.added")
+                              : t("wallet.add")}
+                          </Button>
+
+                          {addedToWallet && nfcCard.isVirtual && expiry && (
+                            <p className="text-xs text-muted-foreground mt-2">
+                              expires on: {format(expiry, "MMMM dd, yyyy")}
+                            </p>
+                          )}
+
+                          {/* Show expiry anyway for virtual cards if not yet added */}
+                          {!addedToWallet && nfcCard.isVirtual && (
+                            <p className="text-xs text-muted-foreground">
+                              Expires on: {format(expiry, "MMMM dd, yyyy")}
+                            </p>
+                          )}
+
+                          {/* Expired notice */}
+                          {nfcCard.isVirtual && isExpired && (
+                            <div className="text-sm text-red-500 border border-red-300 p-2 rounded">
+                              Your temporary access has expired. Please renew to
+                              regain access.
+                              <div className="mt-2">
+                                <button
+                                  onClick={handleRenewTemporaryAccess} // Define this as needed
+                                  className="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
+                                >
+                                  Renew Temporary Access
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <div className="bg-muted/20 rounded-lg p-4">
@@ -744,7 +934,11 @@ const Profile = () => {
                       <Label htmlFor="fullName">
                         {t("profilepage.settingsTab.fullName")}
                       </Label>
-                      <Input id="fullName" defaultValue={userInfo.name} />
+                      <Input
+                        id="fullName"
+                        disabled
+                        defaultValue={userInfo.name}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">
@@ -831,6 +1025,18 @@ const Profile = () => {
                         type="tel"
                         value={emergencyContact}
                         onChange={(e) => setEmergencyContact(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="emergencyContact">
+                        {t("profilepage.settingsTab.emergencyContactName")}
+                      </Label>
+                      <Input
+                        id="emergencyContactName"
+                        value={emergencyContactName}
+                        onChange={(e) =>
+                          setEmergencyContactName(e.target.value)
+                        }
                       />
                     </div>
                   </div>

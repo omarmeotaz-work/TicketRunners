@@ -172,9 +172,35 @@ const ViewOrganizersPage: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Category Badge */}
-                  <div className="flex items-center justify-between mt-2">
-                    <Badge variant="secondary">{evt.category}</Badge>
+                  {/* Category and Action Buttons */}
+                  <div className="flex flex-col gap-2 mt-2">
+                    <Badge variant="secondary" className="w-fit">
+                      {evt.category}
+                    </Badge>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="default"
+                        className="flex-1"
+                        onClick={(e) => {
+                          e.stopPropagation(); // prevent parent onClick
+                          navigate(`/book/${evt.id}`);
+                        }}
+                      >
+                        {t("buttons.book_now")}
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="flex-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/event/${evt.id}`);
+                        }}
+                      >
+                        {t("buttons.view_event")}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
