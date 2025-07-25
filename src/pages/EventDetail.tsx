@@ -209,15 +209,15 @@ const EventDetail: React.FC = () => {
             <DialogTitle>Terms and Conditions</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto">
-            <p>
-              By purchasing a ticket to this event, you agree to the following
-              terms and conditions...
-            </p>
+            <p>{t("eventDetail.termsContent")}</p>
             <ul className="list-disc pl-4">
-              <li>No refunds unless the event is cancelled.</li>
-              <li>Entry requires a valid digital or printed ticket.</li>
-              <li>Event organizers reserve the right to deny entry.</li>
-              {/* Add more as needed */}
+              {(
+                t("eventDetail.termsBullets", {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
             </ul>
           </div>
           <div className="flex justify-end mt-4">
@@ -369,18 +369,27 @@ const EventDetail: React.FC = () => {
                 </h2>
                 <p className="text-muted-foreground">{event.description}</p>
               </div>
-              <div className="pt-6 space-y-2">
+              <div
+                className="pt-6 space-y-2 relative"
+                dir={locale.startsWith("ar") ? "rtl" : "ltr"}
+              >
                 <h3 className="text-lg font-semibold">
                   {t("eventDetail.venueInfoTitle")}
                 </h3>
                 <p className="text-muted-foreground">{event.venueInfo}</p>
                 {event.layoutImageUrl && (
-                  <div className="mt-4 text-center m-auto">
+                  <div
+                    className="mt-4 flex w-full"
+                    dir={locale.startsWith("ar") ? "rtl" : "ltr"}
+                  >
                     <Button
                       variant="gradient"
                       onClick={() => setShowLayout(true)}
+                      className={
+                        locale.startsWith("ar") ? "ml-auto" : "mr-auto"
+                      }
                     >
-                      {t("eventDetail.showLayout")}{" "}
+                      {t("eventDetail.showLayout")}
                     </Button>
                   </div>
                 )}
@@ -421,7 +430,11 @@ const EventDetail: React.FC = () => {
               <div className="card-elevated p-6 sticky top-24 flex flex-col gap-6">
                 {/* Pricing */}
                 <div>
-                  <div className="flex items-center space-x-2">
+                  <div
+                    className={`flex items-center space-x-2 ${
+                      locale.startsWith("ar") ? "space-x-reverse" : ""
+                    }`}
+                  >
                     {event.originalPrice && (
                       <span className="text-lg text-muted-foreground line-through">
                         {event.originalPrice} {t("currency.egp")}

@@ -50,6 +50,8 @@ All colors MUST be HSL.
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --search-text: white;
+    --search-placeholder: #bbb;
   }
 
   .light {
@@ -89,6 +91,8 @@ All colors MUST be HSL.
     --shadow-primary: 0 10px 30px -10px hsl(82 39% 30% / 0.3);
     --shadow-card: 0 8px 32px -8px hsl(0 0% 0% / 0.1);
     --shadow-glow: 0 0 40px hsl(82 39% 30% / 0.3);
+    --search-text: black;
+    --search-placeholder: #333;
   }
 }
 

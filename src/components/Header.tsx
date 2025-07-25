@@ -60,14 +60,16 @@ export function Header() {
     setIsSearchFocused(false);
   });
 
-  const loadOptions = async (inputValue: string) => {
+  const loadOptions = async (
+    inputValue: string
+  ): Promise<Array<Record<string, unknown>>> => {
     if (!inputValue) return [];
 
     const response = await axios.get(`/api/events/search`, {
       params: { query: inputValue },
     });
 
-    return response.data.events.map((event: any) => ({
+    return response.data.events.map((event: Record<string, unknown>) => ({
       label: event.name,
       value: event.id,
       image: event.cover_image,
@@ -76,30 +78,32 @@ export function Header() {
     }));
   };
 
-  const formatOptionLabel = (option: any) => (
+  const formatOptionLabel = (
+    option: Record<string, unknown>
+  ): React.ReactNode => (
     <div className="flex gap-2 items-center">
       <img
-        src={option.image}
-        alt={option.title}
+        src={option.image as string}
+        alt={option.title as string}
         className="w-12 h-12 object-cover rounded"
       />
       <div className="flex flex-col">
-        <span className="text-sm font-medium">{option.title}</span>
+        <span className="text-sm font-medium">{option.title as string}</span>
         <div className="flex items-center text-xs text-muted-foreground gap-1">
           <Calendar className="w-3 h-3" />
-          <span>{option.date}</span>
+          <span>{option.date as string}</span>
           <Clock className="w-3 h-3 ml-2" />
-          <span>{option.time}</span>
+          <span>{option.time as string}</span>
         </div>
         <div className="flex items-center text-xs text-muted-foreground gap-1">
           <MapPin className="w-3 h-3" />
-          <span>{option.location}</span>
+          <span>{option.location as string}</span>
         </div>
       </div>
     </div>
   );
 
-  const handleChange = (selected: any) => {
+  const handleChange = (selected: Record<string, unknown> | null) => {
     if (selected?.value) {
       navigate(`/events/${selected.value}`);
     }
@@ -225,19 +229,19 @@ export function Header() {
                   ...base,
                   backgroundColor: "hsl(var(--input))",
                   borderColor: "hsl(var(--border))",
-                  color: "white",
+                  color: "var(--search-text)",
                 }),
                 input: (base) => ({
                   ...base,
-                  color: "white",
+                  color: "var(--search-text)",
                 }),
                 singleValue: (base) => ({
                   ...base,
-                  color: "white",
+                  color: "var(--search-text)",
                 }),
                 placeholder: (base) => ({
                   ...base,
-                  color: "hsl(0, 0%, 70%)",
+                  color: "var(--search-placeholder)",
                 }),
                 option: (base, { isFocused }) => ({
                   ...base,
@@ -328,15 +332,15 @@ export function Header() {
                       ...base,
                       backgroundColor: "hsl(var(--input))",
                       borderColor: "hsl(var(--border))",
-                      color: "white",
+                      color: "var(--search-text)",
                     }),
                     input: (base) => ({
                       ...base,
-                      color: "white",
+                      color: "var(--search-text)",
                     }),
                     singleValue: (base) => ({
                       ...base,
-                      color: "white",
+                      color: "var(--search-text)",
                     }),
                     placeholder: (base) => ({
                       ...base,

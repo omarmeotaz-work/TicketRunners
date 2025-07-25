@@ -12,7 +12,7 @@ import {
 type Filters = { category: string; location: string; tags: string[] };
 const defaultFilters: Filters = { category: "All", location: "All", tags: [] };
 
-const AllEvents = () => {
+export default function AllEventsPage() {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const section = searchParams.get("section") ?? "all";
@@ -100,6 +100,4 @@ const AllEvents = () => {
       </main>
     </div>
   );
-};
-
-export default AllEvents;
+}

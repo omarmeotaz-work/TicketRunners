@@ -15,7 +15,17 @@ interface EventSectionProps {
   title: string;
   subtitle: string;
   icon: React.ComponentType<{ className?: string }>;
-  events: any[];
+  events: Array<{
+    id: string;
+    title: string;
+    image: string;
+    date: string;
+    time: string;
+    location: string;
+    price: number;
+    category: string;
+    [key: string]: unknown;
+  }>;
   showViewAll?: boolean;
 }
 
@@ -75,7 +85,7 @@ export function EventSection({
               className="animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <EventCard {...event} />
+              <EventCard {...event} category={event.category} />
             </div>
           ))}
         </div>

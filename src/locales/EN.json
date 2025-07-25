@@ -44,9 +44,14 @@
     "refund": "Refund Policy",
     "contact": "Contact",
     "location": "Cairo, Egypt",
-    "trustSlogan": "Your Trusted Ticket Marketplace",
-    "techSupport": "Technical Support",
-    "poweredBy": "Powered by"
+    "trustTagline": "Your Trusted Ticket Marketplace",
+    "technicalSupport": "Technical Support",
+    "poweredBy": "Powered by",
+    "logoAlt": "Ticket Runners Logo",
+    "phoneLabel": "+20 122 652 1747",
+    "emailLabel": "support@ticketrunners.com",
+    "copyright": "TicketRunners",
+    "floki": "Floki Systems"
   },
   "eventCard": {
     "featured": "Featured",
@@ -186,6 +191,7 @@
     "namePlaceholder": "Enter a name",
     "ticketType": "Ticket Tier",
     "mainUserInfo": "Your ticket",
+    "unassignedTransferFeeWarning": "Transferring unassigned tickets later will incur a transfer fee.",
 
     "tiers": {
       "gold": "gold",
@@ -210,7 +216,13 @@
       "nfc": "NFC Card",
       "settings": "Settings",
       "title": "My Profile",
+      "favorites": "Favorites",
       "description": "Manage your account, bookings, and preferences"
+    },
+    "favorites": {
+      "title": "Favorite Events",
+      "description": "Events you have marked as favorites.",
+      "empty": "No favorite events yet."
     },
     "myBookings": {
       "title": "My Bookings",
@@ -287,7 +299,8 @@
       "issued": "Issued",
       "expires": "Expires",
       "addToWallet": "Add to Wallet",
-      "notice": "You don't have an active NFC card. Please purchase one from the nearest merchant."
+      "notice": "You don't have an active NFC card. Please purchase one from the nearest merchant.",
+      "deactivatedDisclaimer": "Your card is deactivated. Please buy a new card from the nearest merchant."
     },
     "settingsTab": {
       "tab": "Settings",
@@ -312,7 +325,8 @@
       "emergencyContactName": "Emergency Contact Name",
       "selectOption": "Select an option",
       "changesSaved": "Changes saved successfully",
-      "browse": "Upload new image"
+      "browse": "Upload new image",
+      "atLeastOneNotification": "At least one notification method must be selected."
     },
     "subscriptions": {
       "title": "My Subscriptions",
@@ -429,12 +443,22 @@
       "Parking": "Parking",
       "Wheelchair Access": "Wheelchair Access",
       "Wi-Fi": "Wi-Fi",
-      "Food": "Food"
+      "Food": "Food",
+      "Baby": "Baby Facilities",
+      "Green Area": "Green Area",
+      "Showers": "Showers",
+      "Music": "Music",
+      "Outdoor": "Outdoor Area"
     },
     "perTicket": "per ticket",
     "organizers": "Organizers",
     "termsTitle": "Terms and Conditions",
     "termsContent": "By purchasing a ticket, you agree to abide by the venue rules and event policies. Tickets are non-refundable and non-transferable unless the event is cancelled or rescheduled.",
+    "termsBullets": [
+      "No refunds unless the event is cancelled.",
+      "Entry requires a valid digital or printed ticket.",
+      "Event organizers reserve the right to deny entry."
+    ],
     "shareToast": {
       "title": "Link copied!",
       "description": "Event link copied to clipboard"
@@ -550,11 +574,19 @@
     "welcome": "Welcome",
     "all_set": "You're all set!",
     "verify": "Verify",
+    "enter_otp": "Enter OTP",
+    "cancel": "Cancel",
     "otp_sent": "OTP sent",
     "otp_verified": "Phone number verified",
     "resend_otp": "resend OTP",
     "verify_otp": "Verify OTP",
     "placeholders": {
+      "email_or_phone": "Email or Mobile Number",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "password": "Password",
+      "phone": "Phone Number",
+      "email": "Email Address",
       "otp": "Enter OTP"
     },
     "errors": {
@@ -571,7 +603,8 @@
       "confirm_password_required": "Confirm your password.",
       "confirm_password_mismatch": "Passwords do not match.",
       "otp_invalid": "Invalid OTP",
-      "phone_not_verified": "Phone number must be verified before signing up"
+      "phone_not_verified": "Phone number must be verified before signing up",
+      "captcha_required": "Captcha is required"
     },
     "no_account": "Don't have an account?",
     "already_account": "Already have an account?"
@@ -589,6 +622,7 @@
     "image_disclaimer": "To ensure security, please upload a clear and recent photo. You may be denied entry to events if your image does not match your appearance.",
     "select_blood_type": "Select blood type (optional)",
     "emergency_contact": "Emergency contact (optional)",
+    "emergency_contact_name": "Emergency Contact Name",
     "submit": "Submit",
     "errors": {
       "image_required": "Profile image is required"
@@ -609,11 +643,12 @@
     "view_event": "View Event"
   },
   "wallet": {
-    "expiresOn": "Expires on",
+    "expiresOn": "Expires in",
     "virtualExpired": "Your temporary virtual access has expired.",
     "renewTemporaryAccess": "Renew Temporary Access",
     "add": "Add to Wallet",
-    "added": "Added to Wallet"
+    "added": "Added to Wallet",
+    "timer": "{{days}}d {{hours}}:{{minutes}}:{{seconds}} left"
   },
 
   "how_it_works": {
@@ -688,9 +723,15 @@
     "copy": "Copy Link",
     "copied": "Link Copied",
     "copied_description": "You can now share it anywhere.",
+    "copyLink": "Copy Link",
     "facebook": "Facebook",
     "twitter": "Twitter",
     "linkedin": "LinkedIn",
     "email": "Email"
+  },
+  "cardExpired": {
+    "title": "Access Card Expired",
+    "message": "Your access card has expired. Please renew your card now.",
+    "renewButton": "Renew Now"
   }
 }

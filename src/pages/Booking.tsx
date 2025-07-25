@@ -117,11 +117,12 @@ const Booking = () => {
   const totalAmount = totalTicketPrice + vatAmount + cardCost + renewalCost;
   const userTicketTypeRef = useRef<TierKey | "">("");
   const [userTicketType, setUserTicketType] = useState<TierKey | "">("");
+  const [addOrder, setAddOrder] = useState<TierKey[]>([]);
 
   const ticketTypeColors: Record<TierKey, string> = {
-    platinum: "bg-yellow-200", // or a custom class like "bg-[#e6e6fa]"
-    gold: "bg-amber-200",
-    silver: "bg-gray-200",
+    platinum: "bg-gray-300", // platinum
+    gold: "bg-yellow-300", // gold
+    regular: "bg-green-200", // green
   };
 
   const eventData = {
@@ -133,11 +134,25 @@ const Booking = () => {
     price: 250,
   };
 
-  const changeQty = (tier: TierKey, delta: number) =>
-    setQuantities((prev) => ({
-      ...prev,
-      [tier]: Math.max(0, prev[tier] + delta),
-    }));
+  const changeQty = (tier: TierKey, delta: number) => {
+    setQuantities((prev) => {
+      const newQty = Math.max(0, prev[tier] + delta);
+      setAddOrder((prevOrder) => {
+        if (delta > 0) {
+          // Add ticket
+          return [...prevOrder, tier];
+        } else if (delta < 0) {
+          // Remove the first occurrence of this tier
+          const idx = prevOrder.indexOf(tier);
+          if (idx !== -1) {
+            return prevOrder.filter((_, i) => i !== idx);
+          }
+        }
+        return prevOrder;
+      });
+      return { ...prev, [tier]: newQty };
+    });
+  };
 
   const updateDependent = (
     index: number,
@@ -149,75 +164,37 @@ const Booking = () => {
     setDependents(updated);
   };
   useEffect(() => {
-    const allTickets: { ticketType: TierKey }[] = [];
-
-    ticketTiers.forEach((tier) => {
-      for (let i = 0; i < quantities[tier.key]; i++) {
-        allTickets.push({ ticketType: tier.key });
-      }
-    });
-
-    if (allTickets.length === 0) {
+    if (addOrder.length === 0) {
       userTicketTypeRef.current = "";
       setUserTicketType("");
       setDependents([]);
       return;
     }
-
-    // Always re-calculate the highest tier selected
-    const tiersOrderedByPrice = [...ticketTiers].sort(
-      (a, b) => b.price - a.price
-    );
-    let newUserTicketType: TierKey | "" = "";
-
-    for (const tier of tiersOrderedByPrice) {
-      if (quantities[tier.key] > 0) {
-        newUserTicketType = tier.key;
-        break;
-      }
-    }
-
-    // Only update ref and state if changed
-    if (newUserTicketType !== userTicketTypeRef.current) {
-      userTicketTypeRef.current = newUserTicketType;
-      setUserTicketType(newUserTicketType);
-    }
-
-    // Assign all other tickets to dependents
-    const dependentTickets: { ticketType: TierKey }[] = [];
-    const ticketsLeft = { ...quantities };
-
-    if (userTicketTypeRef.current) {
-      ticketsLeft[userTicketTypeRef.current] -= 1;
-    }
-
-    ticketTiers.forEach((tier) => {
-      for (let i = 0; i < ticketsLeft[tier.key]; i++) {
-        dependentTickets.push({ ticketType: tier.key });
-      }
-    });
-
+    // Assign the first ticket to the main user
+    const mainUserTicket = addOrder[0];
+    userTicketTypeRef.current = mainUserTicket;
+    setUserTicketType(mainUserTicket);
+    // Assign the rest to dependents
+    const dependentTickets = addOrder.slice(1);
     setDependents((prev) => {
       const updated = [...prev];
-
-      dependentTickets.forEach((ticket, index) => {
+      dependentTickets.forEach((ticketType, index) => {
         if (!updated[index]) {
           updated[index] = {
             name: "",
             mobile: "",
             socialMedia: "",
             assignedTicketNumber: index + 2,
-            ticketType: ticket.ticketType,
+            ticketType,
           };
         } else {
           updated[index].assignedTicketNumber = index + 2;
-          updated[index].ticketType = ticket.ticketType;
+          updated[index].ticketType = ticketType;
         }
       });
-
       return updated.slice(0, dependentTickets.length);
     });
-  }, [quantities]);
+  }, [addOrder]);
 
   const [hours, minutes] = eventData.time.split(":").map(Number);
   const timeDate = new Date();
@@ -259,12 +236,11 @@ const Booking = () => {
     });
   };
 
-  const mainTicketType = (() => {
-    for (const tier of ticketTiers) {
-      if (quantities[tier.key] > 0) return tier.key;
-    }
-    return "";
-  })();
+  const currency = t("currency.egp");
+  const numberFormat = new Intl.NumberFormat(i18n.language);
+
+  // Check if any dependent is unassigned
+  const hasUnassigned = dependents.some((d) => d && d.assigned === false);
 
   return (
     <div className="min-h-screen bg-gradient-dark">
@@ -341,13 +317,12 @@ const Booking = () => {
                       key={tier.key}
                       className="flex items-center justify-between"
                     >
-                      <div>
+                      <div className="space-x-1">
                         <p className="font-medium">
                           {t(`booking.tiers.${tier.key}`)}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {tier.price}
-                          {t("booking.perTicket")}
+                          {tier.price} {t("booking.perTicket")}
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
@@ -375,22 +350,16 @@ const Booking = () => {
 
                   <div className="flex justify-between pt-2">
                     <span className="font-medium">{t("booking.subtotal")}</span>
-                    <span>{totalTicketPrice} EGP</span>
+                    <span>
+                      {numberFormat.format(totalTicketPrice)} {currency}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
               <div className={`p-4 rounded-xl`}>
                 {/* Customer Information */}
-                {mainTicketType && (
-                  <Card
-                    className={
-                      mainTicketType === "platinum"
-                        ? "bg-gray-200"
-                        : mainTicketType === "gold"
-                        ? "bg-amber-200"
-                        : "bg-blue-200"
-                    }
-                  >
+                {addOrder.length > 0 && (
+                  <Card className={ticketTypeColors[addOrder[0]]}>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <User className="h-5 w-5 text-primary" />
@@ -402,7 +371,7 @@ const Booking = () => {
                         <div className="space-y-2 md:col-span-2">
                           <Label>{t("booking.ticketType")}</Label>
                           <Input
-                            value={t(`booking.tiers.${mainTicketType}`)}
+                            value={t(`booking.tiers.${addOrder[0]}`)}
                             disabled
                           />
                         </div>
@@ -413,12 +382,22 @@ const Booking = () => {
               </div>
               {/* Dependents Information */}
 
-              {dependents.length > 0 && (
+              {addOrder.length > 1 && (
                 <Card>
                   <CardHeader>
-                    <p className="text-red-500 mb-2">
-                      {t("booking.dependentDisclaimer")}
-                    </p>
+                    <div className="flex flex-col gap-1 mb-2">
+                      <p className="text-red-500">
+                        {t("booking.dependentDisclaimer")}
+                      </p>
+                      {hasUnassigned && (
+                        <span className="text-xs text-yellow-600 font-medium">
+                          {t(
+                            "booking.unassignedTransferFeeWarning",
+                            "Transferring unassigned tickets later will incur a transfer fee."
+                          )}
+                        </span>
+                      )}
+                    </div>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-primary" />
                       {t("booking.dependentsInfo")}
@@ -428,14 +407,17 @@ const Booking = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {dependents.map((dependent, index) => {
-                      const bgClass =
-                        dependent.ticketType === "platinum"
-                          ? "bg-gray-200"
-                          : dependent.ticketType === "gold"
-                          ? "bg-amber-200"
-                          : "bg-blue-200";
-
+                    {addOrder.slice(1).map((ticketType, index) => {
+                      const bgClass = ticketTypeColors[ticketType];
+                      const dependentRaw = dependents[index] || {};
+                      const dependent = {
+                        assigned: true,
+                        child: false,
+                        name: "",
+                        mobile: "",
+                        email: "",
+                        ...dependentRaw,
+                      };
                       return (
                         <div
                           key={index}
@@ -448,10 +430,7 @@ const Booking = () => {
                             <div className="space-y-2">
                               <Label>{t("booking.ticketType")}</Label>
                               <Input
-                                value={
-                                  t(`booking.tiers.${dependent.ticketType}`) ||
-                                  ""
-                                }
+                                value={t(`booking.tiers.${ticketType}`) || ""}
                                 disabled
                               />
 
@@ -459,7 +438,7 @@ const Booking = () => {
                                 <label className="inline-flex items-center gap-2">
                                   <input
                                     type="checkbox"
-                                    checked={dependent.assigned || false}
+                                    checked={dependent.assigned}
                                     onChange={(e) =>
                                       updateDependent(
                                         index,
@@ -474,7 +453,7 @@ const Booking = () => {
                                 <label className="inline-flex items-center gap-2">
                                   <input
                                     type="checkbox"
-                                    checked={dependent.child || false}
+                                    checked={dependent.child}
                                     onChange={(e) =>
                                       updateDependent(
                                         index,
@@ -487,36 +466,58 @@ const Booking = () => {
                                 </label>
                               </div>
 
-                              <div className="space-y-2">
-                                <Label>{t("booking.name")}</Label>
-                                <Input
-                                  value={dependent.name || ""}
-                                  onChange={(e) =>
-                                    updateDependent(
-                                      index,
-                                      "name",
-                                      e.target.value
-                                    )
-                                  }
-                                  placeholder={t("booking.name")}
-                                />
-                              </div>
-                              {!dependent.child && (
-                                <div className="space-y-2">
-                                  <Label>{t("booking.email")}</Label>
-                                  <Input
-                                    type="email"
-                                    value={dependent.mobile || ""}
-                                    onChange={(e) =>
-                                      updateDependent(
-                                        index,
-                                        "mobile",
-                                        e.target.value
-                                      )
-                                    }
-                                    placeholder={t("booking.mobile")}
-                                  />
-                                </div>
+                              {dependent.assigned && (
+                                <>
+                                  <div className="space-y-2">
+                                    <Label>{t("booking.name")}</Label>
+                                    <Input
+                                      value={dependent.name}
+                                      onChange={(e) =>
+                                        updateDependent(
+                                          index,
+                                          "name",
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder={t("booking.name")}
+                                    />
+                                  </div>
+                                  {/* Only show mobile and email if not child */}
+                                  {!dependent.child && (
+                                    <>
+                                      <div className="space-y-2">
+                                        <Label>{t("booking.mobile")}</Label>
+                                        <Input
+                                          type="tel"
+                                          value={dependent.mobile}
+                                          onChange={(e) =>
+                                            updateDependent(
+                                              index,
+                                              "mobile",
+                                              e.target.value
+                                            )
+                                          }
+                                          placeholder={t("booking.mobile")}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>{t("booking.email")}</Label>
+                                        <Input
+                                          type="email"
+                                          value={dependent.email || ""}
+                                          onChange={(e) =>
+                                            updateDependent(
+                                              index,
+                                              "email",
+                                              e.target.value
+                                            )
+                                          }
+                                          placeholder={t("booking.email")}
+                                        />
+                                      </div>
+                                    </>
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>
@@ -543,24 +544,34 @@ const Booking = () => {
                       <span>
                         {t("booking.ticketPrice", { count: totalTickets })}
                       </span>
-                      <span>{totalTicketPrice} EGP</span>
+                      <span>
+                        {numberFormat.format(totalTicketPrice)} {currency}
+                      </span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
                       <span>{t("booking.vat")}</span>
-                      <span>{vatAmount.toFixed(2)} EGP</span>
+                      <span>
+                        {numberFormat.format(vatAmount)} {currency}
+                      </span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
                       <span>{t("booking.cardCost")}</span>
-                      <span>{cardCost} EGP</span>
+                      <span>
+                        {numberFormat.format(cardCost)} {currency}
+                      </span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
                       <span>{t("booking.renewalCost")}</span>
-                      <span>{renewalCost} EGP</span>
+                      <span>
+                        {numberFormat.format(renewalCost)} {currency}
+                      </span>
                     </div>
                     <Separator />
                     <div className="flex justify-between font-semibold text-lg">
                       <span>{t("booking.totalAmount")}</span>
-                      <span>{totalAmount.toFixed(2)} EGP</span>
+                      <span>
+                        {numberFormat.format(totalAmount)} {currency}
+                      </span>
                     </div>
                   </div>
 

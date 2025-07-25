@@ -72,7 +72,6 @@ const availableTags = [
 
 export function EventFilters({ onFilterChange }: EventFiltersProps) {
   const { t, i18n } = useTranslation();
-  const isRTL = i18n.dir() === "rtl";
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -120,19 +119,9 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
     !!filters.endDate;
 
   return (
-    <div
-      className={clsx(
-        "bg-card border border-border rounded-xl p-6 mb-8",
-        isRTL && "text-right"
-      )}
-    >
+    <div className={clsx("bg-card border border-border rounded-xl p-6 mb-8")}>
       <div className="flex items-center justify-between mb-4">
-        <div
-          className={clsx(
-            "flex items-center",
-            isRTL ? "space-x-reverse space-x-2" : "space-x-2"
-          )}
-        >
+        <div className="flex items-center space-x-2 flex-row">
           <Filter className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold text-foreground">
             {t("filters.title")}
@@ -213,7 +202,7 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        {isRTL ? (
+        {i18n.dir() === "rtl" ? (
           <>
             <div>
               <label className="text-sm font-medium text-foreground mb-2 block">
@@ -304,12 +293,7 @@ export function EventFilters({ onFilterChange }: EventFiltersProps) {
         <label className="text-sm font-medium text-foreground mb-2 block">
           {t("filters.tags")}
         </label>
-        <div
-          className={clsx(
-            "flex flex-wrap gap-2",
-            isRTL ? "justify-end" : "justify-start"
-          )}
-        >
+        <div className="flex flex-wrap gap-2 justify-start">
           {availableTags.map((tag) => (
             <Badge
               key={tag}

@@ -29,6 +29,7 @@ import {
   EyeOff,
   Users,
   CalendarPlus,
+  Heart,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -37,6 +38,8 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Toast } from "@/components/ui/toast";
 import { format, isBefore, parseISO } from "date-fns";
+import { ProfileTabsNav } from "@/components/ProfileTabsNav";
+import { ProfileTabsContent } from "@/components/ProfileTabsContent";
 const Profile = () => {
   const [showCardDetails, setShowCardDetails] = useState(false);
   // ① read the URL hash (#nfc, #bookings …)
@@ -277,6 +280,13 @@ const Profile = () => {
   };
 
   const handleSave = () => {
+    if (newPassword && !passwordOtpVerified) {
+      toast({
+        title: "Please verify your new password before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
     localStorage.setItem("userProfile", JSON.stringify(profile));
     alert("Profile saved locally.");
   };
@@ -285,6 +295,123 @@ const Profile = () => {
     // Add any actual logic here (e.g. Apple/Google Wallet API)
     setAddedToWallet(true);
   };
+
+  const [phone, setPhone] = useState(userInfo.phone);
+  const [email, setEmail] = useState(userInfo.email);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [showPhoneOtpModal, setShowPhoneOtpModal] = useState(false);
+  const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
+  const [phoneOtp, setPhoneOtp] = useState("");
+  const [enteredPhoneOtp, setEnteredPhoneOtp] = useState("");
+  const [emailOtp, setEmailOtp] = useState("");
+  const [enteredEmailOtp, setEnteredEmailOtp] = useState("");
+
+  const handleSendPhoneOtp = () => {
+    const generated = Math.floor(100000 + Math.random() * 900000).toString();
+    setPhoneOtp(generated);
+    setShowPhoneOtpModal(true);
+    toast({ title: "OTP sent (mock)", description: generated });
+  };
+  const handleVerifyPhoneOtp = () => {
+    if (enteredPhoneOtp === phoneOtp) {
+      setPhoneVerified(true);
+      setShowPhoneOtpModal(false);
+      toast({ title: "Phone verified!" });
+    } else {
+      toast({ title: "Incorrect OTP", variant: "destructive" });
+    }
+  };
+  const handleSendEmailOtp = () => {
+    const generated = Math.floor(100000 + Math.random() * 900000).toString();
+    setEmailOtp(generated);
+    setShowEmailOtpModal(true);
+    toast({ title: "Verification code sent (mock)", description: generated });
+  };
+  const handleVerifyEmailOtp = () => {
+    if (enteredEmailOtp === emailOtp) {
+      setEmailVerified(true);
+      setShowEmailOtpModal(false);
+      toast({ title: "Email verified!" });
+    } else {
+      toast({ title: "Incorrect code", variant: "destructive" });
+    }
+  };
+
+  // Add state for password OTP verification
+  const [showPasswordOtpModal, setShowPasswordOtpModal] = useState(false);
+  const [passwordOtp, setPasswordOtp] = useState("");
+  const [enteredPasswordOtp, setEnteredPasswordOtp] = useState("");
+  const [passwordOtpVerified, setPasswordOtpVerified] = useState(false);
+
+  const handleSendPasswordOtp = () => {
+    const generated = Math.floor(100000 + Math.random() * 900000).toString();
+    setPasswordOtp(generated);
+    setShowPasswordOtpModal(true);
+    toast({ title: "Verification code sent (mock)", description: generated });
+  };
+  const handleVerifyPasswordOtp = () => {
+    if (enteredPasswordOtp === passwordOtp) {
+      setPasswordOtpVerified(true);
+      setShowPasswordOtpModal(false);
+      toast({ title: "Password change verified!" });
+    } else {
+      toast({ title: "Incorrect code", variant: "destructive" });
+    }
+  };
+
+  // Add state for password fields
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
+  // Add state for notification preferences
+  const [notifyEmail, setNotifyEmail] = useState(true);
+  const [notifySMS, setNotifySMS] = useState(true);
+
+  // Add state for NFC card status
+  const [nfcCardStatus, setNfcCardStatus] = useState(nfcCard.status);
+
+  // NFC Card button handlers
+  const handleBuyNewCard = () => {
+    // Navigate to the dedicated NFC card payment page
+    navigate("/nfc-card-payment");
+  };
+  const handleDeactivateCard = () => {
+    setNfcCardStatus("Inactive");
+    toast({
+      title: "NFC Card Deactivated",
+      description: "Your NFC card is now inactive.",
+    });
+  };
+
+  // Mock favorite events (replace with localStorage or API as needed)
+  const [favoriteEvents, setFavoriteEvents] = useState(() => {
+    const stored = localStorage.getItem("favoriteEvents");
+    return stored
+      ? JSON.parse(stored)
+      : [
+          {
+            id: 101,
+            eventTitle_en: "Cairo Jazz Festival 2025",
+            eventTitle_ar: "مهرجان القاهرة للجاز 2025",
+            date: "2025-07-15",
+            time: "19:00",
+            location_en: "El Sawy Culturewheel",
+            location_ar: "ساقية الصاوي",
+            image: "/public/event1.jpg",
+          },
+          {
+            id: 102,
+            eventTitle_en: "Art Expo 2025",
+            eventTitle_ar: "معرض الفن 2025",
+            date: "2025-08-10",
+            time: "17:00",
+            location_en: "Cairo Exhibition Center",
+            location_ar: "مركز القاهرة للمعارض",
+            image: "/public/event2.jpg",
+          },
+        ];
+  });
 
   return (
     <div className="min-h-screen bg-gradient-dark">
@@ -309,819 +436,63 @@ const Profile = () => {
           </div>
 
           <Tabs
-            // defaultValue becomes controlled value
             value={activeTab}
             onValueChange={setActiveTab}
             className="space-y-6"
           >
-            {" "}
-            <div className="overflow-x-auto scrollbar-hide">
-              <TabsList className="flex flex-nowrap gap-2 px-2 py-1 min-w-max">
-                {[
-                  {
-                    value: "bookings",
-                    labelKey: "profilepage.profileTabs.bookings",
-                    icon: Ticket,
-                  },
-                  {
-                    value: "visits",
-                    labelKey: "profilepage.profileTabs.visits",
-                    icon: History,
-                  },
-                  {
-                    value: "billing",
-                    labelKey: "profilepage.profileTabs.billing",
-                    icon: CreditCard,
-                  },
-                  {
-                    value: "nfc",
-                    labelKey: "profilepage.profileTabs.nfc",
-                    icon: Smartphone,
-                  },
-                  {
-                    value: "settings",
-                    labelKey: "profilepage.profileTabs.settings",
-                    icon: Settings,
-                  },
-                ].map(({ value, labelKey, icon: Icon }) => (
-                  <TabsTrigger
-                    key={value}
-                    value={value}
-                    className="
-      flex items-center gap-1 whitespace-nowrap
-      shrink-0 px-3 py-2 text-sm
-      md:justify-center
-    "
-                  >
-                    <Icon className="h-4 w-4" />
-                    {t(labelKey)}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </div>
-            {/* My Bookings */}
-            <TabsContent value="bookings" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Ticket className="h-5 w-5 text-primary" />
-                    {t("profilepage.myBookings.title")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("profilepage.myBookings.description")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {bookings.map((booking) => (
-                    <div
-                      key={booking.id}
-                      className="border border-border rounded-lg p-4 space-y-3"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                        <div>
-                          <h3 className="font-semibold text-foreground">
-                            {booking.eventTitle}
-                          </h3>
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.myBookings.date")}:{" "}
-                              </span>
-                              {booking.date}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.myBookings.time")}:{" "}
-                              </span>
-                              {booking.time}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <MapPin className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.myBookings.location")}:{" "}
-                              </span>
-                              {booking.location}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="self-start sm:self-auto">
-                          <Badge
-                            variant={
-                              booking.status === "confirmed"
-                                ? "default"
-                                : "secondary"
-                            }
-                            className="text-xs"
-                          >
-                            {t(
-                              `profilepage.myBookings.status.${booking.status}`
-                            )}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0 items-start sm:items-center">
-                        <div className="text-sm">
-                          <span className="text-muted-foreground">
-                            {t("profilepage.myBookings.quantity")}{" "}
-                          </span>
-                          <span className="font-medium">
-                            {booking.quantity}
-                          </span>
-                          <span className="text-muted-foreground ml-4">
-                            {t("profilepage.myBookings.total")}{" "}
-                          </span>
-                          <span className="font-medium">
-                            {booking.ticketPrice * booking.quantity} EGP
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-2">
-                          {booking.qrEnabled && (
-                            <Button variant="outline" size="sm">
-                              <QrCode className="h-4 w-4 mr-2" />
-                              {t("profilepage.myBookings.qr")}
-                            </Button>
-                          )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleAddCalendar(booking)}
-                          >
-                            <CalendarPlus className="h-4 w-4 mr-2" />
-                            {t("profilepage.myBookings.addToCalendar")}
-                          </Button>
-
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewDetails(booking.id)}
-                          >
-                            {t("profilepage.myBookings.viewDetails")}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-              {/* Dependent Tickets Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" />
-                    {t("profilepage.dependentBookings.title")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("profilepage.dependentBookings.description")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {dependants.map((ticket) => (
-                    <div
-                      key={ticket.id}
-                      className="border border-border rounded-lg p-4 space-y-3"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                        <div>
-                          <h3 className="font-semibold text-foreground">
-                            {ticket.eventTitle}
-                          </h3>
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.myBookings.date")}:
-                              </span>{" "}
-                              {ticket.date}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.myBookings.time")}:
-                              </span>{" "}
-                              {ticket.time}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <MapPin className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.myBookings.location")}:
-                              </span>{" "}
-                              {ticket.location}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="self-start sm:self-auto">
-                          <Badge
-                            variant={
-                              ticket.status === "claimed"
-                                ? "default"
-                                : "secondary"
-                            }
-                            className="text-xs"
-                          >
-                            {t(
-                              `profilepage.dependentBookings.status.${ticket.status}`
-                            )}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0 items-start sm:items-center">
-                        <div className="text-sm">
-                          <span className="text-muted-foreground">
-                            {t("profilepage.myBookings.quantity")}{" "}
-                          </span>
-                          <span className="font-medium">{ticket.quantity}</span>
-                          <span className="text-muted-foreground ml-4">
-                            {t("profilepage.myBookings.total")}{" "}
-                          </span>
-                          <span className="font-medium">
-                            {ticket.ticketPrice * ticket.quantity} EGP
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-2">
-                          {ticket.status === "pending" && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleViewDetails(ticket.id)}
-                            >
-                              {t("profilepage.myBookings.viewDetails")}
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
-            {/* My Visits */}
-            <TabsContent value="visits" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <History className="h-5 w-5 text-primary" />
-                    {t("profilepage.visits.title")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("profilepage.visits.description")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {visits.map((visit) => (
-                    <div
-                      key={visit.id}
-                      className="border border-border rounded-lg p-4 space-y-3"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-semibold text-foreground">
-                            {visit.eventTitle}
-                          </h3>
-                          <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-sm text-muted-foreground mt-1">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.visits.date")}:
-                              </span>
-                              {visit.date}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.visits.enteredAt")}:
-                              </span>
-                              {visit.entranceTime}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <MapPin className="h-4 w-4" />
-                              <span className="font-medium">
-                                {t("profilepage.visits.location")}:
-                              </span>
-                              {visit.location}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {visit.dependents.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">
-                            {t("profilepage.visits.dependents")}:{" "}
-                            {visit.dependents.join(", ")}
-                          </span>
-                        </div>
-                      )}
-                      <div className="pt-2">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => setOpenFeedbackId(visit.id)}
-                        >
-                          {t("profilepage.visits.feedback.button")}
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                  <Dialog
-                    open={!!openFeedbackId}
-                    onOpenChange={() => setOpenFeedbackId(null)}
-                  >
-                    <DialogContent>
-                      <DialogHeader>
-                        {t("profilepage.visits.feedback.title")}
-                      </DialogHeader>
-
-                      <div className="space-y-4">
-                        <Textarea
-                          placeholder={t(
-                            "profilepage.visits.feedback.placeholder"
-                          )}
-                          value={feedbackText}
-                          onChange={(e) => setFeedbackText(e.target.value)}
-                        />
-
-                        <Button onClick={handleSubmitFeedback}>
-                          {t("profilepage.visits.feedback.submit")}
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            {/* Billing History */}
-            <TabsContent value="billing" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5 text-primary" />
-                    {t("profilepage.billing.title")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("profilepage.billing.description")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {billingHistory.map((payment) => (
-                    <div
-                      key={payment.id}
-                      className="border border-border rounded-lg p-4"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                        <div>
-                          <h3 className="font-semibold text-foreground">
-                            {payment.eventTitle}
-                          </h3>
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
-                            <span>{payment.date}</span>
-                            <span>
-                              {t("profilepage.billing.invoice")}:{" "}
-                              {payment.invoiceId}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-right sm:text-left">
-                          <div className="text-right">
-                            <div className="font-semibold text-foreground">
-                              {payment.amount} {payment.currency}
-                            </div>
-                            <Badge variant="default" className="text-xs">
-                              {t(
-                                `profilepage.billing.status.${payment.status.toLowerCase()}`
-                              )}
-                            </Badge>
-                          </div>
-                          <InvoicePreview />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full sm:w-auto"
-                          >
-                            <Download className="h-4 w-4 mr-2" />
-                            {t("profilepage.billing.download")}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
-            {/* NFC Card */}
-            <div className="relative">
-              <div
-                className={
-                  hasActiveNfcCard
-                    ? ""
-                    : "blur-xs pointer-events-none select-none"
-                }
-              >
-                <TabsContent value="nfc" className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Smartphone className="h-5 w-5 text-primary" />
-                        {t("profilepage.nfc.title")}
-                      </CardTitle>
-                      <CardDescription>
-                        {t("profilepage.nfc.description")}
-                      </CardDescription>
-                    </CardHeader>
-
-                    <div className="relative w-full h-full flex items-center justify-center">
-                      {/* Hover Target - Wrap images in group */}
-                      <div className="relative group w-44 h-auto flex items-center justify-center">
-                        {/* Front Image */}
-                        <div className="transition-opacity duration-500 ease-in-out group-hover:opacity-0 z-10">
-                          <img
-                            src="/public/NFC CARD Front -1.png"
-                            alt="NFC Front"
-                            className="shadow-2xl w-44 rounded-lg"
-                          />
-                        </div>
-
-                        {/* Back Image + Overlays */}
-                        <div className="absolute transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100 z-20 flex items-center justify-center">
-                          <img
-                            src="/public/NFC CARD Back-1.png"
-                            alt="NFC Card Back"
-                            className="shadow-2xl w-44 rounded-lg"
-                          />
-
-                          {/* Name */}
-                          <div className="absolute top-[83%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                            <span className="text-black text-xs font-bold drop-shadow-md">
-                              {firstName}
-                            </span>
-                          </div>
-
-                          {/* ID */}
-                          <div className="absolute top-[93%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                            <span className="text-white text-xs font-bold drop-shadow-md">
-                              {userInfo.id}
-                            </span>
-                          </div>
-                          {/* Expiry */}
-                          <div className="absolute top-[15%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                            <span className="text-white text-xs font-bold drop-shadow-md">
-                              {nfcCard.expiryDate}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <CardContent className="space-y-6">
-                      <div className="border border-border rounded-lg p-4">
-                        <div className="flex justify-between items-center mb-4">
-                          <h3 className="font-semibold text-foreground">
-                            {t("profilepage.nfc.cardStatus")}
-                          </h3>
-                          <Badge variant="default">
-                            {t(`profilepage.nfc.status.${nfcCard.status}`)}
-                          </Badge>
-                        </div>
-
-                        <div className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              {t("profilepage.nfc.cardNumber")}
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono">
-                                {showCardDetails
-                                  ? "1234 5678 9012 1234"
-                                  : nfcCard.cardNumber}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() =>
-                                  setShowCardDetails(!showCardDetails)
-                                }
-                              >
-                                {showCardDetails ? (
-                                  <EyeOff className="h-4 w-4" />
-                                ) : (
-                                  <Eye className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              {t("profilepage.nfc.issueDate")}
-                            </span>
-                            <span>{nfcCard.issueDate}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              {t("profilepage.nfc.expiryDate")}
-                            </span>
-                            <span>{nfcCard.expiryDate}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              {t("profilepage.nfc.walletexpiryDate")}
-                            </span>
-                            <span>{nfcCard.expiryDate}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                        <Button
-                          variant="outline"
-                          disabled={nfcCard.status !== "Active"}
-                        >
-                          {t("profilepage.nfc.deactivateCard")}
-                        </Button>
-                        <Button variant="gradient" className="w-full sm:w-auto">
-                          {t("profilepage.nfc.buyNewCard")}
-                        </Button>
-                        <div className="space-y-2 z-30">
-                          {/* Wallet button or expiry message */}
-                          <Button
-                            className="duration-300 disabled:opacity-50 w-full text-center sm:w-auto"
-                            onClick={handleAddToWallet}
-                            variant="gradient"
-                            disabled={addedToWallet}
-                          >
-                            {addedToWallet
-                              ? t("wallet.added")
-                              : t("wallet.add")}
-                          </Button>
-
-                          {addedToWallet && nfcCard.isVirtual && expiry && (
-                            <p className="text-xs text-muted-foreground mt-2">
-                              expires on: {format(expiry, "MMMM dd, yyyy")}
-                            </p>
-                          )}
-
-                          {/* Show expiry anyway for virtual cards if not yet added */}
-                          {!addedToWallet && nfcCard.isVirtual && (
-                            <p className="text-xs text-muted-foreground">
-                              Expires on: {format(expiry, "MMMM dd, yyyy")}
-                            </p>
-                          )}
-
-                          {/* Expired notice */}
-                          {nfcCard.isVirtual && isExpired && (
-                            <div className="text-sm text-red-500 border border-red-300 p-2 rounded">
-                              Your temporary access has expired. Please renew to
-                              regain access.
-                              <div className="mt-2">
-                                <button
-                                  onClick={handleRenewTemporaryAccess} // Define this as needed
-                                  className="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
-                                >
-                                  Renew Temporary Access
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="bg-muted/20 rounded-lg p-4">
-                        <h4 className="font-semibold mb-2">
-                          {t("profilepage.nfc.cardFeaturesTitle")}
-                        </h4>
-                        <ul className="text-sm space-y-1 text-muted-foreground">
-                          <li>• {t("profilepage.nfc.feature1")}</li>
-                          <li>• {t("profilepage.nfc.feature2")}</li>
-                          <li>• {t("profilepage.nfc.feature3")}</li>
-                          <li>• {t("profilepage.nfc.feature4")}</li>
-                        </ul>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </div>
-              {!hasActiveNfcCard && (
-                <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm z-10 text-center p-4">
-                  <p className="text-foreground ">
-                    {t("profilepage.nfc.notice")}
-                  </p>
-                </div>
-              )}
-            </div>
-            {/* Account Settings */}
-            <TabsContent value="settings" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5 text-primary" />
-                    {t("profilepage.settingsTab.tab")}
-                  </CardTitle>
-                  <CardDescription className="mb-2">
-                    {t("profilepage.settingsTab.description")}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="fullName">
-                        {t("profilepage.settingsTab.fullName")}
-                      </Label>
-                      <Input
-                        id="fullName"
-                        disabled
-                        defaultValue={userInfo.name}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">
-                        {t("profilepage.settingsTab.phone")}
-                      </Label>
-                      <Input id="phone" defaultValue={userInfo.phone} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">
-                        {t("profilepage.settingsTab.email")}
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        defaultValue={userInfo.email}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="profileImage">
-                        {t("profilepage.settingsTab.profileImage")}
-                      </Label>
-                      <div className="flex items-center space-x-2">
-                        {/* Preview current or selected image */}
-                        {profileImage && (
-                          <img
-                            src={userInfo.profileImage}
-                            alt="Profile Preview"
-                            className="w-24 h-24 rounded-full object-cover border"
-                          />
-                        )}
-
-                        <Input
-                          id="profileImage"
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onloadend = () => {
-                                const base64 = reader.result?.toString() || "";
-                                setProfileImage(base64); // base64 string
-                                localStorage.setItem(
-                                  "userProfileImage",
-                                  base64
-                                );
-                              };
-                              reader.readAsDataURL(file);
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="bloodType">
-                        {t("profilepage.settingsTab.bloodType")}
-                      </Label>
-                      <select
-                        id="bloodType"
-                        className="w-full rounded-md border border-input bg-input px-3 py-2 text-sm text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                        value={bloodType}
-                        onChange={(e) => setBloodType(e.target.value)}
-                      >
-                        <option value="">
-                          {t("profilepage.settingsTab.selectOption")}
-                        </option>
-                        <option value="A+">A+</option>
-                        <option value="A-">A−</option>
-                        <option value="B+">B+</option>
-                        <option value="B-">B−</option>
-                        <option value="AB+">AB+</option>
-                        <option value="AB-">AB−</option>
-                        <option value="O+">O+</option>
-                        <option value="O-">O−</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContact">
-                        {t("profilepage.settingsTab.emergencyContact")}
-                      </Label>
-                      <Input
-                        id="emergencyContact"
-                        type="tel"
-                        value={emergencyContact}
-                        onChange={(e) => setEmergencyContact(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContact">
-                        {t("profilepage.settingsTab.emergencyContactName")}
-                      </Label>
-                      <Input
-                        id="emergencyContactName"
-                        value={emergencyContactName}
-                        onChange={(e) =>
-                          setEmergencyContactName(e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <h4 className="font-semibold">
-                      {t("profilepage.settingsTab.changePassword")}
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="oldPassword">
-                          {t("profilepage.settingsTab.oldPassword")}
-                        </Label>
-                        <Input
-                          id="oldPassword"
-                          type="password"
-                          placeholder={t(
-                            "profilepage.settingsTab.oldPasswordPlaceholder"
-                          )}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="newPassword">
-                          {t("profilepage.settingsTab.newPassword")}
-                        </Label>
-                        <Input
-                          id="newPassword"
-                          type="password"
-                          placeholder={t(
-                            "profilepage.settingsTab.newPasswordPlaceholder"
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <h4 className="font-semibold">
-                      {t("profilepage.settingsTab.notificationPreferences")}
-                    </h4>
-                    <div className="space-y-2">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          defaultChecked
-                          className="rounded border-border"
-                        />
-                        <span className="text-sm">
-                          {t("profilepage.settingsTab.notifyEmail")}
-                        </span>
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          defaultChecked
-                          className="rounded border-border"
-                        />
-                        <span className="text-sm">
-                          {t("profilepage.settingsTab.notifySMS")}
-                        </span>
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          className="rounded border-border"
-                        />
-                        <span className="text-sm">
-                          {t("profilepage.settingsTab.notifyMarketing")}
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end">
-                    <Button variant="gradient" onClick={handleSave}>
-                      {t("profilepage.settingsTab.saveChanges")}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+            <ProfileTabsNav
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              t={t as (key: string, defaultValue?: string) => string}
+            />
+            <ProfileTabsContent
+              t={t as (key: string, defaultValue?: string) => string}
+              bookings={bookings}
+              dependants={dependants}
+              visits={visits}
+              billingHistory={billingHistory}
+              favoriteEvents={favoriteEvents}
+              openFeedbackId={openFeedbackId}
+              setOpenFeedbackId={setOpenFeedbackId}
+              feedbackText={feedbackText}
+              setFeedbackText={setFeedbackText}
+              handleSubmitFeedback={handleSubmitFeedback}
+              handleAddCalendar={handleAddCalendar}
+              handleViewDetails={handleViewDetails}
+              userInfo={userInfo}
+              nfcCard={nfcCard}
+              nfcCardStatus={nfcCardStatus}
+              hasActiveNfcCard={hasActiveNfcCard}
+              showCardDetails={showCardDetails}
+              setShowCardDetails={setShowCardDetails}
+              handleBuyNewCard={handleBuyNewCard}
+              handleDeactivateCard={handleDeactivateCard}
+              handleAddToWallet={handleAddToWallet}
+              addedToWallet={addedToWallet}
+              expiry={expiry}
+              isExpired={isExpired}
+              handleRenewTemporaryAccess={handleRenewTemporaryAccess}
+              profileImage={profileImage}
+              setProfileImage={setProfileImage}
+              phone={phone}
+              setPhone={setPhone}
+              phoneVerified={phoneVerified}
+              setPhoneVerified={setPhoneVerified}
+              handleSendPhoneOtp={handleSendPhoneOtp}
+              email={email}
+              setEmail={setEmail}
+              emailVerified={emailVerified}
+              setEmailVerified={setEmailVerified}
+              handleSendEmailOtp={handleSendEmailOtp}
+              oldPassword={oldPassword}
+              setOldPassword={setOldPassword}
+              newPassword={newPassword}
+              setNewPassword={setNewPassword}
+              notifyEmail={notifyEmail}
+              setNotifyEmail={setNotifyEmail}
+              notifySMS={notifySMS}
+              setNotifySMS={setNotifySMS}
+            />
           </Tabs>
         </div>
       </main>

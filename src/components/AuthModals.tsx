@@ -13,6 +13,10 @@ import { useAuth } from "@/Contexts/AuthContext";
 import { ProfileCompletionModal } from "./ui/profileCompletionModal";
 import { CardExpiredModal } from "./ExpiredCardModals";
 
+import { OTPInputContext } from "input-otp";
+import ReCAPTCHA from "react-google-recaptcha";
+import { OtpInput } from "@/components/ui/input-otp";
+
 interface AuthModalsProps {
   onLoginSuccess?: () => void;
 }
@@ -33,6 +37,19 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
   const [emailOtp, setEmailOtp] = useState("");
   const [emailOtpVerified, setEmailOtpVerified] = useState(false);
   const [emailOtpError, setEmailOtpError] = useState("");
+  const [showPhoneOtpModal, setShowPhoneOtpModal] = useState(false);
+  const [enteredPhoneOtp, setEnteredPhoneOtp] = useState("");
+  const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
+  const [enteredEmailOtp, setEnteredEmailOtp] = useState("");
+
+  // Add state for login identifier
+  const [loginIdentifier, setLoginIdentifier] = useState("");
+  const [loginError, setLoginError] = useState("");
+
+  // Add state for captcha
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaError, setCaptchaError] = useState("");
+  const recaptchaSiteKey = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
 
   const checkCardExpiration = () => {
     const isExpired = true; // Replace this with real check
@@ -107,6 +124,22 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Update validation for login (not signup)
+  const validateLogin = () => {
+    if (!loginIdentifier) {
+      setLoginError(t("auth.errors.email_or_phone_required"));
+      return false;
+    }
+    const isEmail = /\S+@\S+\.\S+/.test(loginIdentifier);
+    const isPhone = /^\+?\d{10,15}$/.test(loginIdentifier);
+    if (!isEmail && !isPhone) {
+      setLoginError(t("auth.errors.email_or_phone_invalid"));
+      return false;
+    }
+    setLoginError("");
+    return true;
+  };
+
   const sendOtp = async () => {
     if (!form.phone || !/^\+?\d{10,15}$/.test(form.phone)) {
       setErrors((prev) => ({ ...prev, phone: t("auth.errors.phone_invalid") }));
@@ -114,15 +147,16 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
     }
     setOtpSent(true);
     setOtpError("");
+    setShowPhoneOtpModal(true);
     toast({ title: t("auth.otp_sent"), description: form.phone });
     // await api.sendOtp(form.phone);
   };
-
   const verifyOtp = async () => {
     // Simulated OTP verification
-    if (otp === "123456") {
+    if (enteredPhoneOtp === "123456") {
       setOtpVerified(true);
       setOtpError("");
+      setShowPhoneOtpModal(false);
       toast({ title: t("auth.otp_verified") });
     } else {
       setOtpError(t("auth.errors.otp_invalid"));
@@ -138,14 +172,16 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
     }
     setEmailOtpSent(true);
     setEmailOtpError("");
+    setShowEmailOtpModal(true);
     toast({ title: t("auth.otp_sent"), description: form.email });
     // TODO: await api.sendEmailOtp(form.email);
   };
   const verifyEmailOtp = async () => {
     // Simulate
-    if (emailOtp === "123456") {
+    if (enteredEmailOtp === "123456") {
       setEmailOtpVerified(true);
       setEmailOtpError("");
+      setShowEmailOtpModal(false);
       toast({ title: t("auth.otp_verified") });
     } else {
       setEmailOtpError(t("auth.errors.otp_invalid"));
@@ -163,18 +199,30 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
   };
 
   const handleSubmit = () => {
-    if (!validate()) return;
-
-    // Replace with actual backend call
-    localStorage.setItem("auth_token", "fake-token-" + Date.now());
-    toast({
-      title: isSignup ? t("auth.sign_up") : t("auth.sign_in"),
-      description: `${t("auth.welcome")}, ${form.email}`,
-    });
-
+    if (!captchaToken) {
+      setCaptchaError(
+        t("auth.errors.captcha_required") || "Please complete the captcha."
+      );
+      return;
+    }
+    setCaptchaError("");
     if (isSignup) {
+      if (!validate()) return;
+      // Replace with actual backend call
+      localStorage.setItem("auth_token", "fake-token-" + Date.now());
+      toast({
+        title: t("auth.sign_up"),
+        description: `${t("auth.welcome")}, ${form.email}`,
+      });
       handleSuccessfulSignup();
     } else {
+      if (!validateLogin()) return;
+      // Replace with actual backend call
+      localStorage.setItem("auth_token", "fake-token-" + Date.now());
+      toast({
+        title: t("auth.sign_in"),
+        description: `${t("auth.welcome")}, ${loginIdentifier}`,
+      });
       const token = "fake-token-" + Date.now();
       localStorage.setItem("auth_token", token);
       login(token);
@@ -231,72 +279,137 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
               {renderField("lastName", t("auth.last_name"))}
 
               {/* Phone field + verify */}
-              <div className="flex gap-2 items-end">
-                {renderField(
-                  "phone",
-                  t("auth.phone_number"),
-                  "text",
-                  otpVerified
-                )}
+              <div className="relative mb-2">
+                <Input
+                  type="text"
+                  value={form.phone}
+                  placeholder={t(
+                    "auth.placeholders.phone",
+                    t("auth.phone_number")
+                  )}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  autoComplete="off"
+                  disabled={otpVerified}
+                  className="pr-24"
+                />
                 {!otpVerified && (
-                  <Button type="button" size="sm" onClick={sendOtp}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={sendOtp}
+                    className="absolute top-1/2 right-2 h-7 px-3"
+                    style={{ minWidth: 70, transform: "translateY(-50%)" }}
+                  >
                     {otpSent ? t("auth.resend_otp") : t("auth.verify")}
                   </Button>
                 )}
+                {errors.phone && (
+                  <p className="text-sm text-red-500">{errors.phone}</p>
+                )}
               </div>
-
-              {otpSent && !otpVerified && (
-                <div className="space-y-1 mt-2">
-                  <Input
-                    type="text"
-                    value={otp}
-                    placeholder={t("auth.placeholders.otp")}
-                    onChange={(e) => setOtp(e.target.value)}
-                  />
-                  {otpError && (
-                    <p className="text-sm text-red-500">{otpError}</p>
-                  )}
-                  <Button type="button" size="sm" onClick={verifyOtp}>
-                    {t("auth.verify_otp")}
-                  </Button>
+              {/* OTP Modal for phone */}
+              {showPhoneOtpModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white rounded-lg p-6 max-w-xs w-full">
+                    <h2 className="text-lg font-semibold mb-4">
+                      {t("auth.enter_otp")}
+                    </h2>
+                    <OtpInput
+                      value={enteredPhoneOtp}
+                      onChange={setEnteredPhoneOtp}
+                      autoFocus
+                    />
+                    {otpError && (
+                      <p className="text-sm text-red-500">{otpError}</p>
+                    )}
+                    <Button className="w-full mt-2" onClick={verifyOtp}>
+                      {t("auth.verify_otp")}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full mt-2"
+                      onClick={() => setShowPhoneOtpModal(false)}
+                    >
+                      {t("auth.cancel")}
+                    </Button>
+                  </div>
                 </div>
               )}
 
               {/* Email field + verify */}
-              <div className="flex gap-2 items-end">
-                {renderField(
-                  "email",
-                  t("auth.email"),
-                  "email",
-                  emailOtpVerified
-                )}
+              <div className="relative mb-2">
+                <Input
+                  type="email"
+                  value={form.email}
+                  placeholder={t("auth.placeholders.email", t("auth.email"))}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  autoComplete="off"
+                  disabled={emailOtpVerified}
+                  className="pr-24"
+                />
                 {!emailOtpVerified && (
-                  <Button type="button" size="sm" onClick={sendEmailOtp}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={sendEmailOtp}
+                    className="absolute top-1/2 right-2 h-7 px-3"
+                    style={{ minWidth: 70, transform: "translateY(-50%)" }}
+                  >
                     {emailOtpSent ? t("auth.resend_otp") : t("auth.verify")}
                   </Button>
                 )}
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email}</p>
+                )}
               </div>
-
-              {emailOtpSent && !emailOtpVerified && (
-                <div className="space-y-1 mt-2">
-                  <Input
-                    type="text"
-                    value={emailOtp}
-                    placeholder={t("auth.placeholders.otp")}
-                    onChange={(e) => setEmailOtp(e.target.value)}
-                  />
-                  {emailOtpError && (
-                    <p className="text-sm text-red-500">{emailOtpError}</p>
-                  )}
-                  <Button type="button" size="sm" onClick={verifyEmailOtp}>
-                    {t("auth.verify_otp")}
-                  </Button>
+              {/* OTP Modal for email */}
+              {showEmailOtpModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white rounded-lg p-6 max-w-xs w-full">
+                    <h2 className="text-lg font-semibold mb-4">
+                      {t("auth.enter_otp")}
+                    </h2>
+                    <OtpInput
+                      value={enteredEmailOtp}
+                      onChange={setEnteredEmailOtp}
+                      autoFocus
+                    />
+                    {emailOtpError && (
+                      <p className="text-sm text-red-500">{emailOtpError}</p>
+                    )}
+                    <Button className="w-full mt-2" onClick={verifyEmailOtp}>
+                      {t("auth.verify_otp")}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full mt-2"
+                      onClick={() => setShowEmailOtpModal(false)}
+                    >
+                      {t("auth.cancel")}
+                    </Button>
+                  </div>
                 </div>
               )}
             </>
           )}
 
-          {!isSignup && renderField("email", t("auth.email"), "email")}
+          {!isSignup && (
+            <div className="space-y-1">
+              <Input
+                type="text"
+                value={loginIdentifier}
+                placeholder={t(
+                  "auth.placeholders.email_or_phone",
+                  "Email or Mobile Number"
+                )}
+                onChange={(e) => setLoginIdentifier(e.target.value)}
+                autoComplete="off"
+              />
+              {loginError && (
+                <p className="text-sm text-red-500">{loginError}</p>
+              )}
+            </div>
+          )}
 
           {renderField("password", t("auth.password"), "password")}
 
@@ -306,6 +419,15 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
               t("auth.confirm_password"),
               "password"
             )}
+
+          <ReCAPTCHA
+            sitekey={recaptchaSiteKey}
+            onChange={(token) => setCaptchaToken(token || "")}
+            className="my-2"
+          />
+          {captchaError && (
+            <p className="text-sm text-red-500">{captchaError}</p>
+          )}
 
           <Button className="w-full mt-4" type="submit">
             {t("auth.continue")}

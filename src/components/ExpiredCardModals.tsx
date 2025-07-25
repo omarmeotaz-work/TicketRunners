@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface CardExpiredModalProps {
   open: boolean;
@@ -14,6 +15,7 @@ interface CardExpiredModalProps {
 
 export const CardExpiredModal = ({ open, onClose }: CardExpiredModalProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleRenewClick = () => {
     onClose(); // Close the modal
@@ -24,12 +26,14 @@ export const CardExpiredModal = ({ open, onClose }: CardExpiredModalProps) => {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Access Card Expired</DialogTitle>
+          <DialogTitle>{t("cardExpired.title")}</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground mb-4">
-          Your access card has expired. Please renew your card now.
+          {t("cardExpired.message")}
         </p>
-        <Button onClick={handleRenewClick}>Renew Now</Button>
+        <Button onClick={handleRenewClick}>
+          {t("cardExpired.renewButton")}
+        </Button>
       </DialogContent>
     </Dialog>
   );

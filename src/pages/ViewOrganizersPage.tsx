@@ -184,7 +184,7 @@ const ViewOrganizersPage: React.FC = () => {
                         className="flex-1"
                         onClick={(e) => {
                           e.stopPropagation(); // prevent parent onClick
-                          navigate(`/book/${evt.id}`);
+                          navigate(`/booking/${evt.id}`);
                         }}
                       >
                         {t("buttons.book_now")}

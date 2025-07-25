@@ -12,18 +12,20 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary hover:shadow-glow hover:-translate-y-0.5",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-glow hover:-translate-y-0.5",
         outline:
-          "border border-border bg-transparent text-foreground hover:bg-card hover:text-card-foreground",
+          "border border-border bg-transparent text-foreground hover:bg-card hover:text-card-foreground hover:shadow-glow hover:-translate-y-0.5",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-glow hover:-translate-y-0.5",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground hover:shadow-glow hover:-translate-y-0.5",
         link: "text-primary underline-offset-4 hover:underline",
         gradient:
           "bg-gradient-primary text-primary-foreground hover:shadow-glow hover:-translate-y-0.5 font-semibold",
-        icon: "bg-card text-card-foreground border border-border hover:bg-secondary hover:shadow-primary hover:-translate-y-0.5",
+        icon: "bg-card text-card-foreground border border-border hover:bg-secondary hover:shadow-primary hover:-translate-y-0.5 hover:shadow-glow",
         header:
-          "bg-transparent text-slate-400 hover:text-slate-100 border border-slate-600 hover:bg-slate-700/40 focus-visible:ring-2 focus-visible:ring-slate-500",
+          "bg-transparent text-slate-800 hover:text-slate-900 border border-slate-300 hover:bg-slate-200/60 focus-visible:ring-2 focus-visible:ring-slate-500 hover:shadow-glow hover:-translate-y-0.5 " +
+          "dark:text-slate-200 dark:hover:text-white dark:border-slate-600 dark:hover:bg-slate-700/60",
       },
       size: {
         default: "h-11 px-6 py-2",

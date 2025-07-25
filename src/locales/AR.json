@@ -45,7 +45,13 @@
     "contact": "تواصل معنا",
     "location": "القاهرة، مصر",
     "trustTagline": "سوق التذاكر الموثوق به",
-    "technicalSupport": "الدعم الفني"
+    "technicalSupport": "الدعم الفني",
+    "logoAlt": "شعار تيكيت رانرز",
+    "phoneLabel": "+20 122 652 1747",
+    "emailLabel": "support@ticketrunners.com",
+    "copyright": "تيكيت رانرز",
+    "poweredBy": "مدعوم بواسطة",
+    "floki": "Floki Systems"
   },
   "eventCard": {
     "featured": "مميز",
@@ -140,8 +146,14 @@
     "Photography": "تصوير",
     "Dance": "رقص",
     "Literature": "أدب",
-    "Film": "أفلام",
-    "Business": "أعمال"
+    "Film": "سينما",
+    "Business": "أعمال",
+    "All": "الكل",
+    "Cultural": "ثقافي",
+    "EDM": "EDM",
+    "Classical": "كلاسيكي",
+    "Jazz": "جاز",
+    "Workshop": "ورشة"
   },
   "booking": {
     "title": "احجز تذاكرك",
@@ -185,6 +197,7 @@
     "namePlaceholder": "أدخل الاسم",
     "ticketType": "فئة التذكرة",
     "mainUserInfo": "تذكرتكt",
+    "unassignedTransferFeeWarning": "سيتم فرض رسوم تحويل عند نقل التذاكر غير المخصصة لاحقًا.",
 
     "tiers": {
       "gold": "ذهبي",
@@ -208,8 +221,14 @@
       "billing": "الفواتير",
       "nfc": "بطاقة NFC",
       "settings": "الإعدادات",
+      "favorites": "المفضلة",
       "title": "ملفي الشخصي",
       "description": "إدارة الحساب، الحجوزات، والتفضيلات"
+    },
+    "favorites": {
+      "title": "الفعاليات المفضلة",
+      "description": "الفعاليات التي قمت بوضعها في المفضلة.",
+      "empty": "لا توجد فعاليات مفضلة بعد."
     },
     "nfc": {
       "title": "بطاقتي الذكية",
@@ -235,7 +254,8 @@
       "issued": "تاريخ الإصدار",
       "expires": "تاريخ الانتهاء",
       "addToWallet": "أضف إلى المحفظة",
-      "notice": "يرجى شراء البطاقة من أقرب تاجر"
+      "notice": "يرجى شراء البطاقة من أقرب تاجر",
+      "deactivatedDisclaimer": "بطاقتك غير مفعلة. يرجى شراء بطاقة جديدة من أقرب تاجر."
     },
     "dependentBookings": {
       "title": "Dependents’ Tickets",
@@ -268,7 +288,13 @@
       "date": "التاريخ",
       "enteredAt": "وقت الدخول",
       "location": "الموقع",
-      "dependents": "المرافقون"
+      "dependents": "المرافقون",
+      "feedback": {
+        "title": "إرسال ملاحظات",
+        "placeholder": "اكتب ملاحظاتك هنا...",
+        "submit": "إرسال الملاحظات",
+        "button": "إرسال ملاحظات"
+      }
     },
     "billing": {
       "title": "سجل الفواتير",
@@ -306,7 +332,8 @@
 
       "selectOption": "اختر خيارًا",
       "changesSaved": "تم حفظ التغييرات بنجاح",
-      "browse": "تحميل صورة جديدة"
+      "browse": "تحميل صورة جديدة",
+      "atLeastOneNotification": "يجب اختيار طريقة إشعار واحدة على الأقل."
     }
   },
 
@@ -425,10 +452,15 @@
     "showLayout": "عرض المخطط",
     "facilitiesTitle": "Facilities",
     "facilities": {
-      "Parking": "Parking",
-      "Wheelchair Access": "Wheelchair Access",
-      "Wi-Fi": "Wi-Fi",
-      "Food": "Food"
+      "Parking": "موقف سيارات",
+      "Wheelchair Access": "إمكانية الوصول للكراسي المتحركة",
+      "Wi-Fi": "واي فاي",
+      "Food": "طعام",
+      "Baby": "خدمات للأطفال",
+      "Green Area": "مساحة خضراء",
+      "Showers": "دُش",
+      "Music": "موسيقى",
+      "Outdoor": "منطقة خارجية"
     },
     "termsTitle": "الشروط والأحكام",
     "termsContent": "بشراء تذكرة، فإنك توافق على الالتزام بقواعد مكان الفعالية وسياساتها. التذاكر غير قابلة للاسترداد أو التنازل إلا في حال إلغاء الفعالية أو إعادة جدولتها",
@@ -436,7 +468,12 @@
       "title": "تم نسخ الرابط!",
       "description": "تم نسخ رابط الحدث إلى الحافظة"
     },
-    "calendarToast": "تم تنزيل ملف التقويم"
+    "calendarToast": "تم تنزيل ملف التقويم",
+    "termsBullets": [
+      "لا يوجد استرداد إلا إذا تم إلغاء الفعالية.",
+      "الدخول يتطلب تذكرة رقمية أو مطبوعة صالحة.",
+      "يحتفظ منظمو الفعالية بالحق في رفض الدخول."
+    ]
   },
   "badges": {
     "featured": "مميز"
@@ -549,10 +586,20 @@
     "no_account": "ليس لديك حساب؟",
     "already_account": "لديك حساب بالفعل؟",
     "verify": "تحقق",
+    "verifyOtp": "تحقق من الرمز",
+    "verified": "تم التحقق",
+    "enter_otp": "أدخل رمز التحقق",
+    "cancel": "إلغاء",
     "otp_sent": "تم إرسال رمز التحقق",
     "otp_verified": "تم التحقق من رقم الهاتف",
     "verify_otp": "تحقق من الرمز",
     "placeholders": {
+      "email_or_phone": "البريد الإلكتروني أو رقم الجوال",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "password": "كلمة المرور",
+      "phone": "رقم الجوال",
+      "email": "البريد الإلكتروني",
       "otp": "أدخل رمز التحقق"
     },
     "errors": {
@@ -569,7 +616,8 @@
       "confirm_password_required": "يرجى تأكيد كلمة المرور.",
       "confirm_password_mismatch": "كلمتا المرور غير متطابقتين.",
       "otp_invalid": "رمز التحقق غير صحيح",
-      "phone_not_verified": "يجب التحقق من رقم الهاتف قبل إتمام التسجيل"
+      "phone_not_verified": "يجب التحقق من رقم الهاتف قبل إتمام التسجيل",
+      "captcha_required": "يجب أن يتم إدخال الكابتشا"
     }
   },
   "interests": {
@@ -584,6 +632,7 @@
     "image_disclaimer": "لضمان الأمان، يرجى تحميل صورة حديثة وواضحة. قد يتم منعك من دخول الفعاليات إذا لم تتطابق صورتك مع مظهرك الحقيقي.",
     "select_blood_type": "اختر فصيلة الدم (اختياري)",
     "emergency_contact": "جهة الاتصال للطوارئ (اختياري)",
+    "emergencyContactName": "اسم جهة اتصال الطوارئ",
     "submit": "إرسال",
     "errors": {
       "image_required": "الصورة الشخصية مطلوبة"
@@ -604,11 +653,12 @@
     "view_event": "عرض الحدث"
   },
   "wallet": {
-    "expiresOn": "Expires on",
+    "expiresOn": "ينتهي خلال",
     "virtualExpired": "Your temporary virtual access has expired.",
     "renewTemporaryAccess": "Renew Temporary Access",
     "add": "أضف إلى المحفظة",
-    "added": "تمت الإضافة إلى المحفظة"
+    "added": "تمت الإضافة إلى المحفظة",
+    "timer": "{{days}}يوم {{hours}}:{{minutes}}:{{seconds}} متبقي"
   },
 
   "how_it_works": {
@@ -694,10 +744,16 @@
     "title": "شارك هذا الحدث",
     "copy": "نسخ الرابط",
     "copied": "تم نسخ الرابط",
+    "copyLink": "نسخ الرابط",
     "copied_description": "يمكنك الآن مشاركته في أي مكان.",
     "facebook": "فيسبوك",
     "twitter": "تويتر",
     "linkedin": "لينكدإن",
     "email": "بريد إلكتروني"
+  },
+  "cardExpired": {
+    "title": "انتهت صلاحية بطاقة الدخول",
+    "message": "انتهت صلاحية بطاقة الدخول الخاصة بك. يرجى تجديد البطاقة الآن.",
+    "renewButton": "تجديد الآن"
   }
 }

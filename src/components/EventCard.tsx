@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { ShareModal } from "@/components/ShareModal";
 
 interface EventCardProps {
   id: string;
@@ -44,6 +45,7 @@ export function EventCard({
   const { toast } = useToast();
   const { t } = useTranslation();
   const { i18n } = useTranslation();
+  const [showShareModal, setShowShareModal] = useState(false);
   const formattedDate = useMemo(() => {
     const locale = i18n.language === "en" ? "en-GB" : i18n.language;
     return new Intl.DateTimeFormat(locale, {
@@ -57,6 +59,12 @@ export function EventCard({
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(date));
+
+  // Helper to normalize category for translation
+  const normalizedCategory =
+    category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+
+  const eventUrl = `${window.location.origin}/event/${id}`;
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -74,11 +82,7 @@ export function EventCard({
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(`${t("eventCard.sharePrefix")}: ${title}`);
-    toast({
-      title: t("eventCard.linkCopied"),
-      description: t("eventCard.linkCopiedDescription"),
-    });
+    setShowShareModal(true);
   };
 
   const handleBooking = (e: React.MouseEvent) => {
@@ -136,7 +140,7 @@ export function EventCard({
             variant="secondary"
             className="bg-background/80 backdrop-blur-sm"
           >
-            {t(`categories.${category}`, category)}
+            {t(`tags.${normalizedCategory}`, normalizedCategory)}
           </Badge>
         </div>
       </div>
@@ -189,6 +193,11 @@ export function EventCard({
           </Button>
         </div>
       </div>
+      <ShareModal
+        open={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        shareUrl={eventUrl}
+      />
     </div>
   );
 }

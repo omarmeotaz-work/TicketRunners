@@ -44,13 +44,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({
           <Button
             variant="outline"
             className="w-full justify-start gap-2"
-            onClick={() =>
+            onClick={(e) => {
+              e.stopPropagation();
               openWindow(
                 `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
                   shareUrl
                 )}`
-              )
-            }
+              );
+            }}
           >
             <Facebook className="h-4 w-4" />
             {t("share.facebook")}
@@ -59,13 +60,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({
           <Button
             variant="outline"
             className="w-full justify-start gap-2"
-            onClick={() =>
+            onClick={(e) => {
+              e.stopPropagation();
               openWindow(
                 `https://twitter.com/intent/tweet?url=${encodeURIComponent(
                   shareUrl
                 )}`
-              )
-            }
+              );
+            }}
           >
             <Twitter className="h-4 w-4" />
             {t("share.twitter")}
@@ -74,7 +76,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({
           <Button
             variant="outline"
             className="w-full justify-start gap-2"
-            onClick={handleCopy}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopy();
+            }}
           >
             <Copy className="h-4 w-4" />
             {t("share.copyLink")}

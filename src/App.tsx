@@ -41,6 +41,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/refundPolicy";
 import FAQ from "./pages/FAQsPage";
 import NearbyMerchants from "./pages/NearbyMerchants";
+import NFCcardPayment from "@/pages/NFCcardPayment";
 /* -------------------------------------------------------------------------- */
 /*                              Theme Context                                 */
 /* -------------------------------------------------------------------------- */
@@ -167,6 +168,10 @@ export default function App() {
                   <Route
                     path="/nearbymerchants"
                     element={<NearbyMerchants />}
+                  />
+                  <Route
+                    path="/nfc-card-payment"
+                    element={<NFCcardPayment />}
                   />
                 </Route>
                 <Route path="*" element={<NotFound />} />

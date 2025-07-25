@@ -1,5 +1,6 @@
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 interface EventPreviewCardProps {
   image: string;
@@ -18,6 +19,7 @@ export const EventPreviewCard = ({
   location,
   genre,
 }: EventPreviewCardProps) => {
+  const { t } = useTranslation();
   return (
     <div className="flex gap-4 items-center border p-3 rounded-lg bg-card shadow-md">
       <img
@@ -42,7 +44,7 @@ export const EventPreviewCard = ({
           </div>
         </div>
         <div className="mt-2">
-          <Badge>{genre}</Badge>
+          <Badge>{t(`tags.${genre}`, genre)}</Badge>
         </div>
       </div>
     </div>
