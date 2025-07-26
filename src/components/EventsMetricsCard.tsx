@@ -110,7 +110,7 @@ export default function EventMetricsCard({ e }: { e: EventMetrics }) {
           onClick={() => setShowMetrics(!showMetrics)}
         >
           {showMetrics ? t("event.hideMetrics") : t("event.viewMetrics")}
-          <BarChart2 className="h-4 w-4 ml-2" />
+          <BarChart2 className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2" />
         </Button>
 
         {e.freeTickets > 0 && (

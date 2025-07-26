@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Search, CreditCard, User as UserIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface UserInfo {
   id: string;
@@ -22,6 +23,7 @@ interface UserInfo {
 
 export default function MerchantPage() {
   const { toast } = useToast();
+  const { t, i18n } = useTranslation();
   const [emailQuery, setEmailQuery] = useState("");
   const [foundUser, setFoundUser] = useState<UserInfo | null>(null);
   const [cardNumber, setCardNumber] = useState("");
@@ -61,14 +63,16 @@ export default function MerchantPage() {
 
     if (!user) {
       toast({
-        title: "User Not Found",
-        description: `No account associated with ${emailQuery}.`,
+        title: t("merchant_page.user_not_found"),
+        description: t("merchant_page.user_not_found_desc", {
+          email: emailQuery,
+        }),
       });
     } else {
       setFoundUser(user);
       toast({
-        title: "User Found",
-        description: `Account belongs to ${user.name}.`,
+        title: t("merchant_page.user_found"),
+        description: t("merchant_page.user_found_desc", { name: user.name }),
       });
     }
   };
@@ -80,14 +84,20 @@ export default function MerchantPage() {
     setIsAssigning(false);
     if (ok) {
       toast({
-        title: "Card Assigned Successfully",
-        description: `Card ${cardNumber} is now linked to ${foundUser.name}.`,
+        title: t("merchant_page.card_assigned"),
+        description: t("merchant_page.card_assigned_desc", {
+          cardNumber,
+          name: foundUser.name,
+        }),
       });
       setCardNumber("");
       setFoundUser(null);
       setEmailQuery("");
     } else {
-      toast({ title: "Error", description: "Failed to assign card." });
+      toast({
+        title: t("merchant_page.assign_error"),
+        description: t("merchant_page.assign_error_desc"),
+      });
     }
   };
 
@@ -95,28 +105,31 @@ export default function MerchantPage() {
   /* UI                                                                     */
   /* ---------------------------------------------------------------------- */
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-dark">
+    <div
+      className="min-h-screen flex flex-col bg-gradient-dark"
+      dir={i18n.dir()}
+    >
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card className="max-w-xl mx-auto">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <UserIcon className="h-5 w-5 text-primary" />
-              Merchant Portal
+              {t("merchant_page.title")}
             </CardTitle>
-            <CardDescription>
-              Search customer by email and assign NFC card.
-            </CardDescription>
+            <CardDescription>{t("merchant_page.description")}</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-8">
             {/* Search Section */}
             <div className="space-y-4">
-              <Label htmlFor="emailSearch">Customer Email</Label>
+              <Label htmlFor="emailSearch">
+                {t("merchant_page.customer_email")}
+              </Label>
               <div className="flex gap-2">
                 <Input
                   id="emailSearch"
                   type="email"
-                  placeholder="customer@example.com"
+                  placeholder={t("merchant_page.email_placeholder")}
                   value={emailQuery}
                   onChange={(e) => setEmailQuery(e.target.value)}
                 />
@@ -135,15 +148,17 @@ export default function MerchantPage() {
             {foundUser && (
               <div className="space-y-4 animate-fade-in">
                 <p className="text-sm">
-                  Assigning card to:{" "}
+                  {t("merchant_page.assigning_to")}{" "}
                   <span className="font-semibold">{foundUser.name}</span> (
                   {foundUser.email})
                 </p>
-                <Label htmlFor="cardNumber">NFC Card Number</Label>
+                <Label htmlFor="cardNumber">
+                  {t("merchant_page.nfc_card_number")}
+                </Label>
                 <div className="flex gap-2">
                   <Input
                     id="cardNumber"
-                    placeholder="Enter card serial / ID"
+                    placeholder={t("merchant_page.card_placeholder")}
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
                   />
@@ -152,8 +167,8 @@ export default function MerchantPage() {
                     disabled={isAssigning || !cardNumber}
                     onClick={handleAssign}
                   >
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Assign Card
+                    <CreditCard className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                    {t("merchant_page.assign_card")}
                   </Button>
                 </div>
               </div>

@@ -290,9 +290,11 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   autoComplete="off"
                   disabled={otpVerified}
-                  className="pr-24"
+                  className={`pr-24 ${
+                    otpVerified ? "border-green-500 bg-green-50" : ""
+                  }`}
                 />
-                {!otpVerified && (
+                {!otpVerified ? (
                   <Button
                     type="button"
                     size="sm"
@@ -302,6 +304,23 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
                   >
                     {otpSent ? t("auth.resend_otp") : t("auth.verify")}
                   </Button>
+                ) : (
+                  <div className="absolute top-1/2 right-2 transform -translate-y-1/2 flex items-center text-green-600">
+                    <svg
+                      className="w-5 h-5 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className="text-xs font-medium">
+                      {t("auth.verified") || "Verified"}
+                    </span>
+                  </div>
                 )}
                 {errors.phone && (
                   <p className="text-sm text-red-500">{errors.phone}</p>
@@ -326,7 +345,7 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
                       {t("auth.verify_otp")}
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="destructive"
                       className="w-full mt-2"
                       onClick={() => setShowPhoneOtpModal(false)}
                     >
@@ -345,9 +364,11 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   autoComplete="off"
                   disabled={emailOtpVerified}
-                  className="pr-24"
+                  className={`pr-24 ${
+                    emailOtpVerified ? "border-green-500 bg-green-50" : ""
+                  }`}
                 />
-                {!emailOtpVerified && (
+                {!emailOtpVerified ? (
                   <Button
                     type="button"
                     size="sm"
@@ -357,6 +378,23 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
                   >
                     {emailOtpSent ? t("auth.resend_otp") : t("auth.verify")}
                   </Button>
+                ) : (
+                  <div className="absolute top-1/2 right-2 transform -translate-y-1/2 flex items-center text-green-600">
+                    <svg
+                      className="w-5 h-5 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className="text-xs font-medium">
+                      {t("auth.verified") || "Verified"}
+                    </span>
+                  </div>
                 )}
                 {errors.email && (
                   <p className="text-sm text-red-500">{errors.email}</p>
@@ -381,7 +419,7 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onLoginSuccess }) => {
                       {t("auth.verify_otp")}
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="destructive"
                       className="w-full mt-2"
                       onClick={() => setShowEmailOtpModal(false)}
                     >

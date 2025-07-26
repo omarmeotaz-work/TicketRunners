@@ -54,7 +54,7 @@ export function EventSection({
     <section className="py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-12">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
               <Icon className="h-6 w-6 text-primary" />
             </div>
@@ -73,7 +73,7 @@ export function EventSection({
               onClick={handleViewAll}
             >
               {t("viewAll")}
-              <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2 transition-transform group-hover:translate-x-1" />
             </Button>
           )}
         </div>
@@ -94,7 +94,7 @@ export function EventSection({
           <div className="flex justify-center mt-8 md:hidden">
             <Button variant="outline" className="group" onClick={handleViewAll}>
               {t("viewAll")} {t(title)}
-              <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
         )}

@@ -48,13 +48,7 @@ export function Footer() {
             <p className="text-muted-foreground text-sm leading-relaxed">
               {t("footer.tagline")}
             </p>
-            <div
-              className={
-                i18n.dir() === "rtl"
-                  ? "flex flex-row-reverse space-x-reverse space-x-3"
-                  : "flex space-x-3"
-              }
-            >
+            <div className="flex gap-3">
               <Button variant="icon" size="icon" aria-label="Instagram">
                 <Instagram className="h-4 w-4" />
               </Button>

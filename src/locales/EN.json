@@ -538,7 +538,35 @@
     "fetchErrorMessage": "There was an error fetching organizers. Please try again later.",
     "date": "Date",
     "time": "Time",
-    "location": "Location"
+    "location": "Location",
+    "organizerDescription": "Sheba Events focuses on bringing authentic Egyptian music experiences to fans around the world. From intimate unplugged sessions to grand arena shows, we curate, promote, and manage live performances with passion and precision.",
+    "eventCategories": {
+      "music": "Music",
+      "festival": "Festival"
+    },
+    "mockData": {
+      "organizerName": "Sheba Events LLC",
+      "events": {
+        "concert1": {
+          "title": "Ahmed Sheba Live Concert",
+          "date": "March 15, 2025",
+          "time": "8:00 PM",
+          "location": "Cairo Opera House"
+        },
+        "concert2": {
+          "title": "Oriental Fusion Night",
+          "date": "April 10, 2025",
+          "time": "7:30 PM",
+          "location": "Bibliotheca Alexandrina Open Air Theater"
+        },
+        "festival1": {
+          "title": "Cairo Ramadan Festival",
+          "date": "May 5, 2025",
+          "time": "9:00 PM",
+          "location": "Azhar Park"
+        }
+      }
+    }
   },
 
   "invoice": {
@@ -580,6 +608,7 @@
     "otp_verified": "Phone number verified",
     "resend_otp": "resend OTP",
     "verify_otp": "Verify OTP",
+    "verified": "Verified",
     "placeholders": {
       "email_or_phone": "Email or Mobile Number",
       "firstName": "First Name",
@@ -716,7 +745,39 @@
   },
   "nearby_merchants": {
     "title": "Nearby Merchants",
-    "view_on_map": "View On Map"
+    "view_on_map": "View On Map",
+    "merchants": {
+      "cairo_bookstore": {
+        "name": "Cairo Bookstore",
+        "address": "12 Tahrir St, Downtown Cairo"
+      },
+      "alex_boutique": {
+        "name": "Alex Boutique",
+        "address": "45 El Raml Station, Alexandria"
+      },
+      "giza_cafe": {
+        "name": "Giza Café",
+        "address": "87 Haram Street, Giza"
+      }
+    }
+  },
+  "merchant_page": {
+    "title": "Merchant Portal",
+    "description": "Search customer by email and assign NFC card.",
+    "customer_email": "Customer Email",
+    "email_placeholder": "customer@example.com",
+    "user_not_found": "User Not Found",
+    "user_not_found_desc": "No account associated with {{email}}.",
+    "user_found": "User Found",
+    "user_found_desc": "Account belongs to {{name}}.",
+    "assigning_to": "Assigning card to:",
+    "nfc_card_number": "NFC Card Number",
+    "card_placeholder": "Enter card serial / ID",
+    "assign_card": "Assign Card",
+    "card_assigned": "Card Assigned Successfully",
+    "card_assigned_desc": "Card {{cardNumber}} is now linked to {{name}}.",
+    "assign_error": "Error",
+    "assign_error_desc": "Failed to assign card."
   },
   "share": {
     "title": "Share this Event",

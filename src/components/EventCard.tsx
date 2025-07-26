@@ -188,7 +188,7 @@ export function EventCard({
             className="w-full group/btn"
             onClick={handleBooking}
           >
-            <Ticket className="h-4 w-4 mr-2 transition-transform group-hover/btn:scale-110" />
+            <Ticket className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2 transition-transform group-hover/btn:scale-110" />
             {t("eventCard.bookNow")}
           </Button>
         </div>

@@ -582,7 +582,7 @@ const Booking = () => {
                       className="w-full pt-1 pb-1"
                       onClick={onConfirmPayment}
                     >
-                      <CreditCard className="h-5 w-5 mr-2" />
+                      <CreditCard className="h-5 w-5 mr-2 rtl:mr-0 rtl:ml-2" />
                       {t("booking.completePayment")}
                     </Button>
 

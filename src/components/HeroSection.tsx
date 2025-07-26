@@ -139,7 +139,7 @@ export function HeroSection({
                 className="group"
                 onClick={() => (window.location.href = "/events")}
               >
-                <Sparkles className="h-5 w-5 mr-2 transition-transform group-hover:rotate-12" />
+                <Sparkles className="h-5 w-5 mr-2 rtl:mr-0 rtl:ml-2 transition-transform group-hover:rotate-12" />
                 {t("hero.cta_explore")}
               </Button>
               <Button
@@ -148,7 +148,7 @@ export function HeroSection({
                 className="group"
                 onClick={handleTrendingClick}
               >
-                <TrendingUp className="h-5 w-5 mr-2 transition-transform group-hover:scale-110" />
+                <TrendingUp className="h-5 w-5 mr-2 rtl:mr-0 rtl:ml-2 transition-transform group-hover:scale-110" />
                 {t("hero.cta_trending")}
               </Button>
             </div>
